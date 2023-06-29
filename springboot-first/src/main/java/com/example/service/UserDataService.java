@@ -1,5 +1,7 @@
 package com.example.service;
 
+import com.example.dto.UserDataDTO;
+
 import java.util.List;
 
 public interface UserDataService {
@@ -8,5 +10,6 @@ public interface UserDataService {
     UserDataDTO create (UserDataDTO userData);
 
     UserDataDTO findById (UserDataDTO userDataDTO);
+
     void setStatus (Long id);
 }
