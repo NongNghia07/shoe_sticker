@@ -1,7 +1,5 @@
 package com.example.service;
 
-import com.example.dto.UserDataDTO;
-
 import java.util.List;
 
 public interface UserDataService {
