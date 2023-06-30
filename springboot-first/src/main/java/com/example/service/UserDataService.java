@@ -5,11 +5,13 @@ import com.example.dto.UserDataDTO;
 import java.util.List;
 
 public interface UserDataService {
-    List<UserDataDTO> findAll ();
+    List<UserDataDTO> findAll();
 
-    UserDataDTO create (UserDataDTO userData);
+    UserDataDTO create(UserDataDTO userDataDTO);
 
-    UserDataDTO findById (UserDataDTO userDataDTO);
+    UserDataDTO update(UserDataDTO userDataDTO);
 
-    void setStatus (Long id);
+    UserDataDTO findById(Long id);
+
+    void setStatusFalse(Long id);
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+
 @Data
 @Entity
 @Table(name = "product_data")
@@ -34,7 +35,7 @@ public class ProductData {
     private Integer updated;
 
     @Column(name = "updated_date")
-    private String updatedDate;
+    private LocalDateTime updatedDate;
 
     @Column(name = "status")
     private Byte status;

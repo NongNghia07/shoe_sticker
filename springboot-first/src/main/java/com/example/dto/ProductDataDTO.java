@@ -3,6 +3,7 @@ package com.example.dto;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+
 @Data
 public class ProductDataDTO {
     private Integer id;
@@ -13,7 +14,7 @@ public class ProductDataDTO {
     private Integer created;
     private LocalDateTime createdDate;
     private Integer updated;
-    private String updatedDate;
+    private LocalDateTime updatedDate;
     private Byte status;
 
 }

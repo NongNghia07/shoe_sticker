@@ -1,6 +1,7 @@
 package com.example.service.impl;
 
 import com.example.dto.UserLoginDTO;
+import com.example.entity.UserLogin;
 import com.example.repository.UserLoginRepository;
 import com.example.service.UserLoginService;
 import org.modelmapper.ModelMapper;
@@ -25,5 +26,32 @@ public class UserLoginServiceImpl implements UserLoginService {
     @Override
     public List<UserLoginDTO> findAll() {
         return this.userLoginRepository.findAll().stream().map(o -> modelMapper.map(o, UserLoginDTO.class)).collect(Collectors.toList());
+    }
+
+    @Override
+    public UserLoginDTO create(UserLoginDTO userLoginDTO) {
+        UserLogin userLogin = modelMapper.map(userLoginDTO, UserLogin.class);
+        this.userLoginRepository.save(userLogin);
+        userLoginDTO.setId(userLogin.getId());
+        return userLoginDTO;
+    }
+
+    @Override
+    public UserLoginDTO update(UserLoginDTO userLoginDTO) {
+        UserLogin userLogin = modelMapper.map(userLoginDTO, UserLogin.class);
+        this.userLoginRepository.save(userLogin);
+        return userLoginDTO;
+    }
+
+    @Override
+    public void setStatusFalse(Long id) {
+        UserLogin userLogin = this.userLoginRepository.findById(id).orElseThrow();
+        userLogin.setStatus((byte) 0);
+        this.userLoginRepository.save(userLogin);
+    }
+
+    @Override
+    public UserLoginDTO findById(Long id) {
+        return modelMapper.map(this.userLoginRepository.findById(id).orElseThrow(), UserLoginDTO.class);
     }
 }

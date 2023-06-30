@@ -1,12 +1,14 @@
 package com.example.service.impl;
 
 import com.example.dto.UserDataDTO;
+import com.example.entity.UserData;
 import com.example.repository.UserDataRepository;
 import com.example.service.UserDataService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,17 +32,35 @@ public class UserDataServiceImpl implements UserDataService {
     }
 
     @Override
-    public UserDataDTO create(UserDataDTO userData) {
-        return null;
+    public UserDataDTO create(UserDataDTO userDataDTO) {
+        UserData userData = modelMapper.map(userDataDTO, UserData.class);
+        userData.setCreated(userDataDTO.getUserId());
+        userData.setCreatedDate(LocalDateTime.now());
+        this.userDataRepository.save(userData);
+        userDataDTO.setCreated(userData.getCreated());
+        userDataDTO.setCreatedDate(userData.getCreatedDate());
+        return userDataDTO;
     }
 
     @Override
-    public UserDataDTO findById(UserDataDTO userDataDTO) {
-        return null;
+    public UserDataDTO update(UserDataDTO userDataDTO) {
+        UserData userData = modelMapper.map(userDataDTO, UserData.class);
+        userData.setUpdated(userDataDTO.getUserId());
+        userData.setUpdatedDate(LocalDateTime.now());
+        this.userDataRepository.save(userData);
+        userDataDTO.setUpdated(userData.getUpdated());
+        userDataDTO.setUpdatedDate(userData.getUpdatedDate());
+        return userDataDTO;
     }
 
     @Override
-    public void setStatus(Long id) {
+    public UserDataDTO findById(Long id) {
+        return modelMapper.map(this.userDataRepository.findById(id).orElseThrow(), UserDataDTO.class);
+    }
 
+    @Override
+    public void setStatusFalse(Long id) {
+        UserData userData = this.userDataRepository.findById(id).orElseThrow();
+        this.userDataRepository.save(userData);
     }
 }
