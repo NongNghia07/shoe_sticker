@@ -2,6 +2,7 @@ package com.example.service.impl;
 
 import com.example.dto.UserLoginDTO;
 import com.example.entity.UserLogin;
+import com.example.exception.ApiRequestException;
 import com.example.repository.UserLoginRepository;
 import com.example.service.UserLoginService;
 import org.modelmapper.ModelMapper;
@@ -52,6 +53,7 @@ public class UserLoginServiceImpl implements UserLoginService {
 
     @Override
     public UserLoginDTO findById(Long id) {
-        return modelMapper.map(this.userLoginRepository.findById(id).orElseThrow(), UserLoginDTO.class);
+        return modelMapper.map(this.userLoginRepository.findById(id).orElseThrow(() -> new ApiRequestException("Not found with id= " + id))
+                , UserLoginDTO.class);
     }
 }

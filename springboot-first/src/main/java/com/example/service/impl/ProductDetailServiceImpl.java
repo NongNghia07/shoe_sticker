@@ -19,13 +19,11 @@ import java.util.stream.Collectors;
 @Service
 public class ProductDetailServiceImpl implements ProductDetailService {
     private final ProductDetailRepository productDetailRepository;
-    private final ProductDataService productDataService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ProductDetailServiceImpl(ProductDetailRepository productDetailRepository, ProductDataService productDataService, ModelMapper modelMapper) {
+    public ProductDetailServiceImpl(ProductDetailRepository productDetailRepository, ModelMapper modelMapper) {
         this.productDetailRepository = productDetailRepository;
-        this.productDataService = productDataService;
         this.modelMapper = modelMapper;
     }
 
@@ -35,15 +33,11 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     }
 
     @Autowired
-    public ProductDetailDTO create(ProductDataDTO productDataDTO, ProductDetailDTO productDetailDTO) {
-        // Create product data
-        this.productDataService.create(productDataDTO);
-        //
+    public ProductDetailDTO create(ProductDetailDTO productDetailDTO) {
         ProductDetail productDetail = modelMapper.map(productDetailDTO, ProductDetail.class);
-        // Add id product data
-        productDetail.setProductId(productDataDTO.getId());
-        // Create productDetail
+        productDetail.setCreatedDate(LocalDateTime.now());
         this.productDetailRepository.save(productDetail);
+        productDetailDTO.setCreatedDate(productDetail.getCreatedDate());
         productDetailDTO.setId(productDetail.getId());
         return productDetailDTO;
     }

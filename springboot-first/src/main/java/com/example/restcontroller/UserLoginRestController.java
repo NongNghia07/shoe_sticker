@@ -4,10 +4,7 @@ import com.example.dto.UserLoginDTO;
 import com.example.service.UserLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,7 +20,7 @@ public class UserLoginRestController {
         this.userLoginService = userLoginService;
     }
 
-    @GetMapping("/findAll")
+    @GetMapping
     public ResponseEntity<?> findAll() {
         try {
             List<UserLoginDTO> lstUserLoginDTO = this.userLoginService.findAll();
@@ -33,5 +30,9 @@ public class UserLoginRestController {
         }
     }
 
-
+    @GetMapping("/find/{id}")
+    public ResponseEntity<?> findById(@PathVariable("id") Long id) {
+        UserLoginDTO userLoginDTO = this.userLoginService.findById(id);
+        return ResponseEntity.ok().body(userLoginDTO);
+    }
 }

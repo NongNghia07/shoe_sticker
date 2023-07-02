@@ -9,7 +9,7 @@ public interface ProductDetailService {
 
     List<ProductDetailDTO> findAll();
 
-    ProductDetailDTO create(ProductDataDTO productDataDTO, ProductDetailDTO productDetailDTO);
+    ProductDetailDTO create(ProductDetailDTO productDetailDTO);
 
     ProductDetailDTO update(ProductDetailDTO productDetailDTO);
 
