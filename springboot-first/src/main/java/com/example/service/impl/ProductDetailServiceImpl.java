@@ -1,13 +1,9 @@
 package com.example.service.impl;
 
-import com.example.dto.ProductDataDTO;
 import com.example.dto.ProductDetailDTO;
 import com.example.entity.ProductDetail;
 import com.example.repository.ProductDetailRepository;
-import com.example.service.ColorService;
-import com.example.service.ProductDataService;
 import com.example.service.ProductDetailService;
-import com.example.service.SizeService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +28,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         return this.productDetailRepository.findAll().stream().map(o -> modelMapper.map(o, ProductDetailDTO.class)).collect(Collectors.toList());
     }
 
-    @Autowired
+    @Override
     public ProductDetailDTO create(ProductDetailDTO productDetailDTO) {
         ProductDetail productDetail = modelMapper.map(productDetailDTO, ProductDetail.class);
         productDetail.setCreatedDate(LocalDateTime.now());
@@ -42,7 +38,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         return productDetailDTO;
     }
 
-    @Autowired
+    @Override
     public ProductDetailDTO update(ProductDetailDTO productDetailDTO) {
         ProductDetail productDetail = modelMapper.map(productDetailDTO, ProductDetail.class);
         // Create productDetail

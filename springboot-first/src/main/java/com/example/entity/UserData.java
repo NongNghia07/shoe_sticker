@@ -10,11 +10,13 @@ import java.time.LocalDateTime;
 @Table(name = "user_data")
 public class UserData {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private Integer id;
 
-    @Column(name = "user_Id")
-    private Integer userId;
+    @ManyToOne
+    @JoinColumn(name = "user_Id")
+    private UserLogin userLogin;
 
     @Column(name = "first_Name")
     private String firstName;

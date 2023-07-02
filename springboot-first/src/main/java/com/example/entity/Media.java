@@ -8,14 +8,17 @@ import lombok.Data;
 @Table(name = "media")
 public class Media {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "productData_id")
-    private Integer productDataId;
+    @ManyToOne
+    @JoinColumn(name = "productData_id")
+    private ProductData productData;
 
-    @Column(name = "productDetail_id")
-    private Integer productDetailId;
+    @ManyToOne
+    @JoinColumn(name = "productDetail_id")
+    private ProductDetail productDetail;
 
     @Column(name = "type")
     private Byte type;

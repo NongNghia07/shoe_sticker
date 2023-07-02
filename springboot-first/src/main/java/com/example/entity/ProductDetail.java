@@ -1,22 +1,31 @@
 package com.example.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
+
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "product_detail")
-public class ProductDetail {
+public class ProductDetail implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "product_id")
-    private Integer productId;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private ProductData productData;
 
-    @Column(name = "color_id")
-    private Integer colorId;
+    @ManyToOne
+    @JoinColumn(name = "color_id", insertable = true, updatable = true, nullable = false)
+    private Color color;
 
     @Column(name = "size_id")
     private Integer sizeId;

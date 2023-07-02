@@ -22,7 +22,7 @@ public class ProductDetailRestController {
         return null;
     }
 
-    @GetMapping("test")
+    @GetMapping("/test")
     public String test() {
         return "zxc";
     }

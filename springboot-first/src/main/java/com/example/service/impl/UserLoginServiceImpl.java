@@ -53,7 +53,7 @@ public class UserLoginServiceImpl implements UserLoginService {
 
     @Override
     public UserLoginDTO findById(Long id) {
-        return modelMapper.map(this.userLoginRepository.findById(id).orElseThrow(() -> new ApiRequestException("Not found with id= " + id))
-                , UserLoginDTO.class);
+        UserLogin userLogin = this.userLoginRepository.findById(id).orElseThrow(() -> new ApiRequestException("Not found with id= " + id));
+        return modelMapper.map(userLogin, UserLoginDTO.class);
     }
 }

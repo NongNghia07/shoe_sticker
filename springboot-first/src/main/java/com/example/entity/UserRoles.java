@@ -8,13 +8,16 @@ import lombok.Data;
 @Table(name = "user_roles")
 public class UserRoles {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "user_id")
-    private Integer userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserLogin userLogin;
 
-    @Column(name = "role_id")
-    private Integer roleId;
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Roles roles;
 
 }

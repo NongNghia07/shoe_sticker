@@ -1,6 +1,5 @@
 package com.example.service;
 
-import com.example.dto.ProductDataDTO;
 import com.example.dto.ProductDetailDTO;
 
 import java.util.List;
