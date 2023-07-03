@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserLoginServiceImpl implements UserLoginService {
-
     private final UserLoginRepository userLoginRepository;
     private final ModelMapper modelMapper;
 
@@ -53,7 +52,7 @@ public class UserLoginServiceImpl implements UserLoginService {
 
     @Override
     public UserLoginDTO findById(Long id) {
-        UserLogin userLogin = this.userLoginRepository.findById(id).orElseThrow(() -> new ApiRequestException("Not found with id= " + id));
+        UserLogin userLogin = this.userLoginRepository.findById(id).orElseThrow(() -> new ApiRequestException("Not found with id: " + id));
         return modelMapper.map(userLogin, UserLoginDTO.class);
     }
 }

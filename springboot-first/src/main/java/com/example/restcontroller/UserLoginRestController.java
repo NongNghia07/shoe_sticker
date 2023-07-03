@@ -20,19 +20,30 @@ public class UserLoginRestController {
         this.userLoginService = userLoginService;
     }
 
-    @GetMapping
+    @GetMapping("/findAll")
     public ResponseEntity<?> findAll() {
-        try {
-            List<UserLoginDTO> lstUserLoginDTO = this.userLoginService.findAll();
-            return ResponseEntity.ok().body(lstUserLoginDTO);
-        } catch (Exception e) {
-            return null;
-        }
+        List<UserLoginDTO> lstUserLoginDTO = this.userLoginService.findAll();
+        return ResponseEntity.ok().body(lstUserLoginDTO);
     }
 
     @GetMapping("/find/{id}")
     public ResponseEntity<?> findById(@PathVariable("id") Long id) {
         UserLoginDTO userLoginDTO = this.userLoginService.findById(id);
         return ResponseEntity.ok().body(userLoginDTO);
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<?> create(@RequestBody UserLoginDTO userLoginDTO) {
+        return ResponseEntity.ok().body(this.userLoginService.create(userLoginDTO));
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> update(@RequestBody UserLoginDTO userLoginDTO) {
+        return ResponseEntity.ok().body(this.userLoginService.update(userLoginDTO));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public void setStatusFalse(@PathVariable("id") Long id) {
+        this.userLoginService.setStatusFalse(id);
     }
 }

@@ -17,13 +17,28 @@ public class ProductDetailRestController {
         this.productDetailService = productDetailService;
     }
 
-    @GetMapping
-    public ResponseEntity<?> create(@RequestBody ProductDetailDTO productDetailDTO) {
-        return null;
+    @GetMapping("/findAll")
+    public ResponseEntity<?> findAll() {
+        return ResponseEntity.ok().body(this.productDetailService.findAll());
     }
 
-    @GetMapping("/test")
-    public String test() {
-        return "zxc";
+    @GetMapping("/find/{id}")
+    public ResponseEntity<?> findById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok().body(this.productDetailService.findById(id));
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<?> create(@RequestBody ProductDetailDTO productDetailDTO) {
+        return ResponseEntity.ok().body(this.productDetailService.create(productDetailDTO));
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> update(@RequestBody ProductDetailDTO productDetailDTO) {
+        return ResponseEntity.ok().body(this.productDetailService.update(productDetailDTO));
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public void setStatusFalse(@PathVariable("id") Long id) {
+        this.productDetailService.setStatusFalse(id);
     }
 }
