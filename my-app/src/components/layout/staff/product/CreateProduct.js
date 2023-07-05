@@ -99,35 +99,6 @@ const CreateProduct = (props) => {
         }
         setLstColorSelected(copyLstColorSelected);
     }
-
-
-
-    // copyLstColorSelected.map(p => {
-    //     if (p.label === color) {
-    //         if (items.length < p.sizes?.length) {
-    //             let arr = p.sizes.filter(function (x) {
-    //                 return items.filter(function (y) {
-    //                     return y.value == x.value;
-    //                 }).length !== 0
-    //             });
-    //             p['sizes'] = arr;
-    //         } else {
-    //             for (let i in items) {
-    //                 let item = items[i];
-    //                 if (!p.sizes?.map((o) => o.value).includes(item.value)) {
-    //                     if (p.sizes?.length >= 1) {
-    //                         p.sizes.push({ value: item.value, label: item.label })
-    //                         break;
-    //                     } else {
-    //                         p['sizes'] = [{ value: item.value, label: item.label }]
-    //                         break;
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    // })
-
     //End Size ________________________________________________________________________
 
 
@@ -547,7 +518,7 @@ const CreateProduct = (props) => {
                                         {lstColorSelected.map((item) => {
                                             return (
                                                 <>
-                                                    <Col md={12} >
+                                                    <Col md={12} key={item.value}>
                                                         <Row style={{ borderTop: "1px solid #e5e5e5" }} >
                                                             <p>{item.label}</p>
                                                             <Col md={5} >
