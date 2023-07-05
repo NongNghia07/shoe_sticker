@@ -39,6 +39,16 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     }
 
     @Override
+    public List<ProductDetailDTO> createAll(List<ProductDetailDTO> productDetailDTOS) {
+        List<ProductDetail> productDetails = productDetailDTOS.stream().map(o -> modelMapper.map(o, ProductDetail.class)).collect(Collectors.toList());
+        for (int i = 0; i < productDetails.size(); i++) {
+            productDetails.get(i).setCreatedDate(LocalDateTime.now());
+        }
+        this.productDetailRepository.saveAll(productDetails);
+        return productDetails.stream().map(o -> modelMapper.map(o, ProductDetailDTO.class)).collect(Collectors.toList());
+    }
+
+    @Override
     public ProductDetailDTO update(ProductDetailDTO productDetailDTO) {
         ProductDetail productDetail = modelMapper.map(productDetailDTO, ProductDetail.class);
         // Create productDetail

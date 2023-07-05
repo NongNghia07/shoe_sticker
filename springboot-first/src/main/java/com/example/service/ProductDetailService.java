@@ -10,6 +10,8 @@ public interface ProductDetailService {
 
     ProductDetailDTO create(ProductDetailDTO productDetailDTO);
 
+    List<ProductDetailDTO> createAll(List<ProductDetailDTO> productDetailDTOS);
+
     ProductDetailDTO update(ProductDetailDTO productDetailDTO);
 
     ProductDetailDTO findById(Long id);

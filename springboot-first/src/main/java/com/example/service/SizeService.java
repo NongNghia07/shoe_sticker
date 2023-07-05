@@ -15,4 +15,5 @@ public interface SizeService {
     SizeDTO findById(Long id);
 
     void setStatusFalse(Long id);
+
 }

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 // import useTable from "../../../../customHook/UseTable"
 // import useCallGetAPI from "../../../../customHook/UseCallGetApi";
 import CreateProduct from "./CreateProduct";
+import UpdateProduct from "./UpdateProduct";
+
 const Product = (props) => {
     const [isCreateModal, setIsCreateModal] = useState(false);
     // const { data: dataProduct, isLoading } = useCallGetAPI(`http://localhost:8080/api/product/findAll`)
@@ -20,6 +22,7 @@ const Product = (props) => {
             // imageFiles={imageFiles}
             // setImageFiles={setImageFiles}
             />
+            <UpdateProduct />
             {/* <div>
                 {useTable()}
             </div> */}
