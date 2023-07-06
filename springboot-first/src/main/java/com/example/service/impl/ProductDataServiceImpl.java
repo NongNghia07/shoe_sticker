@@ -1,9 +1,12 @@
 package com.example.service.impl;
 
 import com.example.dto.ProductDataDTO;
+import com.example.dto.UserLoginDTO;
 import com.example.entity.ProductData;
+import com.example.entity.UserLogin;
 import com.example.repository.ProductDataRepository;
 import com.example.service.ProductDataService;
+import com.example.service.UserLoginService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,11 +19,13 @@ import java.util.stream.Collectors;
 public class ProductDataServiceImpl implements ProductDataService {
     private final ProductDataRepository productDataRepository;
 
+    private final UserLoginService userLoginService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ProductDataServiceImpl(ProductDataRepository productDataRepository, ModelMapper modelMapper) {
+    public ProductDataServiceImpl(ProductDataRepository productDataRepository, UserLoginService userLoginService, ModelMapper modelMapper) {
         this.productDataRepository = productDataRepository;
+        this.userLoginService = userLoginService;
         this.modelMapper = modelMapper;
     }
 
@@ -34,6 +39,7 @@ public class ProductDataServiceImpl implements ProductDataService {
     public ProductDataDTO create(ProductDataDTO productDataDTO) {
         ProductData productData = modelMapper.map(productDataDTO, ProductData.class);
         productData.setCreatedDate(LocalDateTime.now());
+        productData.setStatus((byte) 1);
         this.productDataRepository.save(productData);
         productDataDTO.setId(productData.getId());
         productDataDTO.setCreatedDate(productData.getCreatedDate());

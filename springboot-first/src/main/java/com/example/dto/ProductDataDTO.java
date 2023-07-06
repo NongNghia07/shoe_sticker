@@ -1,8 +1,10 @@
 package com.example.dto;
 
+
 import lombok.Data;
 
 import java.time.LocalDateTime;
+
 
 @Data
 public class ProductDataDTO {
@@ -16,5 +18,6 @@ public class ProductDataDTO {
     private Integer updated;
     private LocalDateTime updatedDate;
     private Byte status;
+
 
 }

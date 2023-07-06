@@ -1,8 +1,11 @@
 package com.example.service.impl;
 
+import com.example.dto.ProductDataDTO;
 import com.example.dto.ProductDetailDTO;
+import com.example.entity.ProductData;
 import com.example.entity.ProductDetail;
 import com.example.repository.ProductDetailRepository;
+import com.example.service.ProductDataService;
 import com.example.service.ProductDetailService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +18,13 @@ import java.util.stream.Collectors;
 @Service
 public class ProductDetailServiceImpl implements ProductDetailService {
     private final ProductDetailRepository productDetailRepository;
+    private final ProductDataService productDataService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ProductDetailServiceImpl(ProductDetailRepository productDetailRepository, ModelMapper modelMapper) {
+    public ProductDetailServiceImpl(ProductDetailRepository productDetailRepository, ProductDataService productDataService, ModelMapper modelMapper) {
         this.productDetailRepository = productDetailRepository;
+        this.productDataService = productDataService;
         this.modelMapper = modelMapper;
     }
 
@@ -41,8 +46,11 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     @Override
     public List<ProductDetailDTO> createAll(List<ProductDetailDTO> productDetailDTOS) {
         List<ProductDetail> productDetails = productDetailDTOS.stream().map(o -> modelMapper.map(o, ProductDetail.class)).collect(Collectors.toList());
+        ProductDataDTO productDataDTO = this.productDataService.findById((long) productDetailDTOS.get(0).getProductId());
         for (int i = 0; i < productDetails.size(); i++) {
             productDetails.get(i).setCreatedDate(LocalDateTime.now());
+            productDetails.get(i).setStatus((byte) 1);
+            productDetails.get(i).setProductData(modelMapper.map(productDataDTO, ProductData.class));
         }
         this.productDetailRepository.saveAll(productDetails);
         return productDetails.stream().map(o -> modelMapper.map(o, ProductDetailDTO.class)).collect(Collectors.toList());

@@ -1,17 +1,23 @@
 package com.example.entity;
 
 import jakarta.persistence.*;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "user_data")
-public class UserData {
+public class UserData implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
@@ -63,7 +69,6 @@ public class UserData {
     private String image;
 
     @Column(name = "status")
-    @NotNull
     private Byte status;
 
 }

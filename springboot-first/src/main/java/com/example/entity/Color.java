@@ -1,14 +1,20 @@
 package com.example.entity;
 
 import jakarta.persistence.*;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "color")
-public class Color {
+public class Color implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -19,7 +25,6 @@ public class Color {
     private String name;
 
     @Column(name = "status")
-    @NotNull
     private Byte status;
 
 }

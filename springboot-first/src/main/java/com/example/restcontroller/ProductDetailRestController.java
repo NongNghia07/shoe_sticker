@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
+@CrossOrigin("*")
 @RequestMapping("/api/productDetail")
 public class ProductDetailRestController {
 
@@ -30,6 +33,11 @@ public class ProductDetailRestController {
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody ProductDetailDTO productDetailDTO) {
         return ResponseEntity.ok().body(this.productDetailService.create(productDetailDTO));
+    }
+
+    @PostMapping("/createAll")
+    public ResponseEntity<?> createAll(@RequestBody List<ProductDetailDTO> productDetailDTOS) {
+        return ResponseEntity.ok().body(this.productDetailService.createAll(productDetailDTOS));
     }
 
     @PutMapping("/update")

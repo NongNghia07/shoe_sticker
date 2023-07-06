@@ -1,15 +1,22 @@
 package com.example.entity;
 
-import jakarta.persistence.*;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import jakarta.persistence.*;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "category")
-public class Category {
+public class Category implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -34,6 +41,5 @@ public class Category {
     private LocalDateTime updatedDate;
 
     @Column(name = "status")
-    @NotNull
     private Byte status;
 }

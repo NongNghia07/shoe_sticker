@@ -12,26 +12,26 @@ const useCallGetAPI = (url) => {
     const [isError, setIsError] = useState(false);
     const navigate = useNavigate();
     // const ourRequest = axios.CancelToken.source()
-    const notifyWarning = (text) => {
-        toast.warning(text, styleToast);
-    };
-    const notifySuccess = (text) => {
-        toast.success(text, styleToast);
-    };
-    const notifyError = (text) => {
-        toast.error(text, styleToast);
-    };
+    // const notifyWarning = (text) => {
+    //     toast.warning(text, styleToast);
+    // };
+    // const notifySuccess = (text) => {
+    //     toast.success(text, styleToast);
+    // };
+    // const notifyError = (text) => {
+    //     toast.error(text, styleToast);
+    // };
 
-    const styleToast = {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-    };
+    // const styleToast = {
+    //     position: "top-right",
+    //     autoClose: 5000,
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //     progress: undefined,
+    //     theme: "colored",
+    // };
 
     useEffect(() => {
         let canceled = false;
@@ -62,16 +62,16 @@ const useCallGetAPI = (url) => {
                     setData(data);
                 }
             } catch (e) {
-                if (e.response.status == 403) {
-                    notifyWarning("Bạn không có quyền truy cập !!");
-                    navigate("/");
-                }
-                if (axios.isCancel(e)) {
-                    console.log(e.message);
-                } else {
-                    setIsLoading(false)
-                    setIsError(true)
-                }
+                // if (e.response.status == 403) {
+                //     notifyWarning("Bạn không có quyền truy cập !!");
+                //     navigate("/");
+                // }
+                // if (axios.isCancel(e)) {
+                //     console.log(e.message);
+                // } else {
+                //     setIsLoading(false)
+                //     setIsError(true)
+                // }
             }
         }
         setTimeout(() => {

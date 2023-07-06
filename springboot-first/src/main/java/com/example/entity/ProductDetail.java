@@ -1,6 +1,7 @@
 package com.example.entity;
 
 import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,8 @@ public class ProductDetail implements Serializable {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @MapsId("productId")
+    @JoinColumn(name = "product_id", insertable = true, updatable = true, nullable = false)
     @NotNull
     private ProductData productData;
 
@@ -31,9 +33,10 @@ public class ProductDetail implements Serializable {
     @NotNull
     private Color color;
 
-    @Column(name = "size_id")
+    @ManyToOne
+    @JoinColumn(name = "size_id", insertable = true, updatable = true, nullable = false)
     @NotNull
-    private Integer sizeId;
+    private Size size;
 
     @Column(name = "quantity")
     @NotNull
@@ -60,7 +63,6 @@ public class ProductDetail implements Serializable {
     private LocalDateTime updatedDate;
 
     @Column(name = "status")
-    @NotNull
     private Byte status;
 
 }

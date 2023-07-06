@@ -15,7 +15,8 @@ import {
 import Multiselect from "multiselect-react-dropdown";
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
-
+import useCallGetAPI from "../../../../customHook/UseCallGetApi";
+import useCallPostAPI from "../../../../customHook/UseCallPostApi";
 const animatedComponents = makeAnimated();
 
 const CreateProduct = (props) => {
@@ -32,18 +33,30 @@ const CreateProduct = (props) => {
 
     const [productData, setProductData] = useState({})
     const [lstProductDetail, setLstProductDetail] = useState([])
+    let { data: responseData, isError, isLoading, callPost } = useCallPostAPI()
+
+    //Category_______________________________________________________________
+    const { data: category } = useCallGetAPI(`http://localhost:8080/api/category/findAll`)
+    const [lstCategory, setLstCategory] = useState([]);
+    useEffect(() => {
+        let arr = []
+        category.map(p => arr.push({ value: p.id, label: p.name }))
+        setLstCategory([...arr])
+    }, [category])
+    //_______________________________________________________________________
+
 
     //Color__________________________________________________________________________
-    const [lstColor, setLstColor] = useState([
-        { value: '1', label: 'Đen' },
-        { value: '2', label: 'Trắng' },
-        { value: '3', label: 'Xanh' },
-        { value: '4', label: 'Nâu' },
-        { value: '5', label: 'Hồng' },
-        { value: '6', label: 'Đỏ' },
-    ]);
-
+    const { data: colors } = useCallGetAPI(`http://localhost:8080/api/color/findAll`)
+    const [lstColor, setLstColor] = useState([]);
     const [lstColorSelected, setLstColorSelected] = useState([]);
+
+
+    useEffect(() => {
+        let arr = []
+        colors.map(p => arr.push({ value: p.id, label: p.name }))
+        setLstColor([...arr])
+    }, [colors])
 
     const handleOnChangeColor = (items) => {
         let copyLstColorSelected = [...lstColorSelected];
@@ -59,25 +72,23 @@ const CreateProduct = (props) => {
             for (let i in items) {
                 let item = items[i];
                 if (!copyLstColorSelected.map((p) => p.value).includes(item.value)) {
-                    copyLstColorSelected.push({ value: item.value, label: item.label, price: '', sizes: [] });
+                    copyLstColorSelected.push({ value: item.value, label: item.label, price: '', sizes: [], length: 0 });
                 }
             }
         }
         setLstColorSelected(copyLstColorSelected)
     }
-
     //End Color ________________________________________________________________________
 
 
     //Size__________________________________________________________________________
-    const [lstSize, setLstSize] = useState([
-        { value: '1', label: 39 },
-        { value: '2', label: 40 },
-        { value: '3', label: 41 },
-        { value: '4', label: 42 },
-        { value: '5', label: 43 },
-        { value: '6', label: 44 },
-    ]);
+    const { data: sizes } = useCallGetAPI(`http://localhost:8080/api/size/findAll`)
+    const [lstSize, setLstSize] = useState([]);
+    useEffect(() => {
+        let arr = []
+        sizes.map(p => arr.push({ value: p.id, label: p.name }))
+        setLstSize([...arr])
+    }, [sizes])
 
     const handleOnChangeSize = (items, color) => {
         let copyLstColorSelected = [...lstColorSelected];
@@ -89,11 +100,13 @@ const CreateProduct = (props) => {
                 }).length !== 0
             });
             copyLstColorSelected[index].sizes = arr;
+            copyLstColorSelected[index].length = copyLstColorSelected[index].sizes.length
         } else {
             for (let i in items) {
                 let item = items[i];
                 if (!copyLstColorSelected[index].sizes.map((o) => o.value).includes(item.value)) {
                     copyLstColorSelected[index].sizes.push({ value: item.value, label: item.label })
+                    copyLstColorSelected[index].length = copyLstColorSelected[index].sizes.length
                 }
             }
         }
@@ -101,36 +114,36 @@ const CreateProduct = (props) => {
     }
     //End Size ________________________________________________________________________
 
+    const createProductDetail = (data) => {
+        console.log(data);
+        let copyLstProductDetail = []
+        lstColorSelected.map(p => {
+            p.sizes.map(s => copyLstProductDetail.push({ productId: data.id, colorId: p.value, sizeId: s.value, quantity: s.quantity, price: p.price, created: 1 }))
+        })
+        setLstProductDetail([...copyLstProductDetail])
+        console.log(copyLstProductDetail);
+        callPost(`http://localhost:8080/api/productDetail/createAll`, copyLstProductDetail, action);
+    }
 
-    //Product___________________________________________________
+    const action = (data) => {
+        console.log(data);
+    }
+
+    //Product________________________________________________________________
 
     const createProduct = (e) => {
         //create productData
         e.preventDefault()
         let copyProductData = { ...productData }
-        let copyLstProductDetail = []
         let totalProductQuantity = 0
         lstColorSelected.map(p => p.sizes.map(size => {
             totalProductQuantity += Number(size.quantity)
         }))
         copyProductData['quantity'] = totalProductQuantity
+        copyProductData['created'] = 1
         setProductData({ ...copyProductData })
         // call api create pro
-
-
-        // call api findColorByName 
-        // truyền vào 1 list 
-
-        //___________
-
-        //create productDetail
-
-        // copyLstProductDetail['productId'] = 
-        lstColorSelected.map(p => {
-            p.sizes.map(s => copyLstProductDetail.push({ colorId: p.value, sizeId: s.value, quantity: s.quantity, price: p.price }))
-        })
-        setLstProductDetail([...copyLstProductDetail])
-
+        callPost(`http://localhost:8080/api/productData/create`, copyProductData, createProductDetail);
         //__________________
     }
 
@@ -143,6 +156,9 @@ const CreateProduct = (props) => {
         let copyProductData = { ...productData };
         if (id === 'name') {
             copyProductData[id] = e.target.value;
+            setProductData({ ...copyProductData });
+        } else if (id === 'category') {
+            copyProductData["categoryId"] = e.target.value;
             setProductData({ ...copyProductData });
         } else {
             let index = copyLstColorSelected.map(p => p.label).indexOf(color)
@@ -216,7 +232,7 @@ const CreateProduct = (props) => {
                                                 <FormGroup>
                                                     <Label for="namecate">Category</Label>
                                                     <div>
-                                                        {/* <select
+                                                        <select
                                                             style={{
                                                                 border: "1px solid",
                                                                 width: "100%",
@@ -226,21 +242,21 @@ const CreateProduct = (props) => {
                                                             name="namecate"
                                                             placeholder=""
                                                             type="select"
-                                                        onChange={(event) =>
-                                                            handleOnchangeinput(event, "categoryId")
-                                                        }
+                                                            onChange={(event) =>
+                                                                handleOnchangeInput(event, "category")
+                                                            }
                                                         >
                                                             <option value="" disabled selected>
                                                                 Chọn loại sản phẩm
                                                             </option>
-                                                            {lstCate.map((item, index) => {
-                                                        return (
-                                                            <option key={item.id} value={item.id}>
-                                                                {item.namecate}
-                                                            </option>
-                                                        );
-                                                    })}
-                                                        </select> */}
+                                                            {lstCategory.map((item) => {
+                                                                return (
+                                                                    <option key={item.value} value={item.value}>
+                                                                        {item.label}
+                                                                    </option>
+                                                                );
+                                                            })}
+                                                        </select>
                                                         {/* {check.categoryId &&
                                                     check.categoryId.length > 0 && (
                                                         <p className="checkError">{check.categoryId}</p>
@@ -516,9 +532,10 @@ const CreateProduct = (props) => {
                                 <Col md={12}>
                                     <Row>
                                         {lstColorSelected.map((item) => {
+                                            let arrSize = [...item.sizes]
                                             return (
                                                 <>
-                                                    <Col md={12} key={item.value}>
+                                                    <Col md={12} >
                                                         <Row style={{ borderTop: "1px solid #e5e5e5" }} >
                                                             <p>{item.label}</p>
                                                             <Col md={5} >
@@ -529,7 +546,7 @@ const CreateProduct = (props) => {
                                                                         components={animatedComponents}
                                                                         isMulti
                                                                         options={lstSize}
-                                                                        value={item.sizes}
+                                                                        value={arrSize}
                                                                         onChange={(event) => handleOnChangeSize(event, item.label)}
                                                                     />
                                                                 </FormGroup>
