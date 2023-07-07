@@ -181,7 +181,6 @@ const CreateProduct = (props) => {
     const [animating, setAnimating] = useState(false);
 
     const handleImages = (e, color) => {
-        alert(color)
         if (color !== 'imgAll') {
             let coppy = [...lstImage]
             if (e.target.files.length <= 0) {
@@ -195,11 +194,13 @@ const CreateProduct = (props) => {
                 let imageFile = e.target.files[0];
                 let index = coppy.map(p => p.fileName).indexOf(imageFile.name)
                 if (index !== -1) {
-                    coppy.map(p => p.color === color ? "" : p.color)
+                    coppy.map(p => { if (p.color === color) return p.color = "" })
                     coppy[index].color = color
                     setImage(coppy)
                 } else {
-                    setImage((prev) => [...prev, { file: imageFile, fileName: imageFile.name, color: color }]);
+                    coppy.map(p => { if (p.color === color) return p.color = "" })
+                    coppy.push({ file: imageFile, fileName: imageFile.name, color: color })
+                    setImage(coppy)
                 }
             }
         } else {
@@ -252,7 +253,7 @@ const CreateProduct = (props) => {
             <CarouselItem
                 onExiting={onExiting}
                 onExited={onExited}
-                key={item.file}
+                key={item.name}
             >
                 <img src={URL.createObjectURL(item.file)} alt={item.altText} />
                 {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption} /> */}
@@ -298,21 +299,6 @@ const CreateProduct = (props) => {
                                             </div>
                                         </FormGroup>
                                     </Col>
-                                    <Col md={6}>
-                                        <FormGroup>
-                                            <Label for="color">Color</Label>
-                                            <Select
-                                                closeMenuOnSelect={false}
-                                                components={animatedComponents}
-                                                isMulti
-                                                options={lstColor}
-                                                value={lstColorSelected}
-                                                onChange={(event) => handleOnChangeColor(event)}
-                                            />
-                                        </FormGroup>
-                                    </Col>
-                                </Row>
-                                <Row>
                                     <Col md={6}>
                                         <Row>
                                             <Col md={10}>
@@ -372,8 +358,23 @@ const CreateProduct = (props) => {
                                                 </button>
                                             </Col>
                                         </Row>
-                                    </Col>
 
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col md={12}>
+                                        <FormGroup>
+                                            <Label for="color">Color</Label>
+                                            <Select
+                                                closeMenuOnSelect={false}
+                                                components={animatedComponents}
+                                                isMulti
+                                                options={lstColor}
+                                                value={lstColorSelected}
+                                                onChange={(event) => handleOnChangeColor(event)}
+                                            />
+                                        </FormGroup>
+                                    </Col>
                                     <Col md={12}>
                                         <FormGroup>
                                             <Label for="description">Mô tả</Label>
@@ -422,6 +423,11 @@ const CreateProduct = (props) => {
                                                     activeIndex={activeIndex}
                                                     next={next}
                                                     previous={previous}
+                                                    style={{
+                                                        border: "1px solid",
+                                                        marginTop: "1%",
+                                                        marginBottom: "2%"
+                                                    }}
                                                 >
                                                     <CarouselIndicators items={lstImage} activeIndex={activeIndex} onClickHandler={goToIndex} />
                                                     {slides}
@@ -434,14 +440,14 @@ const CreateProduct = (props) => {
                                 </Row>
                             </Col>
                             {lstColorSelected.length >= 1 && (
-                                <Col md={12}>
-                                    <Row>
+                                <Col md={12} >
+                                    <Row >
                                         {lstColorSelected.map((item) => {
                                             let arrSize = [...item.sizes]
                                             return (
                                                 <>
-                                                    <Col md={8} >
-                                                        <Row style={{ borderTop: "1px solid #e5e5e5" }} >
+                                                    <Col md={8} style={{ borderTop: "1px solid #e5e5e5" }}>
+                                                        <Row>
                                                             <p>{item.label}</p>
                                                             <Col md={9} >
                                                                 <FormGroup>
@@ -496,7 +502,7 @@ const CreateProduct = (props) => {
                                                                 })}
                                                         </Row>
                                                     </Col>
-                                                    <Col md={4} >
+                                                    <Col md={4} style={{ borderTop: "1px solid #e5e5e5" }}>
                                                         <Row>
                                                             <Col md={12}>
                                                                 <FormGroup>
@@ -511,46 +517,38 @@ const CreateProduct = (props) => {
                                                                             display: 'none'
                                                                         }}
                                                                     />
-                                                                    {lstImage.length >= 1 &&
-                                                                        lstImage.map((img, index) => {
-                                                                            let z = false
+                                                                    {lstImage.length >= 1 && lstImage.map(p => p.color).includes(item.label) &&
+                                                                        lstImage.map(img => {
                                                                             if (img.color == item.label) {
-                                                                                { z = true }
-
-
-                                                                                if (z) {
-                                                                                    return (
-                                                                                        <img src={URL.createObjectURL(img.file)}
-                                                                                            width="100%"
-                                                                                            height="242rem"
-                                                                                            style={{
-                                                                                                borderRadius: "15px",
-                                                                                                border: "1px solid",
-                                                                                                marginBottom: "5px",
-                                                                                                marginRight: "5px",
-                                                                                            }}
-                                                                                            onClick={(e) => colorImg(item.label)}
-                                                                                        />
-                                                                                    )
-                                                                                }
-                                                                            } else if (index == lstImage.length - 1) {
-                                                                                if (!z) {
-                                                                                    return (
-                                                                                        <img src=""
-                                                                                            width="100%"
-                                                                                            height="242rem"
-                                                                                            style={{
-                                                                                                borderRadius: "15px",
-                                                                                                border: "1px solid",
-                                                                                                marginBottom: "5px",
-                                                                                                marginRight: "5px",
-                                                                                            }}
-                                                                                            onClick={(e) => colorImg(item.label)}
-                                                                                        />
-                                                                                    )
-                                                                                }
+                                                                                return (
+                                                                                    <img src={URL.createObjectURL(img.file)}
+                                                                                        width="100%"
+                                                                                        height="242rem"
+                                                                                        style={{
+                                                                                            borderRadius: "15px",
+                                                                                            border: "1px solid",
+                                                                                            marginTop: "3%",
+                                                                                            marginRight: "2%",
+                                                                                        }}
+                                                                                        onClick={(e) => colorImg(item.label)}
+                                                                                    />
+                                                                                )
                                                                             }
-                                                                        })}
+                                                                        })
+                                                                    }
+                                                                    {lstImage.length >= 1 && !lstImage.map(p => p.color).includes(item.label) &&
+                                                                        <img src=""
+                                                                            width="100%"
+                                                                            height="242rem"
+                                                                            style={{
+                                                                                borderRadius: "15px",
+                                                                                border: "1px solid",
+                                                                                marginTop: "3%",
+                                                                                marginRight: "2%",
+                                                                            }}
+                                                                            onClick={(e) => colorImg(item.label)}
+                                                                        />
+                                                                    }
                                                                     {lstImage.length < 1 &&
                                                                         <img src=""
                                                                             width="100%"
@@ -558,8 +556,8 @@ const CreateProduct = (props) => {
                                                                             style={{
                                                                                 borderRadius: "15px",
                                                                                 border: "1px solid",
-                                                                                marginBottom: "5px",
-                                                                                marginRight: "5px",
+                                                                                marginTop: "3%",
+                                                                                marginRight: "2%",
                                                                             }}
                                                                             onClick={(e) => colorImg(item.label)}
                                                                         />
@@ -568,7 +566,6 @@ const CreateProduct = (props) => {
                                                             </Col>
                                                         </Row>
                                                     </Col>
-
                                                 </>
                                             );
                                         }
