@@ -10,13 +10,19 @@ import {
     Row,
     Col,
     Form,
-    Input,
+    Carousel,
+    CarouselItem,
+    CarouselControl,
+    CarouselIndicators,
+    CarouselCaption
 } from "reactstrap";
-import Multiselect from "multiselect-react-dropdown";
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import useCallGetAPI from "../../../../customHook/UseCallGetApi";
 import useCallPostAPI from "../../../../customHook/UseCallPostApi";
+import "../../../../css/Carousel.css"
+
+
 const animatedComponents = makeAnimated();
 
 const CreateProduct = (props) => {
@@ -50,7 +56,6 @@ const CreateProduct = (props) => {
     const { data: colors } = useCallGetAPI(`http://localhost:8080/api/color/findAll`)
     const [lstColor, setLstColor] = useState([]);
     const [lstColorSelected, setLstColorSelected] = useState([]);
-
 
     useEffect(() => {
         let arr = []
@@ -130,7 +135,6 @@ const CreateProduct = (props) => {
     }
 
     //Product________________________________________________________________
-
     const createProduct = (e) => {
         //create productData
         e.preventDefault()
@@ -146,10 +150,6 @@ const CreateProduct = (props) => {
         callPost(`http://localhost:8080/api/productData/create`, copyProductData, createProductDetail);
         //__________________
     }
-
-
-
-    //_____________________________________________________________
 
     const handleOnchangeInput = (e, id, color, size) => {
         let copyLstColorSelected = [...lstColorSelected];
@@ -174,6 +174,93 @@ const CreateProduct = (props) => {
             setLstColorSelected([...copyLstColorSelected])
         }
     }
+
+    //Image_______________________________________________________________________
+    const [lstImage, setImage] = useState([])
+    const [activeIndex, setActiveIndex] = useState(0);
+    const [animating, setAnimating] = useState(false);
+
+    const handleImages = (e, color) => {
+        alert(color)
+        if (color !== 'imgAll') {
+            let coppy = [...lstImage]
+            if (e.target.files.length <= 0) {
+                let index = coppy.map(p => p.color).indexOf(color)
+                if (index !== -1) {
+                    coppy.splice(index, 1)
+                    setImage(coppy)
+                    return
+                }
+            } else {
+                let imageFile = e.target.files[0];
+                let index = coppy.map(p => p.fileName).indexOf(imageFile.name)
+                if (index !== -1) {
+                    coppy.map(p => p.color === color ? "" : p.color)
+                    coppy[index].color = color
+                    setImage(coppy)
+                } else {
+                    setImage((prev) => [...prev, { file: imageFile, fileName: imageFile.name, color: color }]);
+                }
+            }
+        } else {
+            setImage([]);
+            //Get files
+            for (let i = 0; i < e.target.files.length; i++) {
+                // if(!".jpg" in e.target.files[i]){
+                //     continue;
+                // }
+                let imageFile = e.target.files[i];
+                setImage((prev) => [...prev, { file: imageFile, fileName: imageFile.name, color: "" }]);
+            }
+            setActiveIndex(0)
+        }
+    };
+
+    const onExiting = () => {
+        setAnimating(true)
+    }
+
+    const onExited = () => {
+        setAnimating(false)
+    }
+
+    const next = () => {
+        if (animating) return;
+        const nextIndex = activeIndex === lstImage.length - 1 ? 0 : activeIndex + 1;
+        setActiveIndex(nextIndex);
+    }
+
+    const previous = () => {
+        if (animating) return;
+        const nextIndex = activeIndex === 0 ? lstImage.length - 1 : activeIndex - 1;
+        setActiveIndex(nextIndex);
+    }
+
+    const goToIndex = (newIndex) => {
+        if (animating) return;
+        setActiveIndex(newIndex);
+    }
+
+    const colorImg = (color) => {
+        let text = 'img' + color + 'Product'
+        document.getElementById(text).click()
+    }
+
+    let slides = lstImage.map((item) => {
+
+        return (
+            <CarouselItem
+                onExiting={onExiting}
+                onExited={onExited}
+                key={item.file}
+            >
+                <img src={URL.createObjectURL(item.file)} alt={item.altText} />
+                {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption} /> */}
+            </CarouselItem>
+        );
+    });
+
+    //_____________________________________________________________________________
 
     return (
         <>
@@ -293,6 +380,7 @@ const CreateProduct = (props) => {
                                             <div>
                                                 <textarea
                                                     style={{
+
                                                         border: "1px solid",
                                                         width: "100%",
                                                         borderRadius: "5px",
@@ -320,211 +408,28 @@ const CreateProduct = (props) => {
                                         <div>
                                             <input
                                                 type="file"
+                                                id="fileImg"
                                                 multiple
-                                                // onChange={(e) => { handleImages(e, 'medias'); handleOnchangeinput(e, 'medias') }}
+                                                onChange={(e) => { handleImages(e, "imgAll") }}
                                                 style={{
                                                     border: "1px solid",
                                                     width: "100%",
                                                     borderRadius: "5px",
                                                 }}
                                             />
+                                            {lstImage.length >= 1 &&
+                                                <Carousel
+                                                    activeIndex={activeIndex}
+                                                    next={next}
+                                                    previous={previous}
+                                                >
+                                                    <CarouselIndicators items={lstImage} activeIndex={activeIndex} onClickHandler={goToIndex} />
+                                                    {slides}
+                                                    <CarouselControl direction="prev" directionText="Previous" onClickHandler={previous} />
+                                                    <CarouselControl direction="next" directionText="Next" onClickHandler={next} />
+                                                </Carousel>
+                                            }
                                         </div>
-                                        {/* {check.medias &&
-                                    check.medias.length > 0 && (
-                                        <p className="checkError">{check.medias}</p>
-                                    )} */}
-                                    </Col>
-                                    <Col md={12} style={{ marginTop: "1%" }}>
-                                        {/* {imageFiles.length > 0 &&
-                                    imageFiles &&
-                                    imageFiles.map((item, index) => {
-                                        return (
-                                            <>
-                                                {imageFiles.length === 1 && (
-                                                    <img
-                                                        src={URL.createObjectURL(item)}
-                                                        width="100%"
-                                                        height="285rem"
-                                                        style={{
-                                                            borderRadius: "15px",
-                                                            border: "1px solid",
-                                                        }}
-                                                    />
-                                                )}
-                                                {imageFiles.length === 2 && (
-                                                    <div style={{ padding: "0 20% 0 20%" }}>
-                                                        <img
-                                                            src={URL.createObjectURL(item)}
-                                                            width="100%"
-                                                            height="142rem"
-                                                            style={{
-                                                                borderRadius: "15px",
-                                                                border: "1px solid",
-                                                                marginBottom: "5px",
-                                                            }}
-                                                        />
-                                                    </div>
-                                                )}
-                                                {imageFiles.length === 3 && (
-                                                    <>
-                                                        {index === 0 && (
-                                                            <div style={{ padding: "0 20% 0 20%" }}>
-                                                                <img
-                                                                    src={URL.createObjectURL(item)}
-                                                                    width="100%"
-                                                                    height="142rem"
-                                                                    style={{
-                                                                        borderRadius: "15px",
-                                                                        border: "1px solid",
-                                                                        marginBottom: "5px",
-                                                                    }}
-                                                                />
-                                                            </div>
-                                                        )}
-                                                        {index > 0 && (
-                                                            <img
-                                                                src={URL.createObjectURL(item)}
-                                                                width="48.883%"
-                                                                height="142rem"
-                                                                style={{
-                                                                    borderRadius: "15px",
-                                                                    border: "1px solid",
-                                                                    marginRight: "5px",
-                                                                }}
-                                                            />
-                                                        )}
-                                                    </>
-                                                )}
-                                                {imageFiles.length === 4 && (
-                                                    <>
-                                                        {index === 0 && (
-                                                            <img
-                                                                src={URL.createObjectURL(item)}
-                                                                width="49%"
-                                                                height="142rem"
-                                                                style={{
-                                                                    borderRadius: "15px",
-                                                                    border: "1px solid",
-                                                                    marginBottom: "5px",
-                                                                    marginRight: "5px",
-                                                                }}
-                                                            />
-                                                        )}
-                                                        {index === 1 && (
-                                                            <img
-                                                                src={URL.createObjectURL(item)}
-                                                                width="49%"
-                                                                height="142rem"
-                                                                style={{
-                                                                    borderRadius: "15px",
-                                                                    border: "1px solid",
-                                                                    marginBottom: "5px",
-                                                                }}
-                                                            />
-                                                        )}
-
-                                                        {index === 2 && (
-                                                            <img
-                                                                src={URL.createObjectURL(item)}
-                                                                width="49%"
-                                                                height="142rem"
-                                                                style={{
-                                                                    borderRadius: "15px",
-                                                                    border: "1px solid",
-                                                                    marginRight: "5px",
-                                                                }}
-                                                            />
-                                                        )}
-                                                        {index === 3 && (
-                                                            <img
-                                                                src={URL.createObjectURL(item)}
-                                                                width="49%"
-                                                                height="142rem"
-                                                                style={{
-                                                                    borderRadius: "15px",
-                                                                    border: "1px solid",
-                                                                }}
-                                                            />
-                                                        )}
-                                                    </>
-                                                )}
-                                                {imageFiles.length === 5 && (
-                                                    <>
-                                                        {index === 0 && (
-                                                            <div style={{ padding: "0 20% 0 20%" }}>
-                                                                <img
-                                                                    src={URL.createObjectURL(item)}
-                                                                    width="100%"
-                                                                    height="142rem"
-                                                                    style={{
-                                                                        borderRadius: "15px",
-                                                                        border: "1px solid",
-                                                                        marginBottom: "5px",
-                                                                    }}
-                                                                />
-                                                            </div>
-                                                        )}
-                                                        {index === 1 && (
-                                                            <img
-                                                                src={URL.createObjectURL(item)}
-                                                                width="49%"
-                                                                height="142rem"
-                                                                style={{
-                                                                    borderRadius: "15px",
-                                                                    border: "1px solid",
-                                                                    marginBottom: "5px",
-                                                                    marginRight: "5px",
-                                                                }}
-                                                            />
-                                                        )}
-                                                        {index === 2 && (
-                                                            <img
-                                                                src={URL.createObjectURL(item)}
-                                                                width="49%"
-                                                                height="142rem"
-                                                                style={{
-                                                                    borderRadius: "15px",
-                                                                    border: "1px solid",
-                                                                    marginBottom: "5px",
-                                                                }}
-                                                            />
-                                                        )}
-
-                                                        {index === 3 && (
-                                                            <img
-                                                                src={URL.createObjectURL(item)}
-                                                                width="49%"
-                                                                height="142rem"
-                                                                style={{
-                                                                    borderRadius: "15px",
-                                                                    border: "1px solid",
-                                                                    marginRight: "5px",
-                                                                }}
-                                                            />
-                                                        )}
-                                                        {index === 4 && (
-                                                            <img
-                                                                src={URL.createObjectURL(item)}
-                                                                width="49%"
-                                                                height="142rem"
-                                                                style={{
-                                                                    borderRadius: "15px",
-                                                                    border: "1px solid",
-                                                                }}
-                                                            />
-                                                        )}
-                                                    </>
-                                                )}
-                                            </>
-                                        );
-                                    })}
-                                {imageFiles.length <= 0 && (
-                                    <img
-                                        width="100%"
-                                        height="285rem"
-                                        style={{ borderRadius: "15px", border: "1px solid" }}
-                                    />
-                                )} */}
                                     </Col>
                                 </Row>
                             </Col>
@@ -535,10 +440,10 @@ const CreateProduct = (props) => {
                                             let arrSize = [...item.sizes]
                                             return (
                                                 <>
-                                                    <Col md={12} >
+                                                    <Col md={8} >
                                                         <Row style={{ borderTop: "1px solid #e5e5e5" }} >
                                                             <p>{item.label}</p>
-                                                            <Col md={5} >
+                                                            <Col md={9} >
                                                                 <FormGroup>
                                                                     <Label for="description">Size</Label>
                                                                     <Select
@@ -551,7 +456,7 @@ const CreateProduct = (props) => {
                                                                     />
                                                                 </FormGroup>
                                                             </Col>
-                                                            <Col md={5} >
+                                                            <Col md={3} >
                                                                 <FormGroup>
                                                                     <Label for="description">Price</Label>
                                                                     <div>
@@ -567,45 +472,103 @@ const CreateProduct = (props) => {
                                                                     </div>
                                                                 </FormGroup>
                                                             </Col>
-                                                            {/* <Col md={2}>
-                                                                <FormGroup>
-                                                                    <Label for="description">Image</Label>
-                                                                    <div>
-                                                                        <input
-                                                                            style={{
-                                                                                border: "1px solid",
-                                                                                width: "100%",
-                                                                                borderRadius: "5px",
-                                                                            }}
-                                                                        // {...register(`quantity${item}`)}
-                                                                        />
-                                                                    </div>
-                                                                </FormGroup>
-                                                            </Col> */}
+                                                            {item?.sizes?.length >= 1 &&
+                                                                item.sizes.map(size => {
+                                                                    return (
+                                                                        <Col md={1} key={size.value}>
+                                                                            <FormGroup>
+                                                                                <Label for="description">Size: {size.label}</Label>
+                                                                                <div>
+                                                                                    <input
+                                                                                        style={{
+                                                                                            border: "1px solid",
+                                                                                            width: "100%",
+                                                                                            borderRadius: "5px",
+                                                                                        }}
+                                                                                        value={size.quantity}
+                                                                                        placeholder="Quantity"
+                                                                                        onChange={(e) => handleOnchangeInput(e, 'quantity', item.label, size.label)}
+                                                                                    />
+                                                                                </div>
+                                                                            </FormGroup>
+                                                                        </Col>
+                                                                    )
+                                                                })}
                                                         </Row>
                                                     </Col>
-                                                    {item?.sizes?.length >= 1 &&
-                                                        item.sizes.map(size => {
-                                                            return (
-                                                                <Col md={1} key={size.value}>
-                                                                    <FormGroup>
-                                                                        <Label for="description">Size: {size.label}</Label>
-                                                                        <div>
-                                                                            <input
-                                                                                style={{
-                                                                                    border: "1px solid",
-                                                                                    width: "100%",
-                                                                                    borderRadius: "5px",
-                                                                                }}
-                                                                                value={size.quantity}
-                                                                                placeholder="Quantity"
-                                                                                onChange={(e) => handleOnchangeInput(e, 'quantity', item.label, size.label)}
-                                                                            />
-                                                                        </div>
-                                                                    </FormGroup>
-                                                                </Col>
-                                                            )
-                                                        })}
+                                                    <Col md={4} >
+                                                        <Row>
+                                                            <Col md={12}>
+                                                                <FormGroup>
+                                                                    <input
+                                                                        type="file"
+                                                                        id={`img${item.label}Product`}
+                                                                        onChange={(e) => { handleImages(e, item.label) }}
+                                                                        style={{
+                                                                            border: "1px solid",
+                                                                            width: "100%",
+                                                                            borderRadius: "5px",
+                                                                            display: 'none'
+                                                                        }}
+                                                                    />
+                                                                    {lstImage.length >= 1 &&
+                                                                        lstImage.map((img, index) => {
+                                                                            let z = false
+                                                                            if (img.color == item.label) {
+                                                                                { z = true }
+
+
+                                                                                if (z) {
+                                                                                    return (
+                                                                                        <img src={URL.createObjectURL(img.file)}
+                                                                                            width="100%"
+                                                                                            height="242rem"
+                                                                                            style={{
+                                                                                                borderRadius: "15px",
+                                                                                                border: "1px solid",
+                                                                                                marginBottom: "5px",
+                                                                                                marginRight: "5px",
+                                                                                            }}
+                                                                                            onClick={(e) => colorImg(item.label)}
+                                                                                        />
+                                                                                    )
+                                                                                }
+                                                                            } else if (index == lstImage.length - 1) {
+                                                                                if (!z) {
+                                                                                    return (
+                                                                                        <img src=""
+                                                                                            width="100%"
+                                                                                            height="242rem"
+                                                                                            style={{
+                                                                                                borderRadius: "15px",
+                                                                                                border: "1px solid",
+                                                                                                marginBottom: "5px",
+                                                                                                marginRight: "5px",
+                                                                                            }}
+                                                                                            onClick={(e) => colorImg(item.label)}
+                                                                                        />
+                                                                                    )
+                                                                                }
+                                                                            }
+                                                                        })}
+                                                                    {lstImage.length < 1 &&
+                                                                        <img src=""
+                                                                            width="100%"
+                                                                            height="242rem"
+                                                                            style={{
+                                                                                borderRadius: "15px",
+                                                                                border: "1px solid",
+                                                                                marginBottom: "5px",
+                                                                                marginRight: "5px",
+                                                                            }}
+                                                                            onClick={(e) => colorImg(item.label)}
+                                                                        />
+                                                                    }
+                                                                </FormGroup>
+                                                            </Col>
+                                                        </Row>
+                                                    </Col>
+
                                                 </>
                                             );
                                         }
