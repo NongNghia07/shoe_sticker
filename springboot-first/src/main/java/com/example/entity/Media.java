@@ -21,12 +21,12 @@ public class Media implements Serializable {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "productData_id")
+    @JoinColumn(name = "product_data_id")
     @NotNull
     private ProductData productData;
 
     @ManyToOne
-    @JoinColumn(name = "productDetail_id")
+    @JoinColumn(name = "product_detail_id")
     private ProductDetail productDetail;
 
     @Column(name = "type")

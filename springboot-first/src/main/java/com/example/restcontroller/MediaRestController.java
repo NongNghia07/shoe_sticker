@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/media")
@@ -31,6 +33,11 @@ public class MediaRestController {
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody MediaDTO mediaDTO) {
         return ResponseEntity.ok().body(this.mediaService.create(mediaDTO));
+    }
+
+    @PostMapping("/createAll")
+    public ResponseEntity<?> create(@RequestBody List<MediaDTO> mediaDTOS) {
+        return ResponseEntity.ok().body(this.mediaService.createAll(mediaDTOS));
     }
 
     @PutMapping("/update")

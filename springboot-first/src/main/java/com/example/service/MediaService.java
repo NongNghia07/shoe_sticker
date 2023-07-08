@@ -10,6 +10,8 @@ public interface MediaService {
 
     MediaDTO create(MediaDTO mediaDTO);
 
+    List<MediaDTO> createAll(List<MediaDTO> mediaDTOS);
+
     MediaDTO update(MediaDTO mediaDTO);
 
     MediaDTO findById(Long id);

@@ -120,19 +120,30 @@ const CreateProduct = (props) => {
     //End Size ________________________________________________________________________
 
     const createProductDetail = (data) => {
-        console.log(data);
+        // create media
+        const createImages = (poductDetail) => {
+            let lstMedia = []
+            lstImage.map(p => {
+                if (poductDetail.map(o => o.colorId).includes(p.colorId)) {
+                    let index = poductDetail.map(x => x.colorId).indexOf(p.colorId)
+                    lstMedia.push({ productDataId: data.id, productDetailId: poductDetail[index].id, type: 1, url: p.fileName })
+                } else {
+                    lstMedia.push({ productDataId: data.id, productDetailId: "", type: 1, url: p.fileName })
+                }
+            })
+            callPost(`http://localhost:8080/api/media/createAll`, lstMedia);
+        }
+
+        // create productDetail
         let copyLstProductDetail = []
         lstColorSelected.map(p => {
-            p.sizes.map(s => copyLstProductDetail.push({ productId: data.id, colorId: p.value, sizeId: s.value, quantity: s.quantity, price: p.price, created: 1 }))
+            p.sizes.map(s => copyLstProductDetail.push({ productDataId: data.id, colorId: p.value, sizeId: s.value, quantity: s.quantity, price: p.price, created: 1 }))
         })
         setLstProductDetail([...copyLstProductDetail])
-        console.log(copyLstProductDetail);
-        callPost(`http://localhost:8080/api/productDetail/createAll`, copyLstProductDetail, action);
+        callPost(`http://localhost:8080/api/productDetail/createAll`, copyLstProductDetail, createImages);
     }
 
-    const action = (data) => {
-        console.log(data);
-    }
+
 
     //Product________________________________________________________________
     const createProduct = (e) => {
@@ -180,7 +191,7 @@ const CreateProduct = (props) => {
     const [activeIndex, setActiveIndex] = useState(0);
     const [animating, setAnimating] = useState(false);
 
-    const handleImages = (e, color) => {
+    const handleImages = (e, color, colorId) => {
         if (color !== 'imgAll') {
             let coppy = [...lstImage]
             if (e.target.files.length <= 0) {
@@ -188,18 +199,20 @@ const CreateProduct = (props) => {
                 if (index !== -1) {
                     coppy.splice(index, 1)
                     setImage(coppy)
+                    setActiveIndex(0)
                     return
                 }
             } else {
                 let imageFile = e.target.files[0];
                 let index = coppy.map(p => p.fileName).indexOf(imageFile.name)
                 if (index !== -1) {
-                    coppy.map(p => { if (p.color === color) return p.color = "" })
+                    coppy.map(p => { if (p.color === color) return p.color = "", p.colorId = "" })
                     coppy[index].color = color
+                    coppy[index].colorId = colorId
                     setImage(coppy)
                 } else {
-                    coppy.map(p => { if (p.color === color) return p.color = "" })
-                    coppy.push({ file: imageFile, fileName: imageFile.name, color: color })
+                    coppy.map(p => { if (p.color === color) return p.color = "", p.colorId = "" })
+                    coppy.push({ file: imageFile, fileName: imageFile.name, color: color, colorId: colorId })
                     setImage(coppy)
                 }
             }
@@ -211,7 +224,7 @@ const CreateProduct = (props) => {
                 //     continue;
                 // }
                 let imageFile = e.target.files[i];
-                setImage((prev) => [...prev, { file: imageFile, fileName: imageFile.name, color: "" }]);
+                setImage((prev) => [...prev, { file: imageFile, fileName: imageFile.name, color: "", colorId: colorId }]);
             }
             setActiveIndex(0)
         }
@@ -509,7 +522,7 @@ const CreateProduct = (props) => {
                                                                     <input
                                                                         type="file"
                                                                         id={`img${item.label}Product`}
-                                                                        onChange={(e) => { handleImages(e, item.label) }}
+                                                                        onChange={(e) => { handleImages(e, item.label, item.value) }}
                                                                         style={{
                                                                             border: "1px solid",
                                                                             width: "100%",

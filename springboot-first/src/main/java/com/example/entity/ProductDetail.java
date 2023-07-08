@@ -22,9 +22,10 @@ public class ProductDetail implements Serializable {
     @Column(name = "id")
     private Integer id;
 
+    //cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER
     @ManyToOne
-    @MapsId("productId")
-    @JoinColumn(name = "product_id", insertable = true, updatable = true, nullable = false)
+//    @MapsId("productId")
+    @JoinColumn(name = "product_data_id", insertable = true, updatable = true, nullable = false)
     @NotNull
     private ProductData productData;
 

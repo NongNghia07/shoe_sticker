@@ -60,8 +60,9 @@ public class ProductData implements Serializable {
 
     @OneToMany(
             mappedBy = "productData",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
+            cascade = CascadeType.REMOVE,
+            fetch = FetchType.EAGER
+//            orphanRemoval = true
     )
     private List<ProductDetail> productDetails = new ArrayList<>();
 }
