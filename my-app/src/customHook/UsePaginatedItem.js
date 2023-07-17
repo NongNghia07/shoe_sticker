@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import ReactPaginate from 'react-paginate';
-import '../components/css/Paginated.scss';
+import '../css/Paginated.scss'
 
 // const items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
 
@@ -22,7 +22,6 @@ const PaginatedItems = ({ itemsPerPage, pageable }) => {
         //     `User requested page number ${event.selected}, which is offset ${newOffset}`
         // );
         pageable(event.selected)
-        console.log(event.selected);
         // setItemOffset(newOffset);
 
     };

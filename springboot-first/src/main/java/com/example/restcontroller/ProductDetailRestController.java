@@ -30,6 +30,13 @@ public class ProductDetailRestController {
         return ResponseEntity.ok().body(this.productDetailService.findById(id));
     }
 
+    @GetMapping("/findAllByProductDataId")
+    public ResponseEntity<?> findAllByProductDataId(
+            @RequestParam(name = "status", defaultValue = "1") Integer status,
+            @RequestParam(name = "id", defaultValue = "0") Integer id) {
+        return ResponseEntity.ok().body(this.productDetailService.findAllByProductDataId(status, id));
+    }
+
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody ProductDetailDTO productDetailDTO) {
         return ResponseEntity.ok().body(this.productDetailService.create(productDetailDTO));

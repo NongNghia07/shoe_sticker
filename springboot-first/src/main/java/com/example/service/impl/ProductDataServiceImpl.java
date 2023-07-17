@@ -9,10 +9,14 @@ import com.example.service.ProductDataService;
 import com.example.service.UserLoginService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +37,21 @@ public class ProductDataServiceImpl implements ProductDataService {
     @Override
     public List<ProductDataDTO> findAll() {
         return this.productDataRepository.findAll().stream().map(o -> modelMapper.map(o, ProductDataDTO.class)).collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<ProductDataDTO> findAllPage(Integer size, Integer page) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductData> productDataPage = this.productDataRepository.findAllPageWhereStatus(1, pageable);
+        Page<ProductDataDTO> productDataDTOPage = productDataPage.map(new Function<ProductData, ProductDataDTO>() {
+            @Override
+            public ProductDataDTO apply(ProductData productData) {
+                ProductDataDTO productDataDTO = new ProductDataDTO();
+                productDataDTO = modelMapper.map(productData, ProductDataDTO.class);
+                return productDataDTO;
+            }
+        });
+        return productDataDTOPage;
     }
 
     @Override

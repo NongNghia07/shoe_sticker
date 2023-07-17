@@ -28,6 +28,14 @@ public class ProductDataRestController {
         return ResponseEntity.ok().body(this.productDataService.findById(id));
     }
 
+    @GetMapping("/findAllPage")
+    public ResponseEntity<?> findAllPage(
+            @RequestParam(name = "size", defaultValue = "7") Integer size,
+            @RequestParam(name = "page", defaultValue = "0") Integer page
+    ) {
+        return ResponseEntity.ok().body(this.productDataService.findAllPage(size, page));
+    }
+
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody ProductDataDTO productDataDTO) {
         return ResponseEntity.ok().body(this.productDataService.create(productDataDTO));

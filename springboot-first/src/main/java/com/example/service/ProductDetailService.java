@@ -16,5 +16,7 @@ public interface ProductDetailService {
 
     ProductDetailDTO findById(Long id);
 
+    List<ProductDetailDTO> findAllByProductDataId(Integer status, Integer product_data_id);
+
     void setStatusFalse(Long id);
 }

@@ -30,6 +30,7 @@ const CreateProduct = (props) => {
     const {
         isCreateModal,
         toggleModal,
+        loadData
         // updateData,
         // handleImages,
         // handleUpdateImages,
@@ -141,6 +142,7 @@ const CreateProduct = (props) => {
         })
         setLstProductDetail([...copyLstProductDetail])
         callPost(`http://localhost:8080/api/productDetail/createAll`, copyLstProductDetail, createImages);
+        loadData()
     }
 
 

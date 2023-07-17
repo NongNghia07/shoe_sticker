@@ -3,6 +3,8 @@ package com.example.dto;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class ProductDetailDTO {
@@ -17,5 +19,5 @@ public class ProductDetailDTO {
     private Integer updated;
     private LocalDateTime updatedDate;
     private Byte status;
-
+    private List<SizeDTO> sizeDTOList = new ArrayList<>();
 }
