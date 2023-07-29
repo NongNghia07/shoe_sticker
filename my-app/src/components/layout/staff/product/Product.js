@@ -12,6 +12,7 @@ const Product = (props) => {
     const [isDeleteModal, setIsDeleteModal] = useState(false);
     const { data: dataProduct, isLoading } = useCallGetAPI(`http://localhost:8080/api/productData/findAllPage`)
     const [lstproductData, setLstProductData] = useState([])
+    const [productDetails, setProductDetails] = useState([])
     const [totalPageAndNumber, setTotalPageAndNumber] = useState({ totalPage: 0, numberPage: 0 })
 
     useEffect(() => {
@@ -31,6 +32,13 @@ const Product = (props) => {
         }
     }
 
+    const findProductDetailsByIDProduct = async (id) => {
+        const res = await axios.get(`http://localhost:8080/api/productDetail/findAllByProductDataId?id=${id}`)
+        let data = res ? res.data : []
+        setProductDetails(data)
+
+    }
+
     const setupData = (data) => {
         let fakeData = []
         data.map(p => fakeData.push({ id: p.id, name: p.name, quantity: p.quantity, category: p.categoryId, image: "" }))
@@ -41,7 +49,10 @@ const Product = (props) => {
         setIsCreateModal(!isCreateModal);
     };
 
-    const onUpdate = () => {
+    const onUpdate = (id) => {
+        if (!isUpdateModal) {
+            findProductDetailsByIDProduct(id)
+        }
         setIsUpdateModal(!isUpdateModal);
     };
 
@@ -80,20 +91,13 @@ const Product = (props) => {
                 isCreateModal={isCreateModal}
                 toggleModal={onCreate}
                 loadData={loadData}
-            // updateData={updateData}
-            // handleImages={handleImages}
-            // handleUpdateImages={handleUpdateImages}
-            // imageFiles={imageFiles}
-            // setImageFiles={setImageFiles}
             />
-            <UpdateProduct />
-            {/* {lstproductData.length >= 1 && */}
-
-            {/* } */}
-            {/* <div>
-                {useTable()}
-            </div> */}
-            {/* <button onClick={() => createModal()}> O </button> */}
+            <UpdateProduct
+                isUpdateModal={isUpdateModal}
+                toggleModal={onUpdate}
+                productDetails={productDetails}
+                loadData={loadData}
+            />
         </>
     )
 }

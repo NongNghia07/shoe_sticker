@@ -10,7 +10,10 @@ import java.util.List;
 public class ProductDetailDTO {
     private Integer id;
     private Integer productDataId;
+    private String productDataName;
     private Integer colorId;
+    private Integer value;
+    private String label;
     private Integer sizeId;
     private Integer quantity;
     private Double price;
@@ -19,5 +22,5 @@ public class ProductDetailDTO {
     private Integer updated;
     private LocalDateTime updatedDate;
     private Byte status;
-    private List<SizeDTO> sizeDTOList = new ArrayList<>();
+    private List<SizeDTO> sizes = new ArrayList<>();
 }

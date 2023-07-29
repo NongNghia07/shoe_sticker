@@ -52,6 +52,13 @@ public class ProductDetailRestController {
         return ResponseEntity.ok().body(this.productDetailService.update(productDetailDTO));
     }
 
+    @PostMapping("/updateAll")
+    public ResponseEntity<?> updateAll(@RequestBody List<ProductDetailDTO> productDetailDTOS,
+                                       @RequestParam(name = "status", defaultValue = "1") Integer status
+    ) {
+        return ResponseEntity.ok().body(this.productDetailService.updateAll(productDetailDTOS, status));
+    }
+
     @DeleteMapping("/delete/{id}")
     public void setStatusFalse(@PathVariable("id") Long id) {
         this.productDetailService.setStatusFalse(id);

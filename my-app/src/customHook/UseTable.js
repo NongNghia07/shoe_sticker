@@ -88,7 +88,7 @@ const Tables = (props) => {
                                     <td
                                         key={index2}
                                         className="hoverable"
-                                        onClick={() => onUpdate(obj)}
+                                        onClick={() => onUpdate(obj.value)}
                                     >
                                         {value}
                                     </td>

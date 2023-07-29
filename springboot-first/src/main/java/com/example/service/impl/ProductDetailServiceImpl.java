@@ -61,10 +61,56 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     public ProductDetailDTO update(ProductDetailDTO productDetailDTO) {
         ProductDetail productDetail = modelMapper.map(productDetailDTO, ProductDetail.class);
         // Create productDetail
+
         productDetail.setUpdatedDate(LocalDateTime.now());
         this.productDetailRepository.save(productDetail);
         productDetailDTO.setUpdatedDate(productDetail.getUpdatedDate());
         return productDetailDTO;
+    }
+
+    @Override
+    public List<ProductDetailDTO> updateAll(List<ProductDetailDTO> productDetailDTOS, Integer status) {
+        List<ProductDetail> productDetails = productDetailDTOS.stream().map(o -> modelMapper.map(o, ProductDetail.class)).collect(Collectors.toList());
+        List<ProductDetail> productDetailsOld = this.productDetailRepository.findAllByProductDataId(status, productDetails.get(0).getProductData().getId());
+        for (ProductDetail o : productDetailsOld) {
+            o.setStatus((byte) 0);
+            this.productDetailRepository.save(o);
+        }
+        for (ProductDetail p : productDetails) {
+            if (p.getId() != null) {
+                ProductDetail productDetail = this.productDetailRepository.findById(Long.valueOf(p.getId())).orElseThrow();
+                if (!p.getQuantity().equals(productDetail.getQuantity()) || !p.getPrice().equals(productDetail.getPrice())) {
+                    productDetail.setUpdatedDate(LocalDateTime.now());
+                    productDetail.setQuantity(p.getQuantity());
+                    productDetail.setPrice(p.getPrice());
+                    productDetail.setStatus((byte) 1);
+                    this.productDetailRepository.save(productDetail);
+                } else {
+                    productDetail.setStatus((byte) 1);
+                    this.productDetailRepository.save(productDetail);
+                }
+            } else {
+                ProductDetail productDetail = this.productDetailRepository.findByColorIdAndSizeId(p.getProductData().getId(), p.getColor().getId(), p.getSize().getId());
+                if (productDetail != null && (!p.getQuantity().equals(productDetail.getQuantity()) || !p.getPrice().equals(productDetail.getPrice()))) {
+                    productDetail.setUpdated(1);
+                    productDetail.setUpdatedDate(LocalDateTime.now());
+                    productDetail.setQuantity(p.getQuantity());
+                    productDetail.setPrice(p.getPrice());
+                    productDetail.setStatus((byte) 1);
+                    this.productDetailRepository.save(productDetail);
+                } else if (productDetail == null) {
+                    p.setCreated(1);
+                    p.setCreatedDate(LocalDateTime.now());
+                    p.setStatus((byte) 1);
+                    this.productDetailRepository.save(p);
+                } else {
+                    productDetail.setStatus((byte) 1);
+                    this.productDetailRepository.save(productDetail);
+                }
+            }
+        }
+
+        return productDetailDTOS;
     }
 
     @Override
@@ -81,37 +127,52 @@ public class ProductDetailServiceImpl implements ProductDetailService {
             ProductDetailDTO productDetailDTO = new ProductDetailDTO();
             if (productDetails.size() < 2) {
                 productDetailDTO = modelMapper.map(productDetails.get(i), ProductDetailDTO.class);
-                sizes.add(new SizeDTO(productDetails.get(i).getSize().getId(), productDetails.get(i).getSize().getName(), (byte) 1, productDetails.get(i).getId()));
-                productDetailDTO.setSizeDTOList(sizes);
+                productDetailDTO.setLabel(productDetails.get(i).getColor().getName());
+                productDetailDTO.setValue(productDetails.get(i).getColor().getId());
+                productDetailDTO.setProductDataName(productDetails.get(i).getProductData().getName());
+                sizes.add(new SizeDTO(productDetails.get(i).getSize().getId(), productDetails.get(i).getSize().getId(), productDetails.get(i).getSize().getName(), productDetails.get(i).getSize().getName(), productDetails.get(i).getQuantity(), (byte) 1, true, productDetails.get(i).getId()));
+                productDetailDTO.setSizes(sizes);
                 productDetailDTOS.add(productDetailDTO);
             } else {
                 if (i == 0) {
-                    sizes.add(new SizeDTO(productDetails.get(i).getSize().getId(), productDetails.get(i).getSize().getName(), (byte) 1, productDetails.get(i).getId()));
+                    sizes.add(new SizeDTO(productDetails.get(i).getSize().getId(), productDetails.get(i).getSize().getId(), productDetails.get(i).getSize().getName(), productDetails.get(i).getSize().getName(), productDetails.get(i).getQuantity(), (byte) 1, true, productDetails.get(i).getId()));
                 } else if ((i < productDetails.size() - 1) && (productDetails.get(i).getColor().getId() != productDetails.get(i - 1).getColor().getId())) {
                     productDetailDTO = modelMapper.map(productDetails.get(i - 1), ProductDetailDTO.class);
-                    productDetailDTO.setSizeDTOList(sizes);
+                    productDetailDTO.setLabel(productDetails.get(i - 1).getColor().getName());
+                    productDetailDTO.setValue(productDetails.get(i - 1).getColor().getId());
+                    productDetailDTO.setProductDataName(productDetails.get(i - 1).getProductData().getName());
+                    productDetailDTO.setSizes(sizes);
                     productDetailDTOS.add(productDetailDTO);
                     //
                     sizes = new ArrayList<>();
-                    sizes.add(new SizeDTO(productDetails.get(i).getSize().getId(), productDetails.get(i).getSize().getName(), (byte) 1, productDetails.get(i).getId()));
+                    sizes.add(new SizeDTO(productDetails.get(i).getSize().getId(), productDetails.get(i).getSize().getId(), productDetails.get(i).getSize().getName(), productDetails.get(i).getSize().getName(), productDetails.get(i).getQuantity(), (byte) 1, true, productDetails.get(i).getId()));
                 } else if (((i + 1) == productDetails.size()) && (productDetails.get(i).getColor().getId() == productDetails.get(i - 1).getColor().getId())) {
                     productDetailDTO = modelMapper.map(productDetails.get(i), ProductDetailDTO.class);
-                    sizes.add(new SizeDTO(productDetails.get(i).getSize().getId(), productDetails.get(i).getSize().getName(), (byte) 1, productDetails.get(i).getId()));
-                    productDetailDTO.setSizeDTOList(sizes);
+                    productDetailDTO.setValue(productDetails.get(i).getColor().getId());
+                    productDetailDTO.setProductDataName(productDetails.get(i).getProductData().getName());
+                    productDetailDTO.setLabel(productDetails.get(i).getColor().getName());
+                    sizes.add(new SizeDTO(productDetails.get(i).getSize().getId(), productDetails.get(i).getSize().getId(), productDetails.get(i).getSize().getName(), productDetails.get(i).getSize().getName(), productDetails.get(i).getQuantity(), (byte) 1, true, productDetails.get(i).getId()));
+                    productDetailDTO.setSizes(sizes);
                     productDetailDTOS.add(productDetailDTO);
                 } else if (((i + 1) == productDetails.size()) && (productDetails.get(i).getColor().getId() != productDetails.get(i - 1).getColor().getId())) {
                     productDetailDTO = modelMapper.map(productDetails.get(i - 1), ProductDetailDTO.class);
-                    productDetailDTO.setSizeDTOList(sizes);
+                    productDetailDTO.setValue(productDetails.get(i - 1).getColor().getId());
+                    productDetailDTO.setProductDataName(productDetails.get(i - 1).getProductData().getName());
+                    productDetailDTO.setLabel(productDetails.get(i - 1).getColor().getName());
+                    productDetailDTO.setSizes(sizes);
                     productDetailDTOS.add(productDetailDTO);
                     //
                     productDetailDTO = new ProductDetailDTO();
                     sizes = new ArrayList<>();
                     productDetailDTO = modelMapper.map(productDetails.get(i), ProductDetailDTO.class);
-                    sizes.add(new SizeDTO(productDetails.get(i).getSize().getId(), productDetails.get(i).getSize().getName(), (byte) 1, productDetails.get(i).getId()));
-                    productDetailDTO.setSizeDTOList(sizes);
+                    productDetailDTO.setValue(productDetails.get(i).getColor().getId());
+                    productDetailDTO.setProductDataName(productDetails.get(i).getProductData().getName());
+                    productDetailDTO.setLabel(productDetails.get(i).getColor().getName());
+                    sizes.add(new SizeDTO(productDetails.get(i).getSize().getId(), productDetails.get(i).getSize().getId(), productDetails.get(i).getSize().getName(), productDetails.get(i).getSize().getName(), productDetails.get(i).getQuantity(), (byte) 1, true, productDetails.get(i).getId()));
+                    productDetailDTO.setSizes(sizes);
                     productDetailDTOS.add(productDetailDTO);
                 } else {
-                    sizes.add(new SizeDTO(productDetails.get(i).getSize().getId(), productDetails.get(i).getSize().getName(), (byte) 1, productDetails.get(i).getId()));
+                    sizes.add(new SizeDTO(productDetails.get(i).getSize().getId(), productDetails.get(i).getSize().getId(), productDetails.get(i).getSize().getName(), productDetails.get(i).getSize().getName(), productDetails.get(i).getQuantity(), (byte) 1, true, productDetails.get(i).getId()));
                 }
             }
         }

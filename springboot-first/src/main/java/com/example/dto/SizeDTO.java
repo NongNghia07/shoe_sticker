@@ -9,7 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SizeDTO {
     private Integer id;
+    private Integer value;
     private String name;
+    private String label;
+    private Integer quantity;
     private Byte status;
+    private Boolean isDisabled;
     private Integer id_productDetail;
 }

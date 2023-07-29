@@ -14,6 +14,8 @@ public interface ProductDetailService {
 
     ProductDetailDTO update(ProductDetailDTO productDetailDTO);
 
+    List<ProductDetailDTO> updateAll(List<ProductDetailDTO> productDetailDTOS, Integer status);
+
     ProductDetailDTO findById(Long id);
 
     List<ProductDetailDTO> findAllByProductDataId(Integer status, Integer product_data_id);
