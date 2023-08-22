@@ -5,6 +5,7 @@ import com.example.dto.ProductDetailDTO;
 import com.example.dto.SizeDTO;
 import com.example.entity.ProductData;
 import com.example.entity.ProductDetail;
+import com.example.exception.ApiRequestException;
 import com.example.repository.ProductDetailRepository;
 import com.example.service.ProductDataService;
 import com.example.service.ProductDetailService;
@@ -121,6 +122,9 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     @Override
     public List<ProductDetailDTO> findAllByProductDataId(Integer status, Integer product_data_id) {
         List<ProductDetail> productDetails = this.productDetailRepository.findAllByProductDataId(status, product_data_id);
+        if (productDetails.isEmpty()) {
+            new ApiRequestException("Not found with id: " + product_data_id);
+        }
         List<ProductDetailDTO> productDetailDTOS = new ArrayList<>();
         List<SizeDTO> sizes = new ArrayList<>();
         for (int i = 0; i < productDetails.size(); i++) {

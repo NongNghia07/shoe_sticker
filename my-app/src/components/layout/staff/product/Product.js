@@ -33,9 +33,17 @@ const Product = (props) => {
     }
 
     const findProductDetailsByIDProduct = async (id) => {
-        const res = await axios.get(`http://localhost:8080/api/productDetail/findAllByProductDataId?id=${id}`)
-        let data = res ? res.data : []
-        setProductDetails(data)
+        try {
+            const res = await axios.get(`http://localhost:8080/api/productDetail/findAllByProductDataId?id=${id}`)
+            let data = res ? res.data : []
+            setProductDetails(data)
+        } catch (error) {
+            if (error.response) {
+                console.log(error.message);
+            } else {
+                console.log(error);
+            }
+        }
 
     }
 
