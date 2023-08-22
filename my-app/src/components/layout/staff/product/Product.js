@@ -34,12 +34,12 @@ const Product = (props) => {
 
     const findProductDetailsByIDProduct = async (id) => {
         try {
-            const res = await axios.get(`http://localhost:8080/api/productDetail/findAllByProductDataId?id=${1111}`)
+            const res = await axios.get(`http://localhost:8080/api/productDetail/findAllByProductDataId?id=${id}`)
             let data = res ? res.data : []
             setProductDetails(data)
         } catch (error) {
             if (error.response) {
-                console.log(error.message);
+                console.log(error.response.data.message);
             } else {
                 console.log(error);
             }
