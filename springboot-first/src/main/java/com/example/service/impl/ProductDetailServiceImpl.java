@@ -123,7 +123,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     public List<ProductDetailDTO> findAllByProductDataId(Integer status, Integer product_data_id) {
         List<ProductDetail> productDetails = this.productDetailRepository.findAllByProductDataId(status, product_data_id);
         if (productDetails.isEmpty()) {
-            new ApiRequestException("Not found with id: " + product_data_id);
+            throw new ApiRequestException("Not found with id: " + product_data_id);
         }
         List<ProductDetailDTO> productDetailDTOS = new ArrayList<>();
         List<SizeDTO> sizes = new ArrayList<>();
