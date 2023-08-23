@@ -12,9 +12,13 @@ public interface MediaService {
 
     List<MediaDTO> createAll(List<MediaDTO> mediaDTOS);
 
+    List<MediaDTO> updateAll(List<MediaDTO> mediaDTOS);
+
     MediaDTO update(MediaDTO mediaDTO);
 
     MediaDTO findById(Long id);
+
+    List<MediaDTO> findAllByProductDataID(Integer id);
 
     void setStatusFalse(Long id);
 

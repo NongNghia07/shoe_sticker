@@ -43,6 +43,28 @@ public class MediaServiceImpl implements MediaService {
     }
 
     @Override
+    public List<MediaDTO> updateAll(List<MediaDTO> mediaDTOS) {
+        List<Media> medias = mediaDTOS.stream().map(o -> modelMapper.map(o, Media.class)).collect(Collectors.toList());
+        List<Media> mediaOld = this.mediaRepository.findAllWhereProduct_Data_ID(1, medias.get(0).getId());
+        for (Media m : mediaOld) {
+            m.setStatus((byte) 0);
+            this.mediaRepository.save(m);
+        }
+        for (int i = 0; i < medias.size(); i++) {
+            Media media = this.mediaRepository.findByProductDataIDAndURL(medias.get(i).getProductData().getId(), medias.get(i).getUrl());
+            if (media == null) {
+                medias.get(i).setStatus((byte) 1);
+                this.mediaRepository.save(medias.get(i));
+            } else {
+                medias.get(i).setId(media.getId());
+                medias.get(i).setStatus((byte) 1);
+                this.mediaRepository.save(medias.get(i));
+            }
+        }
+        return mediaDTOS;
+    }
+
+    @Override
     public MediaDTO update(MediaDTO mediaDTO) {
         Media media = modelMapper.map(mediaDTO, Media.class);
         this.mediaRepository.save(media);
@@ -52,6 +74,19 @@ public class MediaServiceImpl implements MediaService {
     @Override
     public MediaDTO findById(Long id) {
         return modelMapper.map(this.mediaRepository.findById(id).orElseThrow(), MediaDTO.class);
+    }
+
+    @Override
+    public List<MediaDTO> findAllByProductDataID(Integer product_data_id) {
+        List<Media> medias = this.mediaRepository.findAllWhereProduct_Data_ID(1, product_data_id);
+        List<MediaDTO> mediaDTOS = medias.stream().map(o -> modelMapper.map(o, MediaDTO.class)).collect(Collectors.toList());
+        for (int i = 0; i < medias.size(); i++) {
+            if (medias.get(i).getProductDetail() != null) {
+                mediaDTOS.get(i).setColor(medias.get(i).getProductDetail().getColor().getName());
+                mediaDTOS.get(i).setColorId(medias.get(i).getProductDetail().getColor().getId());
+            }
+        }
+        return mediaDTOS;
     }
 
     @Override

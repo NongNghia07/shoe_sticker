@@ -30,10 +30,10 @@ const CreateProduct = (props) => {
     const {
         isCreateModal,
         toggleModal,
-        loadData
+        loadData,
         // updateData,
         // handleImages,
-        // handleUpdateImages,
+        handleUpdateImages,
         // imageFiles,
         // setImageFiles,
     } = props;
@@ -133,6 +133,8 @@ const CreateProduct = (props) => {
                 }
             })
             callPost(`http://localhost:8080/api/media/createAll`, lstMedia);
+            handleUpdateImages(lstImage)
+            toggleModal()
         }
 
         // create productDetail

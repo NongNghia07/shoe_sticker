@@ -10,5 +10,6 @@ public class MediaDTO {
     private Byte type;
     private String url;
     private Byte status;
-
+    private String color;
+    private Integer colorId;
 }

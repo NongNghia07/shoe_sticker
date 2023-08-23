@@ -32,12 +32,10 @@ const UpdateProduct = (props) => {
         isUpdateModal,
         toggleModal,
         loadData,
-        productDetails
-        // updateData,
-        // handleImages,
-        // handleUpdateImages,
-        // imageFiles,
-        // setImageFiles,
+        productDetails,
+        lstMediasProduct,
+        handleUpdateImages,
+        imageUrls
     } = props;
     const [productData, setProductData] = useState({})
     const [lstProductDetail, setLstProductDetail] = useState()
@@ -46,11 +44,24 @@ const UpdateProduct = (props) => {
     //Category_______________________________________________________________
     const { data: category } = useCallGetAPI(`http://localhost:8080/api/category/findAll`)
     const [lstCategory, setLstCategory] = useState([]);
+
     useEffect(() => {
         let arr = []
         category.map(p => arr.push({ value: p.id, label: p.name }))
         setLstCategory([...arr])
     }, [category])
+
+
+    useEffect(() => {
+        let arr = []
+        lstMediasProduct.map(p => {
+            if (imageUrls.map((image) => image.nameImg).includes(p.url)) {
+                let base = imageUrls.filter((o) => o.nameImg == p.url)
+                arr.push({ url: base[0].url, file: "", fileName: p.url, color: p.color, colorId: p.colorId })
+            }
+        })
+        setImage([...arr])
+    }, [lstMediasProduct])
     //_______________________________________________________________________
 
     useEffect(() => {
@@ -266,17 +277,29 @@ const UpdateProduct = (props) => {
     }
 
     let slides = lstImage.map((item) => {
-
-        return (
-            <CarouselItem
-                onExiting={onExiting}
-                onExited={onExited}
-                key={item.name}
-            >
-                <img src={URL.createObjectURL(item.file)} alt={item.altText} />
-                {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption} /> */}
-            </CarouselItem>
-        );
+        if (item.file != "") {
+            return (
+                <CarouselItem
+                    onExiting={onExiting}
+                    onExited={onExited}
+                    key={item.name}
+                >
+                    <img src={URL.createObjectURL(item.file)} alt={item.altText} />
+                    {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption} /> */}
+                </CarouselItem>
+            );
+        } else {
+            return (
+                <CarouselItem
+                    onExiting={onExiting}
+                    onExited={onExited}
+                    key={item.name}
+                >
+                    <img src={item.url} alt={item.altText} />
+                    {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption} /> */}
+                </CarouselItem>
+            );
+        }
     });
 
     //_____________________________________________________________________________
@@ -538,19 +561,35 @@ const UpdateProduct = (props) => {
                                                                     {lstImage.length >= 1 && lstImage.map(p => p.color).includes(item.label) &&
                                                                         lstImage.map(img => {
                                                                             if (img.color == item.label) {
-                                                                                return (
-                                                                                    <img src={URL.createObjectURL(img.file)}
-                                                                                        width="100%"
-                                                                                        height="242rem"
-                                                                                        style={{
-                                                                                            borderRadius: "15px",
-                                                                                            border: "1px solid",
-                                                                                            marginTop: "3%",
-                                                                                            marginRight: "2%",
-                                                                                        }}
-                                                                                        onClick={(e) => colorImg(item.label)}
-                                                                                    />
-                                                                                )
+                                                                                if (img.file != "") {
+                                                                                    return (
+                                                                                        <img src={URL.createObjectURL(img.file)}
+                                                                                            width="100%"
+                                                                                            height="242rem"
+                                                                                            style={{
+                                                                                                borderRadius: "15px",
+                                                                                                border: "1px solid",
+                                                                                                marginTop: "3%",
+                                                                                                marginRight: "2%",
+                                                                                            }}
+                                                                                            onClick={(e) => colorImg(item.label)}
+                                                                                        />
+                                                                                    )
+                                                                                } else {
+                                                                                    return (
+                                                                                        <img src={img.url}
+                                                                                            width="100%"
+                                                                                            height="242rem"
+                                                                                            style={{
+                                                                                                borderRadius: "15px",
+                                                                                                border: "1px solid",
+                                                                                                marginTop: "3%",
+                                                                                                marginRight: "2%",
+                                                                                            }}
+                                                                                            onClick={(e) => colorImg(item.label)}
+                                                                                        />
+                                                                                    )
+                                                                                }
                                                                             }
                                                                         })
                                                                     }
