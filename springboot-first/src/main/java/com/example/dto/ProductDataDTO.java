@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,6 +22,6 @@ public class ProductDataDTO {
     private Integer updated;
     private LocalDateTime updatedDate;
     private Byte status;
-
+    private List<MediaDTO> listMediaDTO;
 
 }

@@ -1,10 +1,9 @@
 package com.example.service.impl;
 
 import com.example.dto.ProductDataDTO;
-import com.example.dto.UserLoginDTO;
 import com.example.entity.ProductData;
-import com.example.entity.UserLogin;
 import com.example.repository.ProductDataRepository;
+import com.example.service.MediaService;
 import com.example.service.ProductDataService;
 import com.example.service.UserLoginService;
 import org.modelmapper.ModelMapper;
@@ -22,13 +21,14 @@ import java.util.stream.Collectors;
 @Service
 public class ProductDataServiceImpl implements ProductDataService {
     private final ProductDataRepository productDataRepository;
-
+    private final MediaService mediaService;
     private final UserLoginService userLoginService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ProductDataServiceImpl(ProductDataRepository productDataRepository, UserLoginService userLoginService, ModelMapper modelMapper) {
+    public ProductDataServiceImpl(ProductDataRepository productDataRepository, MediaService mediaService, UserLoginService userLoginService, ModelMapper modelMapper) {
         this.productDataRepository = productDataRepository;
+        this.mediaService = mediaService;
         this.userLoginService = userLoginService;
         this.modelMapper = modelMapper;
     }
@@ -48,6 +48,7 @@ public class ProductDataServiceImpl implements ProductDataService {
             public ProductDataDTO apply(ProductData productData) {
                 ProductDataDTO productDataDTO = new ProductDataDTO();
                 productDataDTO = modelMapper.map(productData, ProductDataDTO.class);
+                productDataDTO.setListMediaDTO(mediaService.findAllByProductDataID(productDataDTO.getId()));
                 return productDataDTO;
             }
         });
@@ -68,7 +69,12 @@ public class ProductDataServiceImpl implements ProductDataService {
     @Override
     public ProductDataDTO update(ProductDataDTO productDataDTO) {
         ProductData productData = modelMapper.map(productDataDTO, ProductData.class);
+        ProductData productDataOld = this.productDataRepository.findById(Long.valueOf(productData.getId())).orElseThrow();
+        productData.setCreated(productDataOld.getCreated());
+        productData.setCreatedDate(productDataOld.getCreatedDate());
         productData.setUpdatedDate(LocalDateTime.now());
+        productData.setUpdated(1);
+        productData.setStatus((byte) 1);
         this.productDataRepository.save(productData);
         productDataDTO.setUpdatedDate(productData.getUpdatedDate());
         return productDataDTO;

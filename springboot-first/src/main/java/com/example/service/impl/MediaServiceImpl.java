@@ -45,7 +45,7 @@ public class MediaServiceImpl implements MediaService {
     @Override
     public List<MediaDTO> updateAll(List<MediaDTO> mediaDTOS) {
         List<Media> medias = mediaDTOS.stream().map(o -> modelMapper.map(o, Media.class)).collect(Collectors.toList());
-        List<Media> mediaOld = this.mediaRepository.findAllWhereProduct_Data_ID(1, medias.get(0).getId());
+        List<Media> mediaOld = this.mediaRepository.findAllWhereProduct_Data_ID(1, medias.get(0).getProductData().getId());
         for (Media m : mediaOld) {
             m.setStatus((byte) 0);
             this.mediaRepository.save(m);

@@ -42,11 +42,9 @@ public class ProductData implements Serializable {
     private String description;
 
     @Column(name = "created")
-    @NotNull
     private Integer created;
 
     @Column(name = "created_date")
-    @NotNull
     private LocalDateTime createdDate;
 
     @Column(name = "updated")

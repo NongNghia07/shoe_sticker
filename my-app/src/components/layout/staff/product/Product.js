@@ -85,9 +85,7 @@ const Product = (props) => {
     }
 
     const handleUpdateImages = (imageFiles) => {
-        console.log(imageFiles);
         imageFiles.map((item) => {
-            console.log(item.file);
             uploadImageAsPromise(item.file);
         });
     };
@@ -111,7 +109,16 @@ const Product = (props) => {
 
     const setupData = (data) => {
         let fakeData = []
-        data.map(p => fakeData.push({ id: p.id, name: p.name, quantity: p.quantity, category: p.categoryId, image: "" }))
+        data.map(p => {
+            let images = []
+            p.listMediaDTO.map(img => {
+                if (imageUrls.map((image) => image.nameImg).includes(img.url)) {
+                    let base = imageUrls.filter((o) => o.nameImg == img.url)
+                    images.push({ ...img, urlbase: base[0].url })
+                }
+            })
+            fakeData.push({ id: p.id, name: p.name, quantity: p.quantity, category: p.categoryId })
+        })
         setLstProductData(fakeData)
     }
 
@@ -143,14 +150,13 @@ const Product = (props) => {
         setTotalPageAndNumber({ totalPage: data.totalPages, numberPage: data.number })
     }
 
-
     return (
         <>
             {lstproductData &&
                 <Tables
                     title={"Product"}
                     list={lstproductData}
-                    colNames={["ID", "Name", "Quantity", "Category", "Image"]}
+                    colNames={["ID", "Name", "Quantity", "Category"]}
                     pageable={pageable}
                     totalPage={totalPageAndNumber.totalPage}
                     onCreate={onCreate}

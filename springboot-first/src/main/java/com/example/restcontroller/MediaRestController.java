@@ -45,12 +45,12 @@ public class MediaRestController {
         return ResponseEntity.ok().body(this.mediaService.createAll(mediaDTOS));
     }
 
-    @PutMapping("/update")
+    @PostMapping("/update")
     public ResponseEntity<?> update(@RequestBody MediaDTO mediaDTO) {
         return ResponseEntity.ok().body(this.mediaService.update(mediaDTO));
     }
 
-    @PutMapping("/updateAll")
+    @PostMapping("/updateAll")
     public ResponseEntity<?> updateAll(@RequestBody List<MediaDTO> mediaDTOS) {
         return ResponseEntity.ok().body(this.mediaService.updateAll(mediaDTOS));
     }

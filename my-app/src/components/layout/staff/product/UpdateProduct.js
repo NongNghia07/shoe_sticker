@@ -149,6 +149,8 @@ const UpdateProduct = (props) => {
                 }
             })
             callPost(`http://localhost:8080/api/media/updateAll`, lstMedia);
+            handleUpdateImages(lstImage)
+            toggleModal()
         }
 
         // create productDetail
@@ -157,7 +159,7 @@ const UpdateProduct = (props) => {
             p.sizes.map(s => copyLstProductDetail.push({ id: s.id_productDetail, productDataId: productData.id, colorId: p.value, sizeId: s.value, quantity: s.quantity, price: p.price, created: 1 }))
         })
         setLstProductDetail([...copyLstProductDetail])
-        callPost(`http://localhost:8080/api/productDetail/updateAll`, copyLstProductDetail);
+        callPost(`http://localhost:8080/api/productDetail/updateAll`, copyLstProductDetail, createImages);
         loadData()
     }
 
@@ -276,31 +278,35 @@ const UpdateProduct = (props) => {
         document.getElementById(text).click()
     }
 
-    let slides = lstImage.map((item) => {
-        if (item.file != "") {
-            return (
-                <CarouselItem
-                    onExiting={onExiting}
-                    onExited={onExited}
-                    key={item.name}
-                >
-                    <img src={URL.createObjectURL(item.file)} alt={item.altText} />
-                    {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption} /> */}
-                </CarouselItem>
-            );
-        } else {
-            return (
-                <CarouselItem
-                    onExiting={onExiting}
-                    onExited={onExited}
-                    key={item.name}
-                >
-                    <img src={item.url} alt={item.altText} />
-                    {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption} /> */}
-                </CarouselItem>
-            );
-        }
-    });
+    const slidesImg = (lstImage) => {
+        let slides = lstImage.map((item) => {
+            if (item.file != "") {
+                return (
+                    <CarouselItem
+                        onExiting={onExiting}
+                        onExited={onExited}
+                        key={item.name}
+                    >
+                        <img src={URL.createObjectURL(item.file)} alt={item.altText} />
+                        {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption} /> */}
+                    </CarouselItem>
+                );
+            } else {
+                return (
+                    <CarouselItem
+                        onExiting={onExiting}
+                        onExited={onExited}
+                        key={item.name}
+                    >
+                        <img src={item.url} alt={item.altText} />
+                        {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption} /> */}
+                    </CarouselItem>
+                );
+            }
+        });
+        return slides
+    }
+
 
     //_____________________________________________________________________________
 
@@ -471,7 +477,7 @@ const UpdateProduct = (props) => {
                                                     }}
                                                 >
                                                     <CarouselIndicators items={lstImage} activeIndex={activeIndex} onClickHandler={goToIndex} />
-                                                    {slides}
+                                                    {slidesImg(lstImage)}
                                                     <CarouselControl direction="prev" directionText="Previous" onClickHandler={previous} />
                                                     <CarouselControl direction="next" directionText="Next" onClickHandler={next} />
                                                 </Carousel>

@@ -1,8 +1,13 @@
 import React, { useState } from "react";
 import {
-    Table
+    Table,
+    Carousel,
+    CarouselItem,
+    CarouselControl,
+    CarouselIndicators
 } from 'reactstrap';
 import PaginatedItems from "./UsePaginatedItem";
+import "../css/Carousel.css"
 
 const Tables = (props) => {
 
@@ -15,34 +20,56 @@ const Tables = (props) => {
         pageable
 
     } = props;
-    const [page, setPage] = useState(pageNum);
-    const [formattedList, setFormattedList] = useState(list);
+    // const [page, setPage] = useState(pageNum);
+    // const [formattedList, setFormattedList] = useState(list);
     const getColumnLength = () => {
         const hasActions = onDelete;
         return hasActions ? colNames.length + 1 : colNames.length;
     };
 
-    const onBack = () => {
-        setPage(page - 1 > -1 ? page - 1 : page);
+    const [activeIndex, setActiveIndex] = useState(0);
+    const [animating, setAnimating] = useState(false);
+
+    const onExiting = () => {
+        setAnimating(true)
+    }
+
+    const onExited = () => {
+        setAnimating(false)
+    }
+
+    const next = (lstImage) => {
+        // if (animating) return;
+        // const nextIndex = activeIndex === lstImage.length - 1 ? 0 : activeIndex + 1;
+        // setActiveIndex(nextIndex);
+    }
+
+    const previous = (lstImage) => {
+        // if (animating) return;
+        // const nextIndex = activeIndex === 0 ? lstImage.length - 1 : activeIndex - 1;
+        // setActiveIndex(nextIndex);
+    }
+
+    const goToIndex = (newIndex) => {
+        if (animating) return;
+        setActiveIndex(newIndex);
+    }
+
+    const slidesImg = (lstImage) => {
+        let slides = lstImage.map((item) => {
+            return (
+                <CarouselItem
+                    onExiting={onExiting}
+                    onExited={onExited}
+                    key={item.id}
+                >
+                    <img src={item.urlbase} alt={item.altText} style={{ height: "220px" }} />
+                    {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption} /> */}
+                </CarouselItem>
+            );
+        })
+        return slides
     };
-
-    const onNext = () => {
-        setPage(page + 1 < list.length / pageSize ? page + 1 : page);
-    };
-
-    // const groupBy = (colName) => {
-    //     const groupedList = {};
-
-    //     list.forEach((item) => {
-    //         const value = item[colName] || "Unknown";
-    //         if (!groupedList[value]) {
-    //             groupedList[value] = [];
-    //         }
-    //         groupedList[value].push(item);
-    //     });
-
-    //     setFormattedList(Object.values(groupedList).flat(Infinity));
-    // };
 
     return (
         <div>
@@ -84,15 +111,41 @@ const Tables = (props) => {
                     <tbody>
                         {list.map((obj) => (
                             <tr key={obj.id}>
-                                {Object.values(obj).map((value, index2) => (
-                                    <td
-                                        key={index2}
-                                        className="hoverable"
-                                        onClick={() => onUpdate(obj.value)}
-                                    >
-                                        {value}
-                                    </td>
-                                ))}
+                                {Object.values(obj).map((value, index2) => {
+                                    if (!Array.isArray(value)) {
+                                        return (
+                                            <td
+                                                key={index2}
+                                                className="hoverable"
+                                                onClick={() => onUpdate(obj.value)}
+                                            >
+                                                {value}
+                                            </td>
+                                        )
+                                    } else {
+                                        let index = 0
+                                        return (
+                                            <td
+                                                key={index2}
+                                                className="hoverable"
+                                                style={{
+                                                    width: "400px"
+                                                }}
+                                            >
+                                                <Carousel
+                                                    activeIndex={index}
+                                                    next={next}
+                                                    previous={previous}
+                                                >
+                                                    <CarouselIndicators items={value} activeIndex={index} onClickHandler={goToIndex} />
+                                                    {slidesImg(value)}
+                                                    <CarouselControl direction="prev" directionText="Previous" onClickHandler={() => index === 0 ? value.length - 1 : index--} />
+                                                    <CarouselControl direction="next" directionText="Next" onClickHandler={() => index === 0 ? value.length - 1 : index--} />
+                                                </Carousel>
+                                            </td>
+                                        )
+                                    }
+                                })}
                                 {onUpdate && (
                                     <td>
                                         <button
