@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import useTable from "../../../../customHook/UseTable"
 import useCallGetAPI from "../../../../customHook/UseCallGetApi";
 import CreateProduct from "./CreateProduct";
 import UpdateProduct from "./UpdateProduct";
@@ -10,12 +9,10 @@ import {
     uploadBytes,
     getDownloadURL,
     listAll,
-    list,
-    getMetadata,
 } from "firebase/storage";
 import { storage } from "../../../../Firebase";
 
-const Product = (props) => {
+const Product = () => {
     const [isCreateModal, setIsCreateModal] = useState(false);
     const [isUpdateModal, setIsUpdateModal] = useState(false);
     const [isDeleteModal, setIsDeleteModal] = useState(false);
@@ -67,7 +64,6 @@ const Product = (props) => {
                 console.log(error);
             }
         }
-
     }
 
     const findMediaByProduct = async (id) => {
