@@ -11,6 +11,7 @@ import {
     listAll,
 } from "firebase/storage";
 import { storage } from "../../../../Firebase";
+import { useNavigate } from "react-router-dom";
 
 const Product = () => {
     const [isCreateModal, setIsCreateModal] = useState(false);
@@ -23,6 +24,7 @@ const Product = () => {
     const [imageUrls, setImageUrls] = useState([]);
     const [totalPageAndNumber, setTotalPageAndNumber] = useState({ totalPage: 0, numberPage: 0 })
     const imagesListRef = ref(storage, "images/");
+    const navigate = useNavigate()
 
     useEffect(() => {
         if (dataProduct.content) {
@@ -103,6 +105,10 @@ const Product = () => {
         });
     };
 
+    const onDetail = (id) => {
+        navigate(`${id}`)
+    }
+
     const setupData = (data) => {
         let fakeData = []
         data.map(p => {
@@ -155,6 +161,7 @@ const Product = () => {
                     colNames={["ID", "Name", "Quantity", "Category"]}
                     pageable={pageable}
                     totalPage={totalPageAndNumber.totalPage}
+                    onDetail={onDetail}
                     onCreate={onCreate}
                     onUpdate={onUpdate}
                     onDelete={onDelete}

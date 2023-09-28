@@ -4,6 +4,7 @@ import Product from '../components/layout/staff/product/Product';
 import HomeLayout from '../components/layout/HomeLayout';
 import ProductDetail from '../components/layout/staff/product/ProductDetail';
 import "../css/Custom.css"
+import "../css/Carousel.css"
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         <Route path="admin">
           <Route path="product" element={<Product />} />
+          <Route path="product/:id" element={<ProductDetail />} />
         </Route>
         <Route path="/" element={<HomeLayout />}>
           <Route path="product/:id" element={<ProductDetail />} />

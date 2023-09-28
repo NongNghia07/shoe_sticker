@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,16 +24,12 @@ public class ProductData implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    @NotNull
     private Category category;
 
     @Column(name = "name")
-    @NotNull
     private String name;
 
     @Column(name = "quantity")
-    @NotNull
-    @Pattern(regexp = "/d")
     private Integer quantity;
 
     @Column(name = "description")

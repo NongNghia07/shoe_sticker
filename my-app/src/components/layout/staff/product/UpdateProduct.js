@@ -458,11 +458,6 @@ const UpdateProduct = (props) => {
                                                 id="fileImg"
                                                 multiple
                                                 onChange={(e) => { handleImages(e, "imgAll") }}
-                                                style={{
-                                                    border: "1px solid",
-                                                    width: "100%",
-                                                    borderRadius: "5px",
-                                                }}
                                             />
                                             {lstImage.length >= 1 &&
                                                 <Carousel
@@ -472,7 +467,7 @@ const UpdateProduct = (props) => {
                                                     style={{
                                                         border: "1px solid",
                                                         marginTop: "1%",
-                                                        marginBottom: "2%"
+                                                        marginBottom: "2%",
                                                     }}
                                                 >
                                                     <CarouselIndicators items={lstImage} activeIndex={activeIndex} onClickHandler={goToIndex} />

@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
@@ -22,7 +21,6 @@ public class Media implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "product_data_id")
-    @NotNull
     private ProductData productData;
 
     @ManyToOne
@@ -30,11 +28,9 @@ public class Media implements Serializable {
     private ProductDetail productDetail;
 
     @Column(name = "type")
-    @NotNull
     private Byte type;
 
     @Column(name = "url")
-    @NotNull
     private String url;
 
     @Column(name = "status")

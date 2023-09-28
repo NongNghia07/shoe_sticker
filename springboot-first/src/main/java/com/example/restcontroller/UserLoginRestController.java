@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -33,7 +34,7 @@ public class UserLoginRestController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody UserLoginDTO userLoginDTO) {
+    public ResponseEntity<?> create(@RequestBody @Valid UserLoginDTO userLoginDTO) {
         return ResponseEntity.ok().body(this.userLoginService.create(userLoginDTO));
     }
 

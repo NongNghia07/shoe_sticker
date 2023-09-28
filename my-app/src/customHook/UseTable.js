@@ -16,6 +16,7 @@ const Tables = (props) => {
         onUpdate,
         onDelete,
         onCreate,
+        onDetail,
         totalPage,
         pageable
 
@@ -109,65 +110,70 @@ const Tables = (props) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {list.map((obj) => (
-                            <tr key={obj.id}>
-                                {Object.values(obj).map((value, index2) => {
-                                    if (!Array.isArray(value)) {
-                                        return (
-                                            <td
-                                                key={index2}
-                                                className="hoverable"
-                                                onClick={() => onUpdate(obj.value)}
-                                            >
-                                                {value}
-                                            </td>
-                                        )
-                                    } else {
-                                        let index = 0
-                                        return (
-                                            <td
-                                                key={index2}
-                                                className="hoverable"
-                                                style={{
-                                                    width: "400px"
-                                                }}
-                                            >
-                                                <Carousel
-                                                    activeIndex={index}
-                                                    next={next}
-                                                    previous={previous}
+                        {list.map((obj) => {
+                            let id = obj.id
+                            return (
+                                <tr key={obj.id}>
+                                    {Object.values(obj).map((value, index2) => {
+                                        if (!Array.isArray(value)) {
+                                            return (
+                                                <td
+                                                    key={index2}
+                                                    className="hoverable"
+                                                    onClick={() => onDetail(id)}
+
                                                 >
-                                                    <CarouselIndicators items={value} activeIndex={index} onClickHandler={goToIndex} />
-                                                    {slidesImg(value)}
-                                                    <CarouselControl direction="prev" directionText="Previous" onClickHandler={() => index === 0 ? value.length - 1 : index--} />
-                                                    <CarouselControl direction="next" directionText="Next" onClickHandler={() => index === 0 ? value.length - 1 : index--} />
-                                                </Carousel>
-                                            </td>
-                                        )
-                                    }
-                                })}
-                                {onUpdate && (
-                                    <td>
-                                        <button
-                                            class="btn btn-primary update" type='buttom'
-                                            onClick={() => onUpdate(obj.id)}
-                                        >
-                                            Edit
-                                        </button>
-                                    </td>
-                                )}
-                                {onDelete && (
-                                    <td>
-                                        <button
-                                            onClick={() => onDelete(obj.id)}
-                                            class="btn btn-primary update" type='buttom'
-                                        >
-                                            Delete
-                                        </button>
-                                    </td>
-                                )}
-                            </tr>
-                        ))}
+                                                    {value}
+                                                </td>
+                                            )
+                                        } else {
+                                            let index = 0
+                                            return (
+                                                <td
+                                                    key={index2}
+                                                    className="hoverable"
+                                                    style={{
+                                                        width: "400px"
+                                                    }}
+                                                >
+                                                    <Carousel
+                                                        activeIndex={index}
+                                                        next={next}
+                                                        previous={previous}
+                                                    >
+                                                        <CarouselIndicators items={value} activeIndex={index} onClickHandler={goToIndex} />
+                                                        {slidesImg(value)}
+                                                        <CarouselControl direction="prev" directionText="Previous" onClickHandler={() => index === 0 ? value.length - 1 : index--} />
+                                                        <CarouselControl direction="next" directionText="Next" onClickHandler={() => index === 0 ? value.length - 1 : index--} />
+                                                    </Carousel>
+                                                </td>
+                                            )
+                                        }
+                                    })}
+                                    {onUpdate && (
+                                        <td>
+                                            <button
+                                                class="btn btn-primary update" type='buttom'
+                                                onClick={() => onUpdate(obj.id)}
+                                            >
+                                                Edit
+                                            </button>
+                                        </td>
+                                    )}
+                                    {onDelete && (
+                                        <td>
+                                            <button
+                                                onClick={() => onDelete(obj.id)}
+                                                class="btn btn-primary update" type='buttom'
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
+                                    )}
+                                </tr>
+                            )
+                        }
+                        )}
                     </tbody>
                 </Table>
             )}

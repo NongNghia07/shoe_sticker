@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
 
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -23,15 +22,12 @@ public class Category implements Serializable {
     private Integer id;
 
     @Column(name = "name")
-    @NotNull
     private String name;
 
     @Column(name = "created")
-    @NotNull
     private Integer created;
 
     @Column(name = "created_date")
-    @NotNull
     private LocalDateTime createdDate;
 
     @Column(name = "updated")

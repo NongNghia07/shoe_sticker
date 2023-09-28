@@ -19,7 +19,6 @@ import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import useCallGetAPI from "../../../../customHook/UseCallGetApi";
 import useCallPostAPI from "../../../../customHook/UseCallPostApi";
-import "../../../../css/Carousel.css"
 
 
 const animatedComponents = makeAnimated();
@@ -428,11 +427,11 @@ const CreateProduct = (props) => {
                                                 id="fileImg"
                                                 multiple
                                                 onChange={(e) => { handleImages(e, "imgAll") }}
-                                                style={{
-                                                    border: "1px solid",
-                                                    width: "100%",
-                                                    borderRadius: "5px",
-                                                }}
+                                            // style={{
+                                            //     border: "1px solid",
+                                            //     width: "100%",
+                                            //     borderRadius: "5px",
+                                            // }}
                                             />
                                             {lstImage.length >= 1 &&
                                                 <Carousel

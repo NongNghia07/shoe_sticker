@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
@@ -21,7 +20,6 @@ public class Color implements Serializable {
     private Integer id;
 
     @Column(name = "name")
-    @NotNull
     private String name;
 
     @Column(name = "status")
