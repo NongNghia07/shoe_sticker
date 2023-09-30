@@ -154,19 +154,17 @@ const Product = () => {
 
     return (
         <>
-            {lstproductData &&
-                <Tables
-                    title={"Product"}
-                    list={lstproductData}
-                    colNames={["ID", "Name", "Quantity", "Category"]}
-                    pageable={pageable}
-                    totalPage={totalPageAndNumber.totalPage}
-                    onDetail={onDetail}
-                    onCreate={onCreate}
-                    onUpdate={onUpdate}
-                    onDelete={onDelete}
-                />
-            }
+            <Tables
+                title={"Product"}
+                list={lstproductData}
+                colNames={["ID", "Name", "Quantity", "Category"]}
+                pageable={pageable}
+                totalPage={totalPageAndNumber.totalPage}
+                onDetail={onDetail}
+                onCreate={onCreate}
+                onUpdate={onUpdate}
+                onDelete={onDelete}
+            />
             <CreateProduct
                 isCreateModal={isCreateModal}
                 toggleModal={onCreate}

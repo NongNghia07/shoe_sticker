@@ -5,6 +5,7 @@ import HomeLayout from '../components/layout/HomeLayout';
 import ProductDetail from '../components/layout/staff/product/ProductDetail';
 import "../css/Custom.css"
 import "../css/Carousel.css"
+import LayoutSign_In_Up from '../components/layout/signIn_signUp/LayoutSign_In_Up';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/" element={<HomeLayout />}>
           <Route path="product/:id" element={<ProductDetail />} />
         </Route>
+        <Route path="login" element={<LayoutSign_In_Up />} />
       </Routes>
       {/* </header> */}
     </div>

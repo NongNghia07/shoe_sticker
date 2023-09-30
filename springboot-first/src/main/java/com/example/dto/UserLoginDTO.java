@@ -5,13 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
+
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserLoginDTO {
+public class UserLoginDTO  {
     private Integer id;
 
     @NotBlank(message = "userName can't be null")
@@ -24,5 +24,4 @@ public class UserLoginDTO {
 //    "^(?=.*[az])(?=.*[AZ])(?=.*[0-9])(?=.*[!@#$%^&* ])[a-zA-Z0-9!@#$%^&*]{4,12}$"
     private String password;
     private Byte status;
-
 }

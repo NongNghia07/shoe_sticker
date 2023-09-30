@@ -74,7 +74,6 @@ const Tables = (props) => {
 
     return (
         <div>
-            {list.length > 0 && (
                 <Table
                     bordered
                     cellSpacing="0"
@@ -110,7 +109,8 @@ const Tables = (props) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {list.map((obj) => {
+            {list.length > 0 && 
+                        list.map((obj) => {
                             let id = obj.id
                             return (
                                 <tr key={obj.id}>
@@ -173,10 +173,10 @@ const Tables = (props) => {
                                 </tr>
                             )
                         }
-                        )}
+                        )
+                        }
                     </tbody>
                 </Table>
-            )}
             <PaginatedItems
                 itemsPerPage={totalPage}
                 pageable={pageable}

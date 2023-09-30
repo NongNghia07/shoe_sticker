@@ -1,5 +1,5 @@
 import axios from "axios";
-import moment from 'moment'
+// import moment from 'moment'
 // import AxiosInterceptor from './AxiosInterceptor'
 import { useState } from "react";
 
@@ -14,7 +14,7 @@ const useCallPostAPI = () => {
     const callPost = async (url, datas, action) => {
         try {
             let canceled = false;
-            let res = await axios.post(url, datas)
+            let res = await axios.post(url, datas, { headers: { "Authorization": `Bearer ${token}` } })
             let data = (res && res.data) ? res.data : {}
             // if (data && data.length > 0) {
             //     data.map(item => {
@@ -40,13 +40,12 @@ const useCallPostAPI = () => {
                 setData(data)
             }
         } catch (e) {
-            // if (axios.isCancel(e)) {
-            //     console.log(e.message);
-            // } else {
-            console.log(e);
-            //     setIsLoading(false)
+            if (e.response) {
+                console.log(e.response.data.message);
+            } else {
+                console.log(e);
+            }
             setIsError(true)
-            // }
         }
 
     }
