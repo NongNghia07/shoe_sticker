@@ -36,7 +36,7 @@ const useCallGetAPI = (url) => {
             // }
             if (e.response) {
                 if (e.response.status === 403) {
-
+                    console.log("K có quền truy cập");
                 }
                 console.log(e.response);
             } else {
