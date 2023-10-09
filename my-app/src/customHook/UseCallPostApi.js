@@ -10,7 +10,6 @@ const useCallPostAPI = () => {
     const [isError, setIsError] = useState(false);
     // const ourRequest = axios.CancelToken.source()
 
-    // const post = () => {
     const callPost = async (url, datas, action) => {
         try {
             let canceled = false;
@@ -49,13 +48,6 @@ const useCallPostAPI = () => {
         }
 
     }
-    // setTimeout(() => {
-    //     postData();
-    // }, 1000)
-    // return () => {
-    //     // ourRequest.cancel('cancel')
-    // }
-    // };
 
     return {
         data, isError, isLoading, callPost

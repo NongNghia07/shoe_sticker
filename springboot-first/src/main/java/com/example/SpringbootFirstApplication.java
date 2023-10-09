@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import com.example.auth.AuthenticationService;
 import com.example.auth.RegisterRequest;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import static com.example.enums.Role.ADMIN;
 import static com.example.enums.Role.MANAGER;

@@ -18,6 +18,7 @@ import {
     CarouselControl,
     CarouselIndicators,
 } from "reactstrap";
+import useCallGetAPI from "../../../../customHook/UseCallGetApi";
 
 const ProductDetail = () => {
     let { id } = useParams();
@@ -32,6 +33,7 @@ const ProductDetail = () => {
     const [activeIndex, setActiveIndex] = useState(0);
     const [animating, setAnimating] = useState(false);
     const [priceAndQuantity, setPriceAndQuantity] = useState({})
+    const { callGet } = useCallGetAPI()
 
     useEffect(() => {
         setImageUrls([])
@@ -120,12 +122,12 @@ const ProductDetail = () => {
         let btnColorActive = document.getElementsByClassName('active-color')
         let btnSizeActive = document.getElementsByClassName('active-size')
         if (btnColorActive.length >= 1) {
-            let index = productDetails.map(p => p.id).indexOf(Number(btnColorActive[0].value))
-            setPriceAndQuantity({ price: productDetails[index].price, quantity: "" })
+            let index = productDetails.map(p => p.colorId).indexOf(Number(btnColorActive[0].value))
+            setPriceAndQuantity({ price: productDetails[index]?.price, quantity: "" })
             if (btnSizeActive.length >= 1) {
-                productDetails[index].sizes.map(p => {
+                productDetails[index]?.sizes?.map(p => {
                     if (p.id === Number(btnSizeActive[0].value)) {
-                        setPriceAndQuantity({ ...priceAndQuantity, quantity: p.quantity })
+                        setPriceAndQuantity({ price: productDetails[index]?.price, quantity: p.quantity })
                     }
                 })
             }
@@ -160,7 +162,7 @@ const ProductDetail = () => {
         // find btn-color-active
         let btnColorActive = document.getElementsByClassName('active-color')
         if (btnColorActive.length >= 1) {
-            if (btnColorActive[0]?.value == color.id) {
+            if (btnColorActive[0]?.value == color.colorId) {
                 e.target.classList.remove('active-color');
                 setProductDetailSelected(null)
                 updateSizes()
@@ -177,7 +179,7 @@ const ProductDetail = () => {
             e.target.classList.add('active-color')
             updateSizes(color.id)
         }
-        let media = lstMediasProduct.filter((m) => m.productDetailId === color.id)
+        let media = lstMediasProduct.filter((m) => m.colorId === color.colorId)
         let base = imageUrls.filter((o) => o.nameImg === media[0]?.url)
         setProductDetailSelected({ ...color, url: base[0]?.url })
         editPriceAndQuantity()
@@ -186,7 +188,7 @@ const ProductDetail = () => {
     // set imgColor
     const handleHoveColor = (color) => {
         let btnColorActive = document.getElementsByClassName('active-color')
-        let media = lstMediasProduct.filter((m) => m.productDetailId === color.id)
+        let media = lstMediasProduct.filter((m) => m.colorId === color.colorId)
         let base = imageUrls.filter((o) => o.nameImg === media[0]?.url)
         if (btnColorActive.length >= 1) {
             setProductDetailSelected({ ...productDetailSelected, url: base[0]?.url })
@@ -198,7 +200,7 @@ const ProductDetail = () => {
     const handleOutHoveColor = () => {
         let btnColorActive = document.getElementsByClassName('active-color')
         if (btnColorActive.length >= 1) {
-            let media = lstMediasProduct.filter((m) => m.productDetailId == btnColorActive[0]?.value)
+            let media = lstMediasProduct.filter((m) => m.colorId == btnColorActive[0]?.value)
             let base = imageUrls.filter((o) => o.nameImg === media[0]?.url)
             setProductDetailSelected({ ...productDetailSelected, url: base[0]?.url })
             return
@@ -207,31 +209,17 @@ const ProductDetail = () => {
     }
 
     const findProductDetailsByIDProduct = async (id) => {
-        try {
-            const res = await axios.get(`http://localhost:8080/api/productDetail/findAllByProductDataId?id=${id}`)
-            let data = res ? res.data : []
+        const getData = (data) => {
             setProductDetailsOld(data)
-        } catch (error) {
-            if (error.response) {
-                console.log(error.response.data.message);
-            } else {
-                console.log(error);
-            }
         }
+        callGet(`http://localhost:8080/api/productDetail/findAllByProductDataId?id=${id}`, getData)
     }
 
     const findMediaByProduct = async (id) => {
-        try {
-            const res = await axios.get(`http://localhost:8080/api/media/findAllByProductData_Id/${id}`)
-            let data = res ? res.data : []
+        const getData = (data) => {
             setLstMediasProduct(data)
-        } catch (error) {
-            if (error.response) {
-                console.log(error.response.data.message);
-            } else {
-                console.log(error);
-            }
         }
+        callGet(`http://localhost:8080/api/media/findAllByProductData_Id/${id}`, getData)
     }
 
     const onExiting = () => {
@@ -307,10 +295,14 @@ const ProductDetail = () => {
                                         width: "100%"
                                     }}
                                 >
-                                    <CarouselIndicators items={lstImage} activeIndex={activeIndex} onClickHandler={goToIndex} />
                                     {slides}
-                                    <CarouselControl direction="prev" directionText="Previous" onClickHandler={previous} />
-                                    <CarouselControl direction="next" directionText="Next" onClickHandler={next} />
+                                    {!productDetailSelected &&
+                                        <>
+                                            <CarouselIndicators items={lstImage} activeIndex={activeIndex} onClickHandler={goToIndex} />
+                                            <CarouselControl direction="prev" directionText="Previous" onClickHandler={previous} />
+                                            <CarouselControl direction="next" directionText="Next" onClickHandler={next} />
+                                        </>
+                                    }
                                 </Carousel>
                             }
                             {/* <div className="cover object">
@@ -336,7 +328,7 @@ const ProductDetail = () => {
                                 <Col md={10} style={{ textAlign: "left", marginBottom: "3%" }}>
                                     {productDetails.map((item) => {
                                         if (item.status === 1) {
-                                            return <button key={item.id} style={{ marginRight: "2%" }} onClick={(e) => { handleClickColor(e, item) }} onMouseOver={() => handleHoveColor(item)} onMouseLeave={() => handleOutHoveColor()} value={item.id} className="btn-color">{item.label}</button>
+                                            return <button key={item.id} style={{ marginRight: "2%" }} onClick={(e) => { handleClickColor(e, item) }} onMouseOver={() => handleHoveColor(item)} onMouseLeave={() => handleOutHoveColor()} value={item.colorId} className="btn-color">{item.label}</button>
                                         } else {
                                             return <button key={item.id} className="btn-color" style={{ marginRight: "2%", borderColor: 'white', color: '#b6b6b6fe' }} disabled >{item.label}</button>
                                         }

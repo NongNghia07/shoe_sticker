@@ -10,80 +10,43 @@ const useCallGetAPI = (url) => {
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
-    const navigate = useNavigate();
-    // const ourRequest = axios.CancelToken.source()
-    // const notifyWarning = (text) => {
-    //     toast.warning(text, styleToast);
-    // };
-    // const notifySuccess = (text) => {
-    //     toast.success(text, styleToast);
-    // };
-    // const notifyError = (text) => {
-    //     toast.error(text, styleToast);
-    // };
 
-    // const styleToast = {
-    //     position: "top-right",
-    //     autoClose: 5000,
-    //     hideProgressBar: false,
-    //     closeOnClick: true,
-    //     pauseOnHover: true,
-    //     draggable: true,
-    //     progress: undefined,
-    //     theme: "colored",
-    // };
-
-    useEffect(() => {
-        let canceled = false;
-        async function getData() {
-            try {
-                let res = await axios.get(url, { headers: { "Authorization": `Bearer ${token}` } })
-                let data = (res && res.data) ? res.data : []
-                if (data && data.length > 0) {
-                    data.map(item => {
-                        item.created = moment(item.created).format('DD/MM/YYYY HH:mm:ss');
-                        if (item.modified > 0) {
-                            item.modified = moment(item.modified).format('DD/MM/YYYY HH:mm:ss');
-                        }
-                        if (item.effectFrom > 0) {
-                            item.effectFrom = moment(item.effectFrom).format('DD/MM/YYYY HH:mm:ss');
-                        }
-                        if (item.effectUntil > 0) {
-                            item.effectUntil = moment(item.effectUntil).format('DD/MM/YYYY HH:mm:ss');
-                        }
-                        return item;
-                    })
-                    data = data.reverse()
-                }
-                canceled = true;
-                setIsLoading(false);
-                setIsError(false);
-                if (canceled) {
-                    setData(data);
-                }
-            } catch (e) {
-                // if (e.response.status == 403) {
-                //     notifyWarning("Bạn không có quyền truy cập !!");
-                //     navigate("/");
-                // }
-                // if (axios.isCancel(e)) {
-                //     console.log(e.message);
-                // } else {
-                //     setIsLoading(false)
-                //     setIsError(true)
-                // }
+    const callGet = async (url, action) => {
+        try {
+            let canceled = false;
+            let res = await axios.get(url, { headers: { "Authorization": `Bearer ${token}` } })
+            let data = (res && res.data) ? res.data : []
+            canceled = true;
+            setIsLoading(false);
+            setIsError(false);
+            if (canceled) {
+                action(data)
+                setData(data);
             }
-        }
-        setTimeout(() => {
-            getData();
-        }, 1000)
-        return () => {
-            // ourRequest.cancel('cancel')
-        }
-    }, [url]);
+        } catch (e) {
+            // if (e.response.status == 403) {
+            //     notifyWarning("Bạn không có quyền truy cập !!");
+            //     navigate("/");
+            // }
+            // if (axios.isCancel(e)) {
+            //     console.log(e.message);
+            // } else {
+            //     setIsLoading(false)
+            //     setIsError(true)
+            // }
+            if (e.response) {
+                if (e.response.status === 403) {
 
+                }
+                console.log(e.response);
+            } else {
+                console.log(e);
+            }
+            setIsError(true)
+        }
+    };
     return {
-        data, isError, isLoading
+        data, isError, isLoading, callGet
     }
 }
 

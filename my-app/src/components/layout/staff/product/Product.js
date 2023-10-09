@@ -17,7 +17,7 @@ const Product = () => {
     const [isCreateModal, setIsCreateModal] = useState(false);
     const [isUpdateModal, setIsUpdateModal] = useState(false);
     const [isDeleteModal, setIsDeleteModal] = useState(false);
-    const { data: dataProduct, isLoading } = useCallGetAPI(`http://localhost:8080/api/productData/findAllPage`)
+    const { data, isError, isLoading, callGet } = useCallGetAPI()
     const [lstproductData, setLstProductData] = useState([])
     const [productDetails, setProductDetails] = useState([])
     const [lstMediasProduct, setLstMediasProduct] = useState([])
@@ -27,11 +27,8 @@ const Product = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        if (dataProduct.content) {
-            setupData(dataProduct.content)
-            setTotalPageAndNumber({ totalPage: dataProduct.totalPages, numberPage: dataProduct.number })
-        }
-    }, [dataProduct])
+        loadData()
+    }, [])
 
     useEffect(() => {
         setImageUrls([])
@@ -45,41 +42,28 @@ const Product = () => {
         });
     }, [])
 
-    const loadData = async () => {
-        const res = await axios.get(`http://localhost:8080/api/productData/findAllPage`)
-        let data = res ? res.data : []
-        if (data.content) {
-            setupData(data.content)
-            setTotalPageAndNumber({ totalPage: data.totalPages, numberPage: data.number })
+    const loadData = () => {
+        const getData = (data) => {
+            if (data?.content) {
+                setupData(data.content)
+                setTotalPageAndNumber({ totalPage: data.totalPages, numberPage: data.number })
+            }
         }
+        callGet(`http://localhost:8080/api/productData/findAllPage`, getData)
     }
 
     const findProductDetailsByIDProduct = async (id) => {
-        try {
-            const res = await axios.get(`http://localhost:8080/api/productDetail/findAllByProductDataId?id=${id}`)
-            let data = res ? res.data : []
+        const getData = (data) => {
             setProductDetails(data)
-        } catch (error) {
-            if (error.response) {
-                console.log(error.response.data.message);
-            } else {
-                console.log(error);
-            }
         }
+        callGet(`http://localhost:8080/api/productDetail/findAllByProductDataId?id=${id}`, getData)
     }
 
     const findMediaByProduct = async (id) => {
-        try {
-            const res = await axios.get(`http://localhost:8080/api/media/findAllByProductData_Id/${id}`)
-            let data = res ? res.data : []
+        const getData = (data) => {
             setLstMediasProduct(data)
-        } catch (error) {
-            if (error.response) {
-                console.log(error.response.data.message);
-            } else {
-                console.log(error);
-            }
         }
+        callGet(`http://localhost:8080/api/media/findAllByProductData_Id/${id}`, getData)
     }
 
     const handleUpdateImages = (imageFiles) => {
@@ -146,10 +130,11 @@ const Product = () => {
         } else if (id >= totalPageAndNumber.totalPage) {
             id = totalPageAndNumber.totalPage
         }
-        const res = await axios.get(`http://localhost:8080/api/productData/findAllPage?page=${id}`)
-        let data = res ? res.data : []
-        setupData(data.content)
-        setTotalPageAndNumber({ totalPage: data.totalPages, numberPage: data.number })
+        const getData = (data) => {
+            setupData(data.content)
+            setTotalPageAndNumber({ totalPage: data.totalPages, numberPage: data.number })
+        }
+        callGet(`http://localhost:8080/api/productData/findAllPage?page=${id}`, getData)
     }
 
     return (
@@ -170,6 +155,7 @@ const Product = () => {
                 toggleModal={onCreate}
                 loadData={loadData}
                 handleUpdateImages={handleUpdateImages}
+                callGet={callGet}
             />
             <UpdateProduct
                 isUpdateModal={isUpdateModal}
@@ -179,6 +165,7 @@ const Product = () => {
                 handleUpdateImages={handleUpdateImages}
                 imageUrls={imageUrls}
                 lstMediasProduct={lstMediasProduct}
+                callGet={callGet}
             />
         </>
     )

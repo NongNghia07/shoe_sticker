@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/color")
+@RequestMapping("/api/v2/color")
 public class ColorRestController {
 
     private final ColorService colorService;

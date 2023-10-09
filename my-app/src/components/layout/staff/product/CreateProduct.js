@@ -17,7 +17,6 @@ import {
 } from "reactstrap";
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
-import useCallGetAPI from "../../../../customHook/UseCallGetApi";
 import useCallPostAPI from "../../../../customHook/UseCallPostApi";
 
 
@@ -29,8 +28,7 @@ const CreateProduct = (props) => {
         isCreateModal,
         toggleModal,
         loadData,
-        // updateData,
-        // handleImages,
+        callGet,
         handleUpdateImages,
         // imageFiles,
         // setImageFiles,
@@ -38,29 +36,38 @@ const CreateProduct = (props) => {
 
     const [productData, setProductData] = useState({})
     const [lstProductDetail, setLstProductDetail] = useState([])
-    let { data: responseData, isError, isLoading, callPost } = useCallPostAPI()
+    const { data, isError, isLoading, callPost } = useCallPostAPI()
 
     //Category_______________________________________________________________
-    const { data: category } = useCallGetAPI(`http://localhost:8080/api/category/findAll`)
+
     const [lstCategory, setLstCategory] = useState([]);
+
     useEffect(() => {
-        let arr = []
-        category.map(p => arr.push({ value: p.id, label: p.name }))
-        setLstCategory([...arr])
-    }, [category])
+        const getData = (data) => {
+            let arr = []
+            data?.map(p => arr.push({ value: p.id, label: p.name }))
+            setLstCategory([...arr])
+        }
+        callGet(`http://localhost:8080/api/category/findAll`, getData)
+    }, [])
+
+
     //_______________________________________________________________________
 
 
     //Color__________________________________________________________________________
-    const { data: colors } = useCallGetAPI(`http://localhost:8080/api/color/findAll`)
     const [lstColor, setLstColor] = useState([]);
     const [lstColorSelected, setLstColorSelected] = useState([]);
 
     useEffect(() => {
-        let arr = []
-        colors.map(p => arr.push({ value: p.id, label: p.name }))
-        setLstColor([...arr])
-    }, [colors])
+        const getData = (data) => {
+            let arr = []
+            data?.map(p => arr.push({ value: p.id, label: p.name }))
+            setLstColor([...arr])
+        }
+        callGet(`http://localhost:8080/api/v2/color/findAll`, getData)
+
+    }, [])
 
     const handleOnChangeColor = (items) => {
         let copyLstColorSelected = [...lstColorSelected];
@@ -86,13 +93,16 @@ const CreateProduct = (props) => {
 
 
     //Size__________________________________________________________________________
-    const { data: sizes } = useCallGetAPI(`http://localhost:8080/api/size/findAll`)
     const [lstSize, setLstSize] = useState([]);
     useEffect(() => {
-        let arr = []
-        sizes.map(p => arr.push({ value: p.id, label: p.name }))
-        setLstSize([...arr])
-    }, [sizes])
+        const getData = (data) => {
+            let arr = []
+            data?.map(p => arr.push({ value: p.id, label: p.name }))
+            setLstSize([...arr])
+        }
+        callGet(`http://localhost:8080/api/size/findAll`, getData)
+
+    }, [])
 
     const handleOnChangeSize = (items, color) => {
         let copyLstColorSelected = [...lstColorSelected];
