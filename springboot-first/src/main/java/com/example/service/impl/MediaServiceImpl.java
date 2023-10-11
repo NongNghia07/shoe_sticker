@@ -38,6 +38,9 @@ public class MediaServiceImpl implements MediaService {
     @Override
     public List<MediaDTO> createAll(List<MediaDTO> mediaDTOS) {
         List<Media> medias = mediaDTOS.stream().map(o -> modelMapper.map(o, Media.class)).collect(Collectors.toList());
+        for (Media m: medias) {
+            m.setStatus((byte) 1);
+        }
         this.mediaRepository.saveAll(medias);
         return mediaDTOS;
     }

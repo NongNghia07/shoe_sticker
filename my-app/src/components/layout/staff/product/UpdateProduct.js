@@ -25,7 +25,6 @@ import axios from "axios";
 const animatedComponents = makeAnimated();
 
 const UpdateProduct = (props) => {
-
     const {
         isUpdateModal,
         toggleModal,
@@ -39,7 +38,7 @@ const UpdateProduct = (props) => {
     const [productData, setProductData] = useState({})
     const [lstProductDetail, setLstProductDetail] = useState()
     let { data: responseData, isError, isLoading, callPost } = useCallPostAPI()
-
+    let userId = null
     //Category_______________________________________________________________
 
     const [lstCategory, setLstCategory] = useState([]);
@@ -149,9 +148,9 @@ const UpdateProduct = (props) => {
             lstImage.map(p => {
                 if (poductDetail.map(o => o.colorId).includes(p.colorId)) {
                     let index = poductDetail.map(x => x.colorId).indexOf(p.colorId)
-                    lstMedia.push({ productDataId: productData.id, productDetailId: poductDetail[index].id, type: 1, url: p.fileName })
+                    lstMedia.push({ productDataId: productData.id, productDetailId: poductDetail[index].id, updated: userId, type: 1, url: p.fileName })
                 } else {
-                    lstMedia.push({ productDataId: productData.id, productDetailId: "", type: 1, url: p.fileName })
+                    lstMedia.push({ productDataId: productData.id, productDetailId: "", updated: userId, type: 1, url: p.fileName })
                 }
             })
             callPost(`http://localhost:8080/api/media/updateAll`, lstMedia);
@@ -162,7 +161,7 @@ const UpdateProduct = (props) => {
         // create productDetail
         let copyLstProductDetail = []
         lstColorSelected.map(p => {
-            p.sizes.map(s => copyLstProductDetail.push({ id: s.id_productDetail, productDataId: productData.id, colorId: p.value, sizeId: s.value, quantity: s.quantity, price: p.price, created: 1 }))
+            p.sizes.map(s => copyLstProductDetail.push({ id: s.id_productDetail, productDataId: productData.id, colorId: p.value, sizeId: s.value, quantity: s.quantity, price: p.price, updated: userId }))
         })
         setLstProductDetail([...copyLstProductDetail])
         callPost(`http://localhost:8080/api/productDetail/updateAll`, copyLstProductDetail, createImages);
@@ -174,16 +173,21 @@ const UpdateProduct = (props) => {
     //Product________________________________________________________________
     const createProduct = async (e) => {
         e.preventDefault()
-        let copyProductData = { ...productData }
-        let totalProductQuantity = 0
-        lstColorSelected.map(p => p.sizes.map(size => {
-            totalProductQuantity += Number(size.quantity)
-        }))
-        copyProductData['quantity'] = totalProductQuantity
-        setProductData(copyProductData)
-        await axios.put(`http://localhost:8080/api/productData/update`, copyProductData)
+        const createPro = async (data) => {
+            userId = data.id
+            let copyProductData = { ...productData }
+            let totalProductQuantity = 0
+            lstColorSelected.map(p => p.sizes.map(size => {
+                totalProductQuantity += Number(size.quantity)
+            }))
+            copyProductData['quantity'] = totalProductQuantity
+            copyProductData['updated'] = userId
+            setProductData(copyProductData)
+            const res = await axios.put(`http://localhost:8080/api/productData/update`, copyProductData, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } })
+            if (res?.data) createProductDetail()
+        }
+        callPost("http://localhost:8080/api/userData/getUserAuthenticate", "", createPro)
         //__________________
-        createProductDetail()
     }
 
     const handleOnchangeInput = (e, id, color, size) => {

@@ -2,6 +2,7 @@ package com.example.service.impl;
 
 import com.example.dto.UserDataDTO;
 import com.example.entity.UserData;
+import com.example.exception.ApiRequestException;
 import com.example.repository.UserDataRepository;
 import com.example.service.UserDataService;
 import org.modelmapper.ModelMapper;
@@ -55,7 +56,7 @@ public class UserDataServiceImpl implements UserDataService {
 
     @Override
     public UserDataDTO findById(Long id) {
-        return modelMapper.map(this.userDataRepository.findById(id).orElseThrow(), UserDataDTO.class);
+        return modelMapper.map(this.userDataRepository.findById(id).orElseThrow(() -> new ApiRequestException("Not Found user")), UserDataDTO.class);
     }
 
     @Override

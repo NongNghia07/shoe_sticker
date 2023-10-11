@@ -1,10 +1,12 @@
 package com.example.auth;
 
 import com.example.config.JwtService;
+import com.example.dto.UserDataDTO;
 import com.example.entity.UserLogin;
 import com.example.enums.TokenType;
 import com.example.exception.ApiRequestException;
 import com.example.repository.UserLoginRepository;
+import com.example.service.UserDataService;
 import com.example.token.Token;
 import com.example.token.TokenRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +31,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final UserDataService userDataService;
 
     public AuthenticationResponse register(RegisterRequest request) {
         var user = UserLogin.builder()
@@ -92,14 +97,14 @@ public class AuthenticationService {
     ) throws IOException {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String refreshToken;
-        final String userEmail;
+        final String userName;
         if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
             return;
         }
         refreshToken = authHeader.substring(7);
-        userEmail = jwtService.extractUsername(refreshToken);
-        if (userEmail != null) {
-            var user = this.repository.findByUserName(userEmail)
+        userName = jwtService.extractUsername(refreshToken);
+        if (userName != null) {
+            var user = this.repository.findByUserName(userName)
                     .orElseThrow();
             if (jwtService.isTokenValid(refreshToken, user)) {
                 var accessToken = jwtService.generateToken(user);
@@ -112,5 +117,27 @@ public class AuthenticationService {
                 new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
             }
         }
+    }
+
+    public UserDataDTO getUserAuthenticate(HttpServletRequest request) {
+       final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String jwt;
+        final String userName;
+//        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+//            return null;
+//        }
+        jwt = authHeader.substring(7);
+        userName = jwtService.extractUsername(jwt);
+//        if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            var user = this.repository.findByUserName(userName)
+                    .orElseThrow();
+//            var isTokenValid = tokenRepository.findByToken(jwt)
+//                    .map(t -> !t.isExpired() && !t.isRevoked())
+//                    .orElse(false);
+//            if (jwtService.isTokenValid(jwt, user) && isTokenValid) {
+                return userDataService.findById(Long.valueOf(user.getId()));
+//            }
+//        }
+//        return null;
     }
 }

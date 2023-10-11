@@ -73,7 +73,6 @@ public class ProductDataServiceImpl implements ProductDataService {
         productData.setCreated(productDataOld.getCreated());
         productData.setCreatedDate(productDataOld.getCreatedDate());
         productData.setUpdatedDate(LocalDateTime.now());
-        productData.setUpdated(1);
         productData.setStatus((byte) 1);
         this.productDataRepository.save(productData);
         productDataDTO.setUpdatedDate(productData.getUpdatedDate());

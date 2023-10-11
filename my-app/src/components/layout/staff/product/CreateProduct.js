@@ -37,7 +37,7 @@ const CreateProduct = (props) => {
     const [productData, setProductData] = useState({})
     const [lstProductDetail, setLstProductDetail] = useState([])
     const { data, isError, isLoading, callPost } = useCallPostAPI()
-
+    let userId = null
     //Category_______________________________________________________________
 
     const [lstCategory, setLstCategory] = useState([]);
@@ -135,9 +135,9 @@ const CreateProduct = (props) => {
             lstImage.map(p => {
                 if (poductDetail.map(o => o.colorId).includes(p.colorId)) {
                     let index = poductDetail.map(x => x.colorId).indexOf(p.colorId)
-                    lstMedia.push({ productDataId: data.id, productDetailId: poductDetail[index].id, type: 1, url: p.fileName })
+                    lstMedia.push({ productDataId: data.id, productDetailId: poductDetail[index].id, created: userId, type: 1, url: p.fileName })
                 } else {
-                    lstMedia.push({ productDataId: data.id, productDetailId: "", type: 1, url: p.fileName })
+                    lstMedia.push({ productDataId: data.id, productDetailId: "", created: userId, type: 1, url: p.fileName })
                 }
             })
             callPost(`http://localhost:8080/api/media/createAll`, lstMedia);
@@ -148,7 +148,7 @@ const CreateProduct = (props) => {
         // create productDetail
         let copyLstProductDetail = []
         lstColorSelected.map(p => {
-            p.sizes.map(s => copyLstProductDetail.push({ productDataId: data.id, colorId: p.value, sizeId: s.value, quantity: s.quantity, price: p.price, created: 1 }))
+            p.sizes.map(s => copyLstProductDetail.push({ productDataId: data.id, colorId: p.value, sizeId: s.value, quantity: s.quantity, price: p.price, created: userId }))
         })
         setLstProductDetail([...copyLstProductDetail])
         callPost(`http://localhost:8080/api/productDetail/createAll`, copyLstProductDetail, createImages);
@@ -159,18 +159,22 @@ const CreateProduct = (props) => {
 
     //Product________________________________________________________________
     const createProduct = (e) => {
-        //create productData
         e.preventDefault()
-        let copyProductData = { ...productData }
-        let totalProductQuantity = 0
-        lstColorSelected.map(p => p.sizes.map(size => {
-            totalProductQuantity += Number(size.quantity)
-        }))
-        copyProductData['quantity'] = totalProductQuantity
-        copyProductData['created'] = 1
-        setProductData({ ...copyProductData })
-        // call api create pro
-        callPost(`http://localhost:8080/api/productData/create`, copyProductData, createProductDetail);
+        //create productData
+        const createPro = (data) => {
+            userId = data.id
+            let copyProductData = { ...productData }
+            let totalProductQuantity = 0
+            lstColorSelected.map(p => p.sizes.map(size => {
+                totalProductQuantity += Number(size.quantity)
+            }))
+            copyProductData['quantity'] = totalProductQuantity
+            copyProductData['created'] = userId
+            setProductData({ ...copyProductData })
+            // call api create pro
+            callPost(`http://localhost:8080/api/productData/create`, copyProductData, createProductDetail);
+        }
+        callPost("http://localhost:8080/api/userData/getUserAuthenticate", "", createPro)
         //__________________
     }
 

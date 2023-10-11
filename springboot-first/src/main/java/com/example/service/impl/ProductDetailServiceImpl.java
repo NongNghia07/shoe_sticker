@@ -81,6 +81,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
             if (p.getId() != null) {
                 ProductDetail productDetail = this.productDetailRepository.findById(Long.valueOf(p.getId())).orElseThrow();
                 if (!p.getQuantity().equals(productDetail.getQuantity()) || !p.getPrice().equals(productDetail.getPrice())) {
+                    productDetail.setUpdated(p.getUpdated());
                     productDetail.setUpdatedDate(LocalDateTime.now());
                     productDetail.setQuantity(p.getQuantity());
                     productDetail.setPrice(p.getPrice());
@@ -93,14 +94,14 @@ public class ProductDetailServiceImpl implements ProductDetailService {
             } else {
                 ProductDetail productDetail = this.productDetailRepository.findByColorIdAndSizeId(p.getProductData().getId(), p.getColor().getId(), p.getSize().getId());
                 if (productDetail != null && (!p.getQuantity().equals(productDetail.getQuantity()) || !p.getPrice().equals(productDetail.getPrice()))) {
-                    productDetail.setUpdated(1);
+                    productDetail.setUpdated(p.getUpdated());
                     productDetail.setUpdatedDate(LocalDateTime.now());
                     productDetail.setQuantity(p.getQuantity());
                     productDetail.setPrice(p.getPrice());
                     productDetail.setStatus((byte) 1);
                     this.productDetailRepository.save(productDetail);
                 } else if (productDetail == null) {
-                    p.setCreated(1);
+                    p.setCreated(p.getUpdated());
                     p.setCreatedDate(LocalDateTime.now());
                     p.setStatus((byte) 1);
                     this.productDetailRepository.save(p);

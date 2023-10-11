@@ -1,7 +1,9 @@
 package com.example.restcontroller;
 
+import com.example.auth.AuthenticationService;
 import com.example.dto.UserDataDTO;
 import com.example.service.UserDataService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +14,12 @@ import org.springframework.web.bind.annotation.*;
 public class UserDataRestController {
 
     private final UserDataService userDataService;
+    private final AuthenticationService service;
 
     @Autowired
-    public UserDataRestController(UserDataService userDataService) {
+    public UserDataRestController(UserDataService userDataService, AuthenticationService service) {
         this.userDataService = userDataService;
+        this.service = service;
     }
 
     @GetMapping("/findAll")
@@ -36,6 +40,11 @@ public class UserDataRestController {
     @PutMapping("/update")
     public ResponseEntity<?> update(@RequestBody UserDataDTO userDataDTO) {
         return ResponseEntity.ok().body(this.userDataService.update(userDataDTO));
+    }
+
+    @PostMapping("getUserAuthenticate")
+    public ResponseEntity<?> getUserAuthenticate (HttpServletRequest request){
+        return ResponseEntity.ok().body(service.getUserAuthenticate(request));
     }
 
     @DeleteMapping("/delete/{id}")
