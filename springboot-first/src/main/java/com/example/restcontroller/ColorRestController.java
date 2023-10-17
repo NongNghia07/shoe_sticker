@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/v2/color")
+@RequestMapping("/api/color")
 public class ColorRestController {
 
     private final ColorService colorService;
@@ -28,14 +28,9 @@ public class ColorRestController {
         return ResponseEntity.ok().body(this.colorService.findById(id));
     }
 
-    @PostMapping("/create")
+    @PostMapping("/save")
     public ResponseEntity<?> create(@RequestBody ColorDTO colorDTO) {
-        return ResponseEntity.ok().body(this.colorService.create(colorDTO));
-    }
-
-    @PutMapping("/update")
-    public ResponseEntity<?> update(@RequestBody ColorDTO colorDTO) {
-        return ResponseEntity.ok().body(this.colorService.update(colorDTO));
+        return ResponseEntity.ok().body(this.colorService.save(colorDTO));
     }
 
     @DeleteMapping("/delete/{id}")

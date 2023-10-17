@@ -28,14 +28,9 @@ public class SizeRestController {
         return ResponseEntity.ok().body(this.sizeService.findById(id));
     }
 
-    @PostMapping("/create")
+    @PostMapping("/save")
     public ResponseEntity<?> create(@RequestBody SizeDTO sizeDTO) {
-        return ResponseEntity.ok().body(this.sizeService.create(sizeDTO));
-    }
-
-    @PutMapping("/update")
-    public ResponseEntity<?> update(@RequestBody SizeDTO sizeDTO) {
-        return ResponseEntity.ok().body(this.sizeService.update(sizeDTO));
+        return ResponseEntity.ok().body(this.sizeService.save(sizeDTO));
     }
 
     @DeleteMapping("/delete/{id}")

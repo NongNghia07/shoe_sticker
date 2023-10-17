@@ -1,11 +1,14 @@
 import './App.css';
 import { Routes, Route } from "react-router-dom";
+
 import Product from '../components/layout/staff/product/Product';
 import HomeLayout from '../components/layout/HomeLayout';
 import ProductDetail from '../components/layout/staff/product/ProductDetail';
+import SizeOrColor from '../components/layout/staff/size/SizeOrColor';
+import LayoutSign_In_Up from '../components/layout/signIn_signUp/LayoutSign_In_Up';
+
 import "../css/Custom.css"
 import "../css/Carousel.css"
-import LayoutSign_In_Up from '../components/layout/signIn_signUp/LayoutSign_In_Up';
 import { ToastContainer, toast } from 'react-toastify';
 
 function App() {
@@ -18,6 +21,7 @@ function App() {
         <Route path="admin">
           <Route path="product" element={<Product />} />
           <Route path="product/:id" element={<ProductDetail />} />
+          <Route path="sizeOrColor/:param" element={<SizeOrColor />} />
         </Route>
         <Route path="/" element={<HomeLayout />}>
           <Route path="product/:id" element={<ProductDetail />} />

@@ -74,42 +74,42 @@ const Tables = (props) => {
 
     return (
         <div>
-                <Table
-                    bordered
-                    cellSpacing="0"
-                >
-                    <thead>
-                        <tr>
-                            <th colSpan={getColumnLength() + 2}>
-                                <h3>{title}</h3>
+            <Table
+                bordered
+                cellSpacing="0"
+            >
+                <thead>
+                    <tr>
+                        <th colSpan={getColumnLength() + 2}>
+                            <h3>{title}</h3>
+                        </th>
+                    </tr>
+                    <tr>
+                        {colNames.map((headerItem, index) => (
+                            <th key={index}
+                            // onClick={() => groupBy(headerItem)}
+                            >
+                                {headerItem.toUpperCase()}
                             </th>
-                        </tr>
-                        <tr>
-                            {colNames.map((headerItem, index) => (
-                                <th key={index}
-                                // onClick={() => groupBy(headerItem)}
-                                >
-                                    {headerItem.toUpperCase()}
-                                </th>
-                            ))}
-                            <>
-                                {onCreate &&
-                                    <>
-                                        <th>Actions</th>
-                                        <th>
-                                            <button
-                                                class="btn btn-primary" type='buttom'
-                                                onClick={() => { onCreate() }}
-                                            >
-                                                ADD
-                                            </button></th>
-                                    </>
-                                }
-                            </>
-                        </tr>
-                    </thead>
-                    <tbody>
-            {list.length > 0 && 
+                        ))}
+                        <>
+                            {onCreate &&
+                                <>
+                                    <th>Actions</th>
+                                    <th>
+                                        <button
+                                            className="btn btn-primary" type='buttom'
+                                            onClick={() => { onCreate() }}
+                                        >
+                                            ADD
+                                        </button></th>
+                                </>
+                            }
+                        </>
+                    </tr>
+                </thead>
+                <tbody>
+                    {list.length > 0 &&
                         list.map((obj) => {
                             let id = obj.id
                             return (
@@ -121,7 +121,6 @@ const Tables = (props) => {
                                                     key={index2}
                                                     className="hoverable"
                                                     onClick={() => onDetail(id)}
-
                                                 >
                                                     {value}
                                                 </td>
@@ -153,7 +152,7 @@ const Tables = (props) => {
                                     {onUpdate && (
                                         <td>
                                             <button
-                                                class="btn btn-primary update" type='buttom'
+                                                className="btn btn-primary update" type='buttom'
                                                 onClick={() => onUpdate(obj.id)}
                                             >
                                                 Edit
@@ -164,7 +163,7 @@ const Tables = (props) => {
                                         <td>
                                             <button
                                                 onClick={() => onDelete(obj.id)}
-                                                class="btn btn-primary update" type='buttom'
+                                                className="btn btn-primary update" type='buttom'
                                             >
                                                 Delete
                                             </button>
@@ -174,9 +173,9 @@ const Tables = (props) => {
                             )
                         }
                         )
-                        }
-                    </tbody>
-                </Table>
+                    }
+                </tbody>
+            </Table>
             <PaginatedItems
                 itemsPerPage={totalPage}
                 pageable={pageable}

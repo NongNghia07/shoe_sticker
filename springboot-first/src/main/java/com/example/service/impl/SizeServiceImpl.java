@@ -30,16 +30,9 @@ public class SizeServiceImpl implements SizeService {
     }
 
     @Override
-    public SizeDTO create(SizeDTO sizeDTO) {
+    public SizeDTO save(SizeDTO sizeDTO) {
         Size size = modelMapper.map(sizeDTO, Size.class);
-        this.sizeRepository.save(size);
-        sizeDTO.setId(size.getId());
-        return sizeDTO;
-    }
-
-    @Override
-    public SizeDTO update(SizeDTO sizeDTO) {
-        Size size = modelMapper.map(sizeDTO, Size.class);
+        size.setStatus((byte) 1);
         this.sizeRepository.save(size);
         return sizeDTO;
     }

@@ -8,9 +8,7 @@ public interface ColorService {
 
     List<ColorDTO> findAll();
 
-    ColorDTO create(ColorDTO colorDTO);
-
-    ColorDTO update(ColorDTO colorDTO);
+    ColorDTO save(ColorDTO colorDTO);
 
     ColorDTO findById(Long id);
 

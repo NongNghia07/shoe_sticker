@@ -8,9 +8,7 @@ public interface SizeService {
 
     List<SizeDTO> findAll();
 
-    SizeDTO create(SizeDTO sizeDTO);
-
-    SizeDTO update(SizeDTO sizeDTO);
+    SizeDTO save(SizeDTO sizeDTO);
 
     SizeDTO findById(Long id);
 

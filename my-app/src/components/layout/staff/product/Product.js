@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import useCallGetAPI from "../../../../customHook/UseCallGetApi";
 import CreateProduct from "./CreateProduct";
 import UpdateProduct from "./UpdateProduct";
@@ -25,6 +24,7 @@ const Product = () => {
     const [totalPageAndNumber, setTotalPageAndNumber] = useState({ totalPage: 0, numberPage: 0 })
     const imagesListRef = ref(storage, "images/");
     const navigate = useNavigate()
+    const [product, setProduct] = useState({})
 
     useEffect(() => {
         loadData()
@@ -52,14 +52,21 @@ const Product = () => {
         callGet(`http://localhost:8080/api/productData/findAllPage`, getData)
     }
 
-    const findProductDetailsByIDProduct = async (id) => {
+    const findProductDetailsByIDProduct = (id) => {
         const getData = (data) => {
             setProductDetails(data)
         }
         callGet(`http://localhost:8080/api/productDetail/findAllByProductDataId?id=${id}`, getData)
     }
 
-    const findMediaByProduct = async (id) => {
+    const findProduct = (id) => {
+        const getData = (data) => {
+            setProduct(data)
+        }
+        callGet(`http://localhost:8080/api/productData/find/${id}`, getData)
+    }
+
+    const findMediaByProduct = (id) => {
         const getData = (data) => {
             setLstMediasProduct(data)
         }
@@ -114,6 +121,7 @@ const Product = () => {
 
     const onUpdate = (id) => {
         if (!isUpdateModal) {
+            findProduct(id)
             findProductDetailsByIDProduct(id)
             findMediaByProduct(id)
         }
@@ -160,6 +168,7 @@ const Product = () => {
             <UpdateProduct
                 isUpdateModal={isUpdateModal}
                 toggleModal={onUpdate}
+                product={product}
                 productDetails={productDetails}
                 loadData={loadData}
                 handleUpdateImages={handleUpdateImages}

@@ -277,7 +277,6 @@ const CreateProduct = (props) => {
     }
 
     let slides = lstImage.map((item) => {
-
         return (
             <CarouselItem
                 onExiting={onExiting}

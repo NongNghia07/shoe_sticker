@@ -33,7 +33,8 @@ const UpdateProduct = (props) => {
         lstMediasProduct,
         handleUpdateImages,
         imageUrls,
-        callGet
+        callGet,
+        product
     } = props;
     const [productData, setProductData] = useState({})
     const [lstProductDetail, setLstProductDetail] = useState()
@@ -66,7 +67,7 @@ const UpdateProduct = (props) => {
     //_______________________________________________________________________
 
     useEffect(() => {
-        setProductData({ id: productDetails[0]?.productDataId, name: productDetails[0]?.productDataName })
+        setProductData(product)
         setLstColorSelected(productDetails)
     }, [productDetails])
 
@@ -288,34 +289,34 @@ const UpdateProduct = (props) => {
         document.getElementById(text).click()
     }
 
-    const slidesImg = (lstImage) => {
-        let slides = lstImage.map((item) => {
-            if (item.file != "") {
-                return (
-                    <CarouselItem
-                        onExiting={onExiting}
-                        onExited={onExited}
-                        key={item.name}
-                    >
-                        <img src={URL.createObjectURL(item.file)} alt={item.altText} />
-                        {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption} /> */}
-                    </CarouselItem>
-                );
-            } else {
-                return (
-                    <CarouselItem
-                        onExiting={onExiting}
-                        onExited={onExited}
-                        key={item.name}
-                    >
-                        <img src={item.url} alt={item.altText} />
-                        {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption} /> */}
-                    </CarouselItem>
-                );
-            }
-        });
-        return slides
-    }
+    // const slidesImg = (lstImage) => {
+    let slides = lstImage.map((item) => {
+        if (item.file != "") {
+            return (
+                <CarouselItem
+                    onExiting={onExiting}
+                    onExited={onExited}
+                    key={item.name}
+                >
+                    <img src={URL.createObjectURL(item.file)} alt={item.altText} />
+                    {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption} /> */}
+                </CarouselItem>
+            );
+        } else {
+            return (
+                <CarouselItem
+                    onExiting={onExiting}
+                    onExited={onExited}
+                    key={item.name}
+                >
+                    <img src={item.url} alt={item.altText} />
+                    {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption} /> */}
+                </CarouselItem>
+            );
+        }
+    });
+    //     return slides
+    // }
 
 
     //_____________________________________________________________________________
@@ -380,11 +381,19 @@ const UpdateProduct = (props) => {
                                                                 Chọn loại sản phẩm
                                                             </option>
                                                             {lstCategory.map((item) => {
-                                                                return (
-                                                                    <option key={item.value} value={item.value}>
-                                                                        {item.label}
-                                                                    </option>
-                                                                );
+                                                                if (item.value === product.categoryId) {
+                                                                    return (
+                                                                        <option key={item.value} selected value={item.value}>
+                                                                            {item.label}
+                                                                        </option>
+                                                                    );
+                                                                } else {
+                                                                    return (
+                                                                        <option key={item.value} value={item.value}>
+                                                                            {item.label}
+                                                                        </option>
+                                                                    );
+                                                                }
                                                             })}
                                                         </select>
                                                         {/* {check.categoryId &&
@@ -482,7 +491,7 @@ const UpdateProduct = (props) => {
                                                     }}
                                                 >
                                                     <CarouselIndicators items={lstImage} activeIndex={activeIndex} onClickHandler={goToIndex} />
-                                                    {slidesImg(lstImage)}
+                                                    {slides}
                                                     <CarouselControl direction="prev" directionText="Previous" onClickHandler={previous} />
                                                     <CarouselControl direction="next" directionText="Next" onClickHandler={next} />
                                                 </Carousel>
@@ -533,7 +542,7 @@ const UpdateProduct = (props) => {
                                                             {item?.sizes?.length >= 1 &&
                                                                 item.sizes.map(size => {
                                                                     return (
-                                                                        <Col md={1} key={size.value}>
+                                                                        <Col md={2} key={size.value}>
                                                                             <FormGroup>
                                                                                 <Label for="description">Size: {size.label}</Label>
                                                                                 <div>
