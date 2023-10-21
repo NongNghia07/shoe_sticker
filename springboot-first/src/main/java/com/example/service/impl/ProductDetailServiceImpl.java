@@ -190,4 +190,16 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         productDetail.setStatus((byte) 0);
         this.productDetailRepository.save(productDetail);
     }
+
+    @Override
+    public void setAllStatusFalse(Integer id) {
+        List<ProductDetail> productDetails = this.productDetailRepository.findAllByProductDataId(1, id);
+        if (productDetails.isEmpty()) {
+            throw new ApiRequestException("Not found with id: " + id);
+        }
+        for (ProductDetail p: productDetails) {
+            p.setStatus((byte) 0);
+            this.productDetailRepository.save(p);
+        }
+    }
 }

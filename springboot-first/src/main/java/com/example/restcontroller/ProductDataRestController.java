@@ -36,6 +36,12 @@ public class ProductDataRestController {
         return ResponseEntity.ok().body(this.productDataService.findAllPage(size, page));
     }
 
+    @GetMapping("/searchAllByName")
+    public ResponseEntity<?> searchAllByName(
+            @RequestParam(name = "keyword", defaultValue = "") String keyword) {
+        return ResponseEntity.ok().body(this.productDataService.searchAllByName(keyword));
+    }
+
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody ProductDataDTO productDataDTO) {
         return ResponseEntity.ok().body(this.productDataService.create(productDataDTO));
@@ -46,8 +52,8 @@ public class ProductDataRestController {
         return ResponseEntity.ok().body(this.productDataService.update(productDataDTO));
     }
 
-    @DeleteMapping("/delete/{id}")
-    public void setStatusFalse(@PathVariable("id") Long id) {
-        this.productDataService.setStatusFalse(id);
+    @PostMapping("/delete/{id}")
+    public void setStatusFalse(@PathVariable("id") Long id, @RequestParam(name = "userId", defaultValue = "0") Integer userId) {
+        this.productDataService.setStatusFalse(id, userId);
     }
 }

@@ -18,6 +18,7 @@ import {
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import useCallPostAPI from "../../../../customHook/UseCallPostApi";
+import CreateCategory from "../category/CreateCategory";
 import "../../../../css/Carousel.css"
 import axios from "axios";
 
@@ -34,25 +35,29 @@ const UpdateProduct = (props) => {
         handleUpdateImages,
         imageUrls,
         callGet,
-        product
+        product,
+        refreshDataCategory,
+        lstCategory
     } = props;
     const [productData, setProductData] = useState({})
     const [lstProductDetail, setLstProductDetail] = useState()
     let { data: responseData, isError, isLoading, callPost } = useCallPostAPI()
     let userId = null
     //Category_______________________________________________________________
-
-    const [lstCategory, setLstCategory] = useState([]);
+    const [isCreateCateModal, setIsCreateCateModal] = useState(false)
 
     useEffect(() => {
-        const getData = (data) => {
-            let arr = []
-            data?.map(p => arr.push({ value: p.id, label: p.name }))
-            setLstCategory([...arr])
-        }
-        callGet(`http://localhost:8080/api/category/findAll`, getData)
+        refreshDataCategory()
     }, [])
 
+    const toggleCreateCateModal = () => {
+        setIsCreateCateModal(!isCreateCateModal)
+    }
+
+    //_______________________________________________________________________
+
+
+    //IMG_______________________________________________________________________
 
     useEffect(() => {
         let arr = []
@@ -81,7 +86,7 @@ const UpdateProduct = (props) => {
             data.map(p => arr.push({ value: p.id, label: p.name }))
             setLstColor([...arr])
         }
-        callGet(`http://localhost:8080/api/v2/color/findAll`, getData)
+        callGet(`http://localhost:8080/api/color/findAll`, getData)
     }, [])
 
     const handleOnChangeColor = (items) => {
@@ -418,7 +423,7 @@ const UpdateProduct = (props) => {
                                                         width: "100%",
                                                         borderRadius: "15px",
                                                     }}
-                                                // onClick={toggleNested}
+                                                    onClick={() => toggleCreateCateModal()}
                                                 >
                                                     +
                                                 </button>
@@ -669,38 +674,11 @@ const UpdateProduct = (props) => {
                         </Button>
                     </ModalFooter>
                 </Form>
-                {/* <Modal
-            isOpen={nestedModal}
-            toggle={toggleNested}
-            onClosed={closeAll ? toggle : undefined}
-            // size='lg'
-            centered
-        >
-            <ModalHeader>Thêm loại sản phẩm</ModalHeader>
-            <ModalBody>
-                <Input
-                    id="namecate"
-                    placeholder="Name Category"
-                    name="namecate"
-                    onChange={(event) => setCate(event.target.value)}
+                <CreateCategory
+                    isCreateModel={isCreateCateModal}
+                    toggleCreateModal={toggleCreateCateModal}
+                    refreshData={refreshDataCategory}
                 />
-            </ModalBody>
-            <ModalFooter>
-                <Button
-                    type="button"
-                    color="primary"
-                    onClick={() => {
-                        //createProduct();
-                        createCate();
-                    }}
-                >
-                    Thêm
-                </Button>
-                <Button color="secondary" onClick={toggleNested}>
-                    Hủy
-                </Button>
-            </ModalFooter>
-        </Modal> */}
             </Modal>
         </>
     )

@@ -59,8 +59,14 @@ public class ProductDetailRestController {
         return ResponseEntity.ok().body(this.productDetailService.updateAll(productDetailDTOS, status));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public void setStatusFalse(@PathVariable("id") Long id) {
         this.productDetailService.setStatusFalse(id);
+    }
+
+
+    @PostMapping("/deleteAllByProductData/{id}")
+    public void setAllStatusFalse(@PathVariable("id") Integer id) {
+        this.productDetailService.setAllStatusFalse(id);
     }
 }

@@ -28,17 +28,29 @@ public class CategoryRestController {
         return ResponseEntity.ok().body(this.categoryService.findById(id));
     }
 
+    @GetMapping("/findAllPage")
+    public ResponseEntity<?> findAllPage(@RequestParam(name = "size", defaultValue = "7") Integer size,
+                                      @RequestParam(name = "page", defaultValue = "0") Integer page) {
+        return ResponseEntity.ok().body(this.categoryService.findAllPage(size,page ));
+    }
+
+    @GetMapping("/searchAllByName")
+    public ResponseEntity<?> searchAllByName(
+                            @RequestParam(name = "keyword", defaultValue = "") String keyword) {
+        return ResponseEntity.ok().body(this.categoryService.searchAllByName(keyword));
+    }
+
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody CategoryDTO categoryDTO) {
         return ResponseEntity.ok().body(this.categoryService.create(categoryDTO));
     }
 
-    @PutMapping("/update")
+    @PostMapping("/update")
     public ResponseEntity<?> update(@RequestBody CategoryDTO categoryDTO) {
         return ResponseEntity.ok().body(this.categoryService.update(categoryDTO));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public void setStatusFalse(@PathVariable("id") Long id) {
         this.categoryService.setStatusFalse(id);
     }

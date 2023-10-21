@@ -11,11 +11,13 @@ public interface ProductDataService {
 
     Page<ProductDataDTO> findAllPage(Integer size, Integer page);
 
+    List<ProductDataDTO> searchAllByName(String keyword);
+
     ProductDataDTO create(ProductDataDTO productDataDTO);
 
     ProductDataDTO update(ProductDataDTO productDataDTO);
 
     ProductDataDTO findById(Long id);
 
-    void setStatusFalse(Long id);
+    void setStatusFalse(Long id, Integer userId);
 }

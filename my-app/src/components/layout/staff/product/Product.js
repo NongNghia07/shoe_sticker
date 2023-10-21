@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import useCallGetAPI from "../../../../customHook/UseCallGetApi";
+import useCallPostAPI from "../../../../customHook/UseCallPostApi";
 import CreateProduct from "./CreateProduct";
 import UpdateProduct from "./UpdateProduct";
 import Tables from "../../../../customHook/UseTable";
@@ -9,6 +10,13 @@ import {
     getDownloadURL,
     listAll,
 } from "firebase/storage";
+import {
+    Button,
+    Modal,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+} from "reactstrap";
 import { storage } from "../../../../Firebase";
 import { useNavigate } from "react-router-dom";
 
@@ -16,18 +24,24 @@ const Product = () => {
     const [isCreateModal, setIsCreateModal] = useState(false);
     const [isUpdateModal, setIsUpdateModal] = useState(false);
     const [isDeleteModal, setIsDeleteModal] = useState(false);
-    const { data, isError, isLoading, callGet } = useCallGetAPI()
+
+    const { callGet } = useCallGetAPI()
+    const { callPost } = useCallPostAPI()
+
     const [lstproductData, setLstProductData] = useState([])
     const [productDetails, setProductDetails] = useState([])
     const [lstMediasProduct, setLstMediasProduct] = useState([])
     const [imageUrls, setImageUrls] = useState([]);
-    const [totalPageAndNumber, setTotalPageAndNumber] = useState({ totalPage: 0, numberPage: 0 })
+    // const [totalPageAndNumber, setTotalPageAndNumber] = useState({ totalPage: 0, numberPage: 0 })
     const imagesListRef = ref(storage, "images/");
     const navigate = useNavigate()
     const [product, setProduct] = useState({})
+    const [lstCategory, setLstCategory] = useState([]);
+
 
     useEffect(() => {
         loadData()
+        refreshDataCategory()
     }, [])
 
     useEffect(() => {
@@ -44,13 +58,22 @@ const Product = () => {
 
     const loadData = () => {
         const getData = (data) => {
-            if (data?.content) {
-                setupData(data.content)
-                setTotalPageAndNumber({ totalPage: data.totalPages, numberPage: data.number })
+            if (data) {
+                setupData(data)
             }
         }
-        callGet(`http://localhost:8080/api/productData/findAllPage`, getData)
+        callGet(`http://localhost:8080/api/productData/findAll`, getData)
     }
+
+    const refreshDataCategory = () => {
+        const getData = (data) => {
+            let arr = []
+            data?.map(p => arr.push({ value: p.id, label: p.name }))
+            setLstCategory([...arr])
+        }
+        callGet(`http://localhost:8080/api/category/findAll`, getData)
+    }
+
 
     const findProductDetailsByIDProduct = (id) => {
         const getData = (data) => {
@@ -128,42 +151,95 @@ const Product = () => {
         setIsUpdateModal(!isUpdateModal);
     };
 
-    const onDelete = () => {
+    const onDelete = (id) => {
         setIsDeleteModal(!isDeleteModal);
+        if (!isDeleteModal) {
+            setProduct({ id: id })
+            console.log(product);
+            return
+        }
+        setProduct({})
+        console.log(product);
     };
 
-    const pageable = async (id) => {
-        if (id <= 0) {
-            id = 0
-        } else if (id >= totalPageAndNumber.totalPage) {
-            id = totalPageAndNumber.totalPage
+    const sortDataAscending = (data) => {
+        let newData = [...lstproductData]
+        if (!newData?.map(p => p[data])) return
+        newData?.sort((a, b) => a[data] > b[data] ? 1 : -1)
+        setLstProductData(newData)
+    }
+
+    const sortDataGraduallySmaller = (data) => {
+        let newData = [...lstproductData]
+        if (!newData?.map(p => p[data])) return
+        newData?.sort((a, b) => a[data] < b[data] ? 1 : -1)
+        setLstProductData(newData)
+    }
+
+
+    const deleteProductData = () => {
+        const deletePro = (data) => {
+            const deleteProductAllDetailByProductDataId = () => {
+                const refresh = () => {
+                    loadData()
+                    onDelete()
+                }
+                callPost(`http://localhost:8080/api/productDetail/deleteAllByProductData/${product.id}`, "", refresh)
+            }
+            callPost(`http://localhost:8080/api/productData/delete/${product.id}?userId=${data.id}`, "", deleteProductAllDetailByProductDataId)
         }
+        callPost("http://localhost:8080/api/userData/getUserAuthenticate", "", deletePro)
+    }
+
+    // const pageable = async (id) => {
+    //     if (id <= 0) {
+    //         id = 0
+    //     } else if (id >= totalPageAndNumber.totalPage) {
+    //         id = totalPageAndNumber.totalPage
+    //     }
+    //     const getData = (data) => {
+    //         setupData(data)
+    //     }
+    //     callGet(`http://localhost:8080/api/productData/findAll`, getData)
+    // }
+
+    const search = (e) => {
         const getData = (data) => {
-            setupData(data.content)
-            setTotalPageAndNumber({ totalPage: data.totalPages, numberPage: data.number })
+            if (data) {
+                setupData(data)
+            }
         }
-        callGet(`http://localhost:8080/api/productData/findAllPage?page=${id}`, getData)
+        setTimeout(() => {
+            callGet(`http://localhost:8080/api/productData/searchAllByName?keyword=${e.target.value}`, getData)
+        }, 1000);
     }
 
     return (
         <>
-            <Tables
-                title={"Product"}
-                list={lstproductData}
-                colNames={["ID", "Name", "Quantity", "Category"]}
-                pageable={pageable}
-                totalPage={totalPageAndNumber.totalPage}
-                onDetail={onDetail}
-                onCreate={onCreate}
-                onUpdate={onUpdate}
-                onDelete={onDelete}
-            />
+            <input onChange={(e) => search(e)} />
+            <div style={{ width: "90%", margin: "auto" }}>
+                <Tables
+                    title={"Product"}
+                    list={lstproductData}
+                    colNames={[{ title: "Id", id: "id" }, { title: "name", id: "aa" }, { title: "quantity", id: "quantity" }, { title: "category", id: "categoryId" }]}
+                    // pageable={pageable}
+                    // totalPage={totalPageAndNumber.totalPage}
+                    onDetail={onDetail}
+                    onCreate={onCreate}
+                    onUpdate={onUpdate}
+                    onDelete={onDelete}
+                    sortDataAscending={sortDataAscending}
+                    sortDataGraduallySmaller={sortDataGraduallySmaller}
+                />
+            </div>
             <CreateProduct
                 isCreateModal={isCreateModal}
                 toggleModal={onCreate}
                 loadData={loadData}
                 handleUpdateImages={handleUpdateImages}
                 callGet={callGet}
+                refreshDataCategory={refreshDataCategory}
+                lstCategory={lstCategory}
             />
             <UpdateProduct
                 isUpdateModal={isUpdateModal}
@@ -175,7 +251,31 @@ const Product = () => {
                 imageUrls={imageUrls}
                 lstMediasProduct={lstMediasProduct}
                 callGet={callGet}
+                refreshDataCategory={refreshDataCategory}
+                lstCategory={lstCategory}
             />
+            <Modal isOpen={isDeleteModal} toggle={() => onDelete()} centered>
+                <ModalHeader toggle={() => onDelete()}>Thông báo</ModalHeader>
+                <ModalBody>
+                    Do you want delete?
+                </ModalBody>
+                <ModalFooter>
+                    <Button
+                        color="primary"
+                        type="submit"
+                        onClick={() => {
+                            deleteProductData();
+                        }}
+                    >
+                        Delete
+                    </Button>
+                    <Button color="secondary"
+                        onClick={() => onDelete()}
+                    >
+                        Cancel
+                    </Button>
+                </ModalFooter>
+            </Modal>
         </>
     )
 }

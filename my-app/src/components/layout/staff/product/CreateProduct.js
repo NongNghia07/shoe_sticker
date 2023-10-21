@@ -18,7 +18,7 @@ import {
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import useCallPostAPI from "../../../../customHook/UseCallPostApi";
-
+import CreateCategory from "../category/CreateCategory";
 
 const animatedComponents = makeAnimated();
 
@@ -30,8 +30,8 @@ const CreateProduct = (props) => {
         loadData,
         callGet,
         handleUpdateImages,
-        // imageFiles,
-        // setImageFiles,
+        refreshDataCategory,
+        lstCategory
     } = props;
 
     const [productData, setProductData] = useState({})
@@ -40,17 +40,16 @@ const CreateProduct = (props) => {
     let userId = null
     //Category_______________________________________________________________
 
-    const [lstCategory, setLstCategory] = useState([]);
+    const [isCreateCateModal, setIsCreateCateModal] = useState(false)
 
     useEffect(() => {
-        const getData = (data) => {
-            let arr = []
-            data?.map(p => arr.push({ value: p.id, label: p.name }))
-            setLstCategory([...arr])
-        }
-        callGet(`http://localhost:8080/api/category/findAll`, getData)
+        refreshDataCategory()
     }, [])
 
+
+    const toggleCreateCateModal = () => {
+        setIsCreateCateModal(!isCreateCateModal)
+    }
 
     //_______________________________________________________________________
 
@@ -65,7 +64,7 @@ const CreateProduct = (props) => {
             data?.map(p => arr.push({ value: p.id, label: p.name }))
             setLstColor([...arr])
         }
-        callGet(`http://localhost:8080/api/v2/color/findAll`, getData)
+        callGet(`http://localhost:8080/api/color/findAll`, getData)
 
     }, [])
 
@@ -293,11 +292,11 @@ const CreateProduct = (props) => {
 
     return (
         <>
-            <Modal isOpen={isCreateModal} toggle={() => toggleModal()} size="xl" centered>
+            <Modal isOpen={isCreateModal} toggle={() => { toggleModal(); setImage([]) }} size="xl" centered>
                 <Form
                 // onSubmit={handleSubmit(createProduct)} innerRef={ref}
                 >
-                    <ModalHeader toggle={() => toggleModal()}>Add</ModalHeader>
+                    <ModalHeader toggle={() => { toggleModal(); setImage([]) }}>Add</ModalHeader>
                     <ModalBody>
                         <Row>
                             <Col md={7}>
@@ -380,7 +379,7 @@ const CreateProduct = (props) => {
                                                         width: "100%",
                                                         borderRadius: "15px",
                                                     }}
-                                                // onClick={toggleNested}
+                                                    onClick={() => toggleCreateCateModal()}
                                                 >
                                                     +
                                                 </button>
@@ -614,44 +613,17 @@ const CreateProduct = (props) => {
                             Thêm Mới
                         </Button>
                         <Button color="secondary"
-                            onClick={() => toggleModal()}
+                            onClick={() => { toggleModal(); setImage([]) }}
                         >
                             Hủy
                         </Button>
                     </ModalFooter>
                 </Form>
-                {/* <Modal
-            isOpen={nestedModal}
-            toggle={toggleNested}
-            onClosed={closeAll ? toggle : undefined}
-            // size='lg'
-            centered
-        >
-            <ModalHeader>Thêm loại sản phẩm</ModalHeader>
-            <ModalBody>
-                <Input
-                    id="namecate"
-                    placeholder="Name Category"
-                    name="namecate"
-                    onChange={(event) => setCate(event.target.value)}
+                <CreateCategory
+                    isCreateModel={isCreateCateModal}
+                    toggleCreateModal={toggleCreateCateModal}
+                    refreshData={refreshDataCategory}
                 />
-            </ModalBody>
-            <ModalFooter>
-                <Button
-                    type="button"
-                    color="primary"
-                    onClick={() => {
-                        //createProduct();
-                        createCate();
-                    }}
-                >
-                    Thêm
-                </Button>
-                <Button color="secondary" onClick={toggleNested}>
-                    Hủy
-                </Button>
-            </ModalFooter>
-        </Modal> */}
             </Modal>
         </>
     )

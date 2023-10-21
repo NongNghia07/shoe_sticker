@@ -28,12 +28,24 @@ public class SizeRestController {
         return ResponseEntity.ok().body(this.sizeService.findById(id));
     }
 
+    @GetMapping("/findAllPage")
+    public ResponseEntity<?> findAllPage(@RequestParam(name = "size", defaultValue = "7") Integer size,
+                                      @RequestParam(name = "page", defaultValue = "0") Integer page) {
+        return ResponseEntity.ok().body(this.sizeService.findAllPage(size, page));
+    }
+
+    @GetMapping("/searchAllByName")
+    public ResponseEntity<?> searchAllByName(
+            @RequestParam(name = "keyword", defaultValue = "") String keyword) {
+        return ResponseEntity.ok().body(this.sizeService.searchAllByName(keyword));
+    }
+
     @PostMapping("/save")
     public ResponseEntity<?> create(@RequestBody SizeDTO sizeDTO) {
         return ResponseEntity.ok().body(this.sizeService.save(sizeDTO));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public void setStatusFalse(@PathVariable("id") Long id) {
         this.sizeService.setStatusFalse(id);
     }

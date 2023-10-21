@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import {
-    Table,
-    Carousel,
-    CarouselItem,
-    CarouselControl,
-    CarouselIndicators
-} from 'reactstrap';
-import PaginatedItems from "./UsePaginatedItem";
 import "../css/Carousel.css"
+import Paper from '@mui/material/Paper'
+import Table from '@mui/material/Table'
+import TableRow from '@mui/material/TableRow'
+import TableHead from '@mui/material/TableHead'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TablePagination from '@mui/material/TablePagination'
 
 const Tables = (props) => {
 
@@ -18,63 +18,131 @@ const Tables = (props) => {
         onCreate,
         onDetail,
         totalPage,
-        pageable
-
+        pageable,
+        sortDataAscending,
+        sortDataGraduallySmaller
     } = props;
-    // const [page, setPage] = useState(pageNum);
-    // const [formattedList, setFormattedList] = useState(list);
-    const getColumnLength = () => {
-        const hasActions = onDelete;
-        return hasActions ? colNames.length + 1 : colNames.length;
-    };
 
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [animating, setAnimating] = useState(false);
+    // const getColumnLength = () => {
+    //     const hasActions = onDelete;
+    //     return hasActions ? colNames.length + 1 : colNames.length;
+    // };
+    const [isSort, setIsSort] = useState(false)
 
-    const onExiting = () => {
-        setAnimating(true)
+    const sortData = (id) => {
+        if (!id) return
+        setIsSort(!isSort)
+        if (!isSort) {
+            sortDataGraduallySmaller(id)
+        } else {
+            sortDataAscending(id)
+        }
     }
 
-    const onExited = () => {
-        setAnimating(false)
+
+
+    const [page, setPage] = useState(0)
+    const [rowsPerPage, setRowsPerPage] = useState(5)
+
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage)
     }
 
-    const next = (lstImage) => {
-        // if (animating) return;
-        // const nextIndex = activeIndex === lstImage.length - 1 ? 0 : activeIndex + 1;
-        // setActiveIndex(nextIndex);
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(+event.target.value)
+        setPage(0)
     }
-
-    const previous = (lstImage) => {
-        // if (animating) return;
-        // const nextIndex = activeIndex === 0 ? lstImage.length - 1 : activeIndex - 1;
-        // setActiveIndex(nextIndex);
-    }
-
-    const goToIndex = (newIndex) => {
-        if (animating) return;
-        setActiveIndex(newIndex);
-    }
-
-    const slidesImg = (lstImage) => {
-        let slides = lstImage.map((item) => {
-            return (
-                <CarouselItem
-                    onExiting={onExiting}
-                    onExited={onExited}
-                    key={item.id}
-                >
-                    <img src={item.urlbase} alt={item.altText} style={{ height: "220px" }} />
-                    {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption} /> */}
-                </CarouselItem>
-            );
-        })
-        return slides
-    };
 
     return (
-        <div>
-            <Table
+        <>
+            <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+                <TableContainer sx={{ maxHeight: 440 }}>
+                    <Table title aria-label={title}>
+                        <TableHead>
+                            <TableRow>
+                                {colNames.map((headerItem, index) => (
+                                    <TableCell key={index}
+                                        onClick={() => sortData(headerItem.id)}
+                                    >
+                                        {headerItem.title.toUpperCase()}
+                                    </TableCell>
+                                ))}
+                                <>
+                                    {onCreate &&
+                                        <>
+                                            <TableCell>Actions</TableCell>
+                                            <TableCell>
+                                                <button
+                                                    className="btn btn-primary" type='buttom'
+                                                    onClick={() => { onCreate() }}
+                                                >
+                                                    ADD
+                                                </button></TableCell>
+                                        </>
+                                    }
+                                </>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {list.length > 0 &&
+                                list.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((obj) => {
+                                    let id = obj.id
+                                    return (
+                                        <TableRow key={obj.id}>
+                                            {Object.values(obj).map((value, index2) => {
+                                                if (!Array.isArray(value)) {
+                                                    return (
+                                                        <TableCell
+                                                            key={index2}
+                                                            className="hoverable"
+                                                            onClick={() => onDetail(id)}
+                                                        >
+                                                            {value}
+                                                        </TableCell>
+                                                    )
+                                                }
+                                            })}
+                                            {onUpdate && (
+                                                <TableCell style={{ width: 60 }} align="right">
+                                                    <button
+                                                        className="btn btn-primary update" type='buttom'
+                                                        onClick={() => onUpdate(obj.id)}
+                                                    >
+                                                        Edit
+                                                    </button>
+                                                </TableCell>
+                                            )}
+                                            {onDelete && (
+                                                <TableCell align="right" style={{ width: 60 }}>
+                                                    <button
+                                                        onClick={() => onDelete(obj.id)}
+                                                        className="btn btn-primary update" type='buttom'
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </TableCell>
+                                            )}
+                                        </TableRow>
+                                    )
+                                }
+                                )
+                            }
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+                <TablePagination
+                    rowsPerPageOptions={[5, 10, 25, 100]}
+                    component='div'
+                    count={list.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            </Paper>
+
+
+            {/* <Table
                 bordered
                 cellSpacing="0"
             >
@@ -87,9 +155,9 @@ const Tables = (props) => {
                     <tr>
                         {colNames.map((headerItem, index) => (
                             <th key={index}
-                            // onClick={() => groupBy(headerItem)}
+                                onClick={() => sortData(headerItem.id)}
                             >
-                                {headerItem.toUpperCase()}
+                                {headerItem.title.toUpperCase()}
                             </th>
                         ))}
                         <>
@@ -180,10 +248,9 @@ const Tables = (props) => {
                 itemsPerPage={totalPage}
                 pageable={pageable}
             />
-        </div>
+        </div> */}
+        </>
     );
 }
-
-
 
 export default Tables;

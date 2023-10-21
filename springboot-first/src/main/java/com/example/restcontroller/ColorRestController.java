@@ -28,12 +28,24 @@ public class ColorRestController {
         return ResponseEntity.ok().body(this.colorService.findById(id));
     }
 
+    @GetMapping("/findAllPage")
+    public ResponseEntity<?> findAllPage(@RequestParam(name = "size", defaultValue = "7") Integer size,
+                                      @RequestParam(name = "page", defaultValue = "0") Integer page) {
+        return ResponseEntity.ok().body(this.colorService.findAllPage(size, page));
+    }
+
+    @GetMapping("/searchAllByName")
+    public ResponseEntity<?> searchAllByName(
+                                @RequestParam(name = "keyword", defaultValue = "") String keyword) {
+        return ResponseEntity.ok().body(this.colorService.searchAllByName(keyword));
+    }
+
     @PostMapping("/save")
     public ResponseEntity<?> create(@RequestBody ColorDTO colorDTO) {
         return ResponseEntity.ok().body(this.colorService.save(colorDTO));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public void setStatusFalse(@PathVariable("id") Long id) {
         this.colorService.setStatusFalse(id);
     }

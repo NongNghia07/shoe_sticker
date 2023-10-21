@@ -21,4 +21,6 @@ public interface ProductDetailService {
     List<ProductDetailDTO> findAllByProductDataId(Integer status, Integer product_data_id);
 
     void setStatusFalse(Long id);
+
+    void setAllStatusFalse(Integer id);
 }
