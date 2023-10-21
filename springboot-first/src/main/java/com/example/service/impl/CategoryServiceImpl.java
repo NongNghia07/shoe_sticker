@@ -50,7 +50,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDTO> searchAllByName(String keyword) {
-        return this.categoryRepository.findAllByStatusOrderByIdDesc((byte)1).stream().map(o -> modelMapper.map(o, CategoryDTO.class)).collect(Collectors.toList());
+        return this.categoryRepository.findAllByNameAndStatusOrderByIdDesc(keyword,1).stream().map(o -> modelMapper.map(o, CategoryDTO.class)).collect(Collectors.toList());
     }
 
     @Override

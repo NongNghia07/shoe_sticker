@@ -13,8 +13,10 @@ import java.util.List;
 public interface ProductDataRepository extends JpaRepository<ProductData, Long> {
     Page<ProductData> findAllPageByStatusOrderByIdDesc(Integer status, Pageable pageable);
 
+    List<ProductData> findAllByStatusOrderByIdDesc(Integer status);
+
     ProductData findByName(String name);
 
     @Query("SELECT p FROM ProductData p WHERE p.name like %?1% AND p.status = ?2 order by p.id desc")
-    List<ProductData> findAllPageByNameAndStatusOrderByIdDesc(String keyword,Integer status, Pageable pageable);
+    List<ProductData> findAllByNameAndStatusOrderByIdDesc(String keyword,Integer status);
 }

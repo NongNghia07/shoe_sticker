@@ -20,7 +20,7 @@ function App() {
       {/* <header className="App-header"> */}
       <ToastContainer />
       <Routes>
-        <Route path="admin" element={<AdminLayout />} >
+        <Route path="admin" >
           <Route path="product" element={<Product />} />
           <Route path="product/:id" element={<ProductDetail />} />
           <Route path="sizeOrColor/:param" element={<SizeOrColor />} />

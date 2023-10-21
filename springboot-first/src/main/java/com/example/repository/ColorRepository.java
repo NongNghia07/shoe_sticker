@@ -17,5 +17,5 @@ public interface ColorRepository extends JpaRepository<Color, Long> {
     Page<Color> findAllPageByStatusOrderByIdDesc(Integer status, Pageable pageable);
 
     @Query("SELECT c FROM Color c WHERE c.name like %?1% AND c.status = ?2 order by c.id desc")
-    List<Color> findAllPageByNameAndStatusOrderByIdDesc(String keyword, Integer status, Pageable pageable);
+    List<Color> findAllByNameAndStatusOrderByIdDesc(String keyword, Integer status);
 }

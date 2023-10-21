@@ -37,7 +37,7 @@ public class ProductDataServiceImpl implements ProductDataService {
 
     @Override
     public List<ProductDataDTO> findAll() {
-        List<ProductDataDTO> productDataDTOS = this.productDataRepository.findAll().stream().map(o -> modelMapper.map(o, ProductDataDTO.class)).collect(Collectors.toList());
+        List<ProductDataDTO> productDataDTOS = this.productDataRepository.findAllByStatusOrderByIdDesc(1).stream().map(o -> modelMapper.map(o, ProductDataDTO.class)).collect(Collectors.toList());
         for (ProductDataDTO p: productDataDTOS) {
             p.setListMediaDTO(mediaService.findAllByProductDataID(p.getId()));
         }
@@ -62,7 +62,7 @@ public class ProductDataServiceImpl implements ProductDataService {
 
     @Override
     public List<ProductDataDTO> searchAllByName(String keyword) {
-        List<ProductDataDTO> productDataDTOS = this.productDataRepository.findAll().stream().map(o -> modelMapper.map(o, ProductDataDTO.class)).collect(Collectors.toList());
+        List<ProductDataDTO> productDataDTOS = this.productDataRepository.findAllByNameAndStatusOrderByIdDesc(keyword, 1).stream().map(o -> modelMapper.map(o, ProductDataDTO.class)).collect(Collectors.toList());
         for (ProductDataDTO p: productDataDTOS) {
             p.setListMediaDTO(mediaService.findAllByProductDataID(p.getId()));
         }

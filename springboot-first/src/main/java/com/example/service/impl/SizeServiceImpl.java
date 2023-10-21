@@ -51,7 +51,7 @@ public class SizeServiceImpl implements SizeService {
 
     @Override
     public List<SizeDTO> searchAllByName(String keyword) {
-        return this.sizeRepository.findAllByStatusOrderByIdDesc(1).stream().map(o -> modelMapper.map(o, SizeDTO.class)).collect(Collectors.toList());
+        return this.sizeRepository.findAllByNameAndStatusOrderByIdDesc(keyword,1).stream().map(o -> modelMapper.map(o, SizeDTO.class)).collect(Collectors.toList());
     }
 
     @Override

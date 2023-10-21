@@ -17,5 +17,5 @@ public interface SizeRepository extends JpaRepository<Size, Long> {
     Page<Size> findAllPageByStatusOrderByIdDesc(Integer status, Pageable pageable);
 
     @Query("SELECT s FROM Size s WHERE s.name like %?1% AND s.status = ?2 order by s.id desc")
-    List<Size> findAllPageByNameAndStatusOrderByIdDesc(String keyword, Integer status, Pageable pageable);
+    List<Size> findAllByNameAndStatusOrderByIdDesc(String keyword, Integer status);
 }

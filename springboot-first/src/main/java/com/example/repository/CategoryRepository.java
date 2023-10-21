@@ -16,5 +16,5 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     Page<Category> findAllPageByStatusOrderByIdDesc(Integer status, Pageable pageable);
 
     @Query("SELECT c FROM Category c WHERE c.name like %?1% AND c.status = ?2 order by c.id desc")
-    List<Category> findAllPageByNameAndStatusOrderByIdDesc(String keyword, Integer status, Pageable pageable);
+    List<Category> findAllByNameAndStatusOrderByIdDesc(String keyword, Integer status);
 }

@@ -207,6 +207,7 @@ const Product = () => {
         const getData = (data) => {
             if (data) {
                 setupData(data)
+                console.log(data);
             }
         }
         setTimeout(() => {

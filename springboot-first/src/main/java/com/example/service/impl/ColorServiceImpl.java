@@ -49,7 +49,7 @@ public class ColorServiceImpl implements ColorService {
 
     @Override
     public List<ColorDTO> searchAllByName(String keyword) {
-        return this.colorRepository.findAllByStatusOrderByIdDesc(1).stream().map(o -> modelMapper.map(o, ColorDTO.class)).collect(Collectors.toList());
+        return this.colorRepository.findAllByNameAndStatusOrderByIdDesc(keyword,1).stream().map(o -> modelMapper.map(o, ColorDTO.class)).collect(Collectors.toList());
     }
 
     @Override
