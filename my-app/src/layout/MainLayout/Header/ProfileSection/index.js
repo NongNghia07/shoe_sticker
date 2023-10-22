@@ -1,5 +1,5 @@
 import React from 'react';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
     Avatar,
@@ -24,7 +24,7 @@ import {
     useTheme
 } from '@material-ui/core';
 
-import {IconLogout, IconSearch, IconSettings} from '@tabler/icons';
+import { IconLogout, IconSearch, IconSettings } from '@tabler/icons';
 
 import UpgradePlanCard from '../../../../ui-component/cards/UpgradePlanCard';
 
@@ -146,7 +146,7 @@ const ProfileSection = () => {
     return (
         <React.Fragment>
             <Chip
-                classes={{label: classes.profileLabel}}
+                classes={{ label: classes.profileLabel }}
                 className={classes.profileChip}
                 icon={
                     <Avatar
@@ -184,7 +184,7 @@ const ProfileSection = () => {
                     ]
                 }}
             >
-                {({TransitionProps, placement}) => (
+                {({ TransitionProps, placement }) => (
                     <Fade {...TransitionProps}>
                         <Paper>
                             <ClickAwayListener onClickAway={handleClose}>
@@ -275,7 +275,7 @@ const ProfileSection = () => {
                                                 </ListItem> */}
                                                 <ListItem
                                                     className={classes.listItem}
-                                                    sx={{borderRadius: customization.borderRadius + 'px'}}
+                                                    sx={{ borderRadius: customization.borderRadius + 'px' }}
                                                     button
                                                     selected={selectedIndex === 4}
                                                     onClick={handleLogout}

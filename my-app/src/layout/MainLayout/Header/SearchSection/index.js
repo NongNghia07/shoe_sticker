@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
     Avatar,
     Box,
@@ -13,9 +13,11 @@ import {
     OutlinedInput,
     Popper
 } from '@material-ui/core';
-import PopupState, {bindPopper, bindToggle} from 'material-ui-popup-state';
+import PopupState, { bindPopper, bindToggle } from 'material-ui-popup-state';
 
-import {IconAdjustmentsHorizontal, IconSearch, IconX} from '@tabler/icons';
+import { IconAdjustmentsHorizontal, IconSearch, IconX } from '@tabler/icons';
+
+import useCallGetAPI from '../../../../hooks/UseCallGetApi';
 
 const useStyles = makeStyles((theme) => ({
     searchControl: {
@@ -73,9 +75,23 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const SearchSection = () => {
+const SearchSection = (props) => {
+    const { url, getDataSearch } = props
     const classes = useStyles();
     const [value, setValue] = useState('');
+    const { callGet } = useCallGetAPI()
+
+    const search = (e) => {
+        if (!url) return
+        const getData = (data) => {
+            if (data) {
+                getDataSearch(data)
+            }
+        }
+        setTimeout(() => {
+            callGet(`${url}${e.target.value}`, getData)
+        }, 1000);
+    }
 
     return (
         <React.Fragment>
@@ -84,14 +100,14 @@ const SearchSection = () => {
                     {(popupState) => (
                         <React.Fragment>
                             <Box ml={2}>
-                                <ButtonBase sx={{borderRadius: '12px'}}>
+                                <ButtonBase sx={{ borderRadius: '12px' }}>
                                     <Avatar variant="rounded" className={classes.headerAvtar} {...bindToggle(popupState)}>
                                         <IconSearch stroke={1.5} size="1.2rem" />
                                     </Avatar>
                                 </ButtonBase>
                             </Box>
                             <Popper {...bindPopper(popupState)} transition className={classes.popperContainer}>
-                                {({TransitionProps}) => (
+                                {({ TransitionProps }) => (
                                     <Fade {...TransitionProps} timeout={350}>
                                         <Card className={classes.card}>
                                             <CardContent className={classes.cardContent}>
@@ -101,7 +117,7 @@ const SearchSection = () => {
                                                             className={classes.searchControl}
                                                             id="input-search-header"
                                                             value={value}
-                                                            onChange={(e) => setValue(e.target.value)}
+                                                            onChange={(e) => { search(e); setValue(e.target.value) }}
                                                             placeholder="Search"
                                                             startAdornment={
                                                                 <InputAdornment position="start">
@@ -114,13 +130,13 @@ const SearchSection = () => {
                                                             }
                                                             endAdornment={
                                                                 <InputAdornment position="end">
-                                                                    <ButtonBase sx={{borderRadius: '12px'}}>
+                                                                    <ButtonBase sx={{ borderRadius: '12px' }}>
                                                                         <Avatar variant="rounded" className={classes.headerAvtar}>
                                                                             <IconAdjustmentsHorizontal stroke={1.5} size="1.3rem" />
                                                                         </Avatar>
                                                                     </ButtonBase>
                                                                     <Box ml={2}>
-                                                                        <ButtonBase sx={{borderRadius: '12px'}}>
+                                                                        <ButtonBase sx={{ borderRadius: '12px' }}>
                                                                             <Avatar
                                                                                 variant="rounded"
                                                                                 className={classes.colseAvtar}
@@ -154,7 +170,7 @@ const SearchSection = () => {
                     className={classes.searchControl}
                     id="input-search-header"
                     value={value}
-                    onChange={(e) => setValue(e.target.value)}
+                    onChange={(e) => { search(e); setValue(e.target.value) }}
                     placeholder="Search"
                     startAdornment={
                         <InputAdornment position="start">
@@ -163,7 +179,7 @@ const SearchSection = () => {
                     }
                     endAdornment={
                         <InputAdornment position="end">
-                            <ButtonBase sx={{borderRadius: '12px'}}>
+                            <ButtonBase sx={{ borderRadius: '12px' }}>
                                 <Avatar variant="rounded" className={classes.headerAvtar}>
                                     <IconAdjustmentsHorizontal stroke={1.5} size="1.3rem" />
                                 </Avatar>

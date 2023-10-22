@@ -17,13 +17,13 @@ const useStyles = makeStyles((theme) => ({
     createButton: {
         fontSize: '1rem',
         fontWeight: 500,
-        backgroundColor: theme.palette.error.light,
+        backgroundColor: theme.palette.primary[200],
         border: '1px solid',
-        borderColor: theme.palette.error.main,
+        borderColor: theme.palette.primary[200],
         color: theme.palette.text.dark,
         textTransform: 'none',
         '&:hover': {
-            backgroundColor: theme.palette.error.dark
+            backgroundColor: theme.palette.primary.main
         },
         [theme.breakpoints.down('sm')]: {
             fontSize: '0.875rem'
@@ -32,13 +32,13 @@ const useStyles = makeStyles((theme) => ({
     updateButton: {
         fontSize: '1rem',
         fontWeight: 500,
-        backgroundColor: theme.palette.error.light,
+        backgroundColor: theme.palette.warning.main,
         border: '1px solid',
-        borderColor: theme.palette.error.main,
+        borderColor: theme.palette.warning.main,
         color: theme.palette.text.dark,
         textTransform: 'none',
         '&:hover': {
-            backgroundColor: theme.palette.error.dark
+            backgroundColor: theme.palette.warning.dark
         },
         [theme.breakpoints.down('sm')]: {
             fontSize: '0.875rem'
@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
     deleteButton: {
         fontSize: '1rem',
         fontWeight: 500,
-        backgroundColor: theme.palette.error.light,
+        backgroundColor: theme.palette.error.main,
         border: '1px solid',
         borderColor: theme.palette.error.main,
         color: theme.palette.text.dark,

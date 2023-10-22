@@ -20,11 +20,11 @@ import {
 import { storage } from "../../Firebase";
 // import { useNavigate } from "react-router-dom";
 
-const Product = () => {
+const Product = (props) => {
+    const { data } = props
     const [isCreateModal, setIsCreateModal] = useState(false);
     const [isUpdateModal, setIsUpdateModal] = useState(false);
     const [isDeleteModal, setIsDeleteModal] = useState(false);
-
     const { callGet } = useCallGetAPI()
     const { callPost } = useCallPostAPI()
 
@@ -43,6 +43,10 @@ const Product = () => {
         loadData()
         refreshDataCategory()
     }, [])
+
+    useEffect(() => {
+        setupData(data)
+    }, [data])
 
     useEffect(() => {
         setImageUrls([])
@@ -203,21 +207,8 @@ const Product = () => {
     //     callGet(`http://localhost:8080/api/productData/findAll`, getData)
     // }
 
-    const search = (e) => {
-        const getData = (data) => {
-            if (data) {
-                setupData(data)
-                console.log(data);
-            }
-        }
-        setTimeout(() => {
-            callGet(`http://localhost:8080/api/productData/searchAllByName?keyword=${e.target.value}`, getData)
-        }, 1000);
-    }
-
     return (
         <>
-            <input onChange={(e) => search(e)} />
             <div style={{ width: "90%", margin: "auto" }}>
                 <Tables
                     title={"Product"}
