@@ -1,22 +1,17 @@
 import { React, useState, useEffect } from "react";
 import {
-    Carousel,
-    CarouselItem,
-    CarouselControl,
-    CarouselIndicators,
-} from "reactstrap";
-import {
     Dialog, DialogActions, DialogContent, DialogTitle
     , Button, TextField, Select, FormControl,
     OutlinedInput, InputAdornment, InputLabel, Checkbox, MenuItem, ListItemText
 } from '@mui/material';
-
 import { Grid } from '@material-ui/core';
 
+import "../../assets/css/Carousel.css"
 import { gridSpacing } from '../../store/constant';
 import makeAnimated from 'react-select/animated';
 import useCallPostAPI from "../../hooks/UseCallPostApi";
 import CreateCategory from "../category/CreateCategory";
+import CarouselCustom from "../../layout/MainLayout/CarouselCustom";
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 const animatedComponents = makeAnimated();
@@ -285,18 +280,18 @@ const CreateProduct = (props) => {
         document.getElementById(text).click()
     }
 
-    let slides = lstImage.map((item) => {
-        return (
-            <CarouselItem
-                onExiting={onExiting}
-                onExited={onExited}
-                key={item.name}
-            >
-                <img src={URL.createObjectURL(item.file)} alt={item.altText} />
-                {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption} /> */}
-            </CarouselItem>
-        );
-    });
+    // let slides = lstImage.map((item) => {
+    //     return (
+    //         <CarouselItem
+    //             onExiting={onExiting}
+    //             onExited={onExited}
+    //             key={item.name}
+    //         >
+    //             <img src={URL.createObjectURL(item.file)} alt={item.altText} />
+    //             {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption} /> */}
+    //         </CarouselItem>
+    //     );
+    // });
 
     //_____________________________________________________________________________
 
@@ -427,21 +422,7 @@ const CreateProduct = (props) => {
                                 </Grid>
                                 <Grid item md={12}>
                                     {lstImage.length >= 1 &&
-                                        <Carousel
-                                            activeIndex={activeIndex}
-                                            next={next}
-                                            previous={previous}
-                                            style={{
-                                                border: "1px solid",
-                                                marginTop: "1%",
-                                                marginBottom: "2%"
-                                            }}
-                                        >
-                                            <CarouselIndicators items={lstImage} activeIndex={activeIndex} onClickHandler={goToIndex} />
-                                            {slides}
-                                            <CarouselControl direction="prev" directionText="Previous" onClickHandler={previous} />
-                                            <CarouselControl direction="next" directionText="Next" onClickHandler={next} />
-                                        </Carousel>
+                                        <CarouselCustom items={lstImage} />
                                     }
                                 </Grid>
                             </Grid>
