@@ -1,12 +1,12 @@
 import React from 'react';
 import PerfectScrollbar from 'react-perfect-scrollbar';
-import {Drawer, Hidden, makeStyles, useMediaQuery, useTheme} from '@material-ui/core';
+import { Drawer, Hidden, makeStyles, useMediaQuery, useTheme } from '@material-ui/core';
 
 import MenuList from './MenuList';
 
 import LogoSection from '../LogoSection';
 
-import {drawerWidth} from './../../../store/constant';
+import { drawerWidth } from './../../../store/constant';
 import UpgradePlanCard from '../../../ui-component/cards/UpgradePlanCard';
 
 const useStyles = makeStyles((theme) => ({
@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Sidebar = (props) => {
-    const {drawerOpen, drawerToggle, window} = props;
+    const { drawerOpen, drawerToggle, window } = props;
     const classes = useStyles();
     const theme = useTheme();
     const matchUpMd = useMediaQuery(theme.breakpoints.up('md'));
@@ -56,7 +56,7 @@ const Sidebar = (props) => {
             </Hidden>
             <PerfectScrollbar className={classes.ScrollHeight}>
                 <MenuList />
-                <UpgradePlanCard/>
+                <UpgradePlanCard />
             </PerfectScrollbar>
         </React.Fragment>
     );
@@ -74,7 +74,7 @@ const Sidebar = (props) => {
                 classes={{
                     paper: classes.drawerPaper
                 }}
-                ModalProps={{keepMounted: true}}
+                ModalProps={{ keepMounted: true }}
                 color="inherit"
             >
                 {drawer}

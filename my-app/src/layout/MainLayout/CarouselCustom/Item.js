@@ -12,7 +12,7 @@ export default function Item({ item }) {
                     left: 0,
                     borderRadius: "5%",
                 }}
-                src={URL.createObjectURL(item.file)} />
+                src={!item.id ? URL.createObjectURL(item.file) : item.file} />
         </Paper>
     )
 }

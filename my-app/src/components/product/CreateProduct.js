@@ -1,20 +1,19 @@
 import { React, useState, useEffect } from "react";
 import {
     Dialog, DialogActions, DialogContent, DialogTitle
-    , Button, TextField, Select, FormControl,
+    , Button, TextField, Select, FormControl, IconButton,
     OutlinedInput, InputAdornment, InputLabel, Checkbox, MenuItem, ListItemText
 } from '@mui/material';
 import { Grid } from '@material-ui/core';
-
-import "../../assets/css/Carousel.css"
 import { gridSpacing } from '../../store/constant';
-import makeAnimated from 'react-select/animated';
+
+import AddIcon from '@mui/icons-material/Add';
+import "../../assets/css/Carousel.css"
 import useCallPostAPI from "../../hooks/UseCallPostApi";
 import CreateCategory from "../category/CreateCategory";
 import CarouselCustom from "../../layout/MainLayout/CarouselCustom";
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-const animatedComponents = makeAnimated();
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -40,7 +39,6 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 const CreateProduct = (props) => {
-
     const {
         isCreateModal,
         toggleModal,
@@ -50,6 +48,7 @@ const CreateProduct = (props) => {
         refreshDataCategory,
         lstCategory
     } = props;
+
     const [scroll, setScroll] = useState('paper');
     const [productData, setProductData] = useState({})
     const { callPost } = useCallPostAPI()
@@ -65,6 +64,7 @@ const CreateProduct = (props) => {
 
     const toggleCreateCateModal = () => {
         setIsCreateCateModal(!isCreateCateModal)
+        console.log("zxc");
     }
 
     //_______________________________________________________________________
@@ -208,8 +208,6 @@ const CreateProduct = (props) => {
 
     //Image_______________________________________________________________________
     const [lstImage, setImage] = useState([])
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [animating, setAnimating] = useState(false);
 
     const handleImages = (e, color, colorId) => {
         if (color !== 'imgAll') {
@@ -219,7 +217,6 @@ const CreateProduct = (props) => {
                 if (index !== -1) {
                     coppy.splice(index, 1)
                     setImage(coppy)
-                    setActiveIndex(0)
                     return
                 }
             } else {
@@ -246,53 +243,13 @@ const CreateProduct = (props) => {
                 let imageFile = e.target.files[i];
                 setImage((prev) => [...prev, { file: imageFile, fileName: imageFile.name, color: "", colorId: colorId }]);
             }
-            setActiveIndex(0)
         }
     };
-
-    const onExiting = () => {
-        setAnimating(true)
-    }
-
-    const onExited = () => {
-        setAnimating(false)
-    }
-
-    const next = () => {
-        if (animating) return;
-        const nextIndex = activeIndex === lstImage.length - 1 ? 0 : activeIndex + 1;
-        setActiveIndex(nextIndex);
-    }
-
-    const previous = () => {
-        if (animating) return;
-        const nextIndex = activeIndex === 0 ? lstImage.length - 1 : activeIndex - 1;
-        setActiveIndex(nextIndex);
-    }
-
-    const goToIndex = (newIndex) => {
-        if (animating) return;
-        setActiveIndex(newIndex);
-    }
 
     const colorImg = (color) => {
         let text = 'img' + color + 'Product'
         document.getElementById(text).click()
     }
-
-    // let slides = lstImage.map((item) => {
-    //     return (
-    //         <CarouselItem
-    //             onExiting={onExiting}
-    //             onExited={onExited}
-    //             key={item.name}
-    //         >
-    //             <img src={URL.createObjectURL(item.file)} alt={item.altText} />
-    //             {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption} /> */}
-    //         </CarouselItem>
-    //     );
-    // });
-
     //_____________________________________________________________________________
 
     return (
@@ -306,7 +263,7 @@ const CreateProduct = (props) => {
                 open={isCreateModal}
                 onClose={toggleModal}
             >
-                <DialogTitle id="scroll-dialog-title">Add</DialogTitle>
+                <DialogTitle id="scroll-dialog-title">Create Product</DialogTitle>
                 <DialogContent dividers={scroll === 'paper'} >
                     <Grid container spacing={gridSpacing} maxWidth={'md'}>
                         <Grid item md={7}>
@@ -330,7 +287,6 @@ const CreateProduct = (props) => {
                                             <FormControl fullWidth sx={{ m: 1, minWidth: 80 }}>
                                                 <InputLabel id="category">Category</InputLabel>
                                                 <Select
-
                                                     labelId="category"
                                                     id="category"
                                                     // label="Category *"
@@ -356,18 +312,16 @@ const CreateProduct = (props) => {
                                                 marginLeft: "0%",
                                             }}
                                         >
-                                            <p for="category">Add</p>
-                                            <button
-                                                type="button"
-                                                style={{
-                                                    border: "1px solid",
-                                                    width: "100%",
-                                                    borderRadius: "15px",
-                                                }}
-                                                onClick={() => toggleCreateCateModal()}
-                                            >
-                                                +
-                                            </button>
+                                            <FormControl fullWidth sx={{ mt: 4.5, marginLeft: 2.5 }}>
+                                                <IconButton sx={{
+                                                    backgroundColor: '#90CAF9',
+                                                    '&:hover': {
+                                                        backgroundColor: '#2196F3'
+                                                    }
+                                                }} onClick={() => toggleCreateCateModal()} aria-label="menu">
+                                                    <AddIcon />
+                                                </IconButton>
+                                            </FormControl>
                                         </Grid>
                                     </Grid>
 
@@ -566,11 +520,11 @@ const CreateProduct = (props) => {
                     <Button onClick={(e) => { createProduct(e) }}>Add</Button>
                     <Button onClick={() => { toggleModal(); setImage([]) }}>Cancel</Button>
                 </DialogActions>
-                {/* <CreateCategory
+                <CreateCategory
                     isCreateModel={isCreateCateModal}
                     toggleCreateModal={toggleCreateCateModal}
                     refreshData={refreshDataCategory}
-                /> */}
+                />
             </Dialog>
         </>
     )

@@ -1,14 +1,11 @@
 import React, { useState } from "react";
 import useCallPostAPI from "../../hooks/UseCallPostApi";
 import {
-    Row,
-    Col,
-    Button,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-} from "reactstrap";
+    Dialog, DialogActions, DialogContent, DialogTitle
+    , Button, TextField, FormControl
+} from '@mui/material';
+import { Grid } from '@material-ui/core';
+import { gridSpacing } from '../../store/constant';
 
 export default function CreateCategory(props) {
     const [category, setCategory] = useState({})
@@ -29,39 +26,36 @@ export default function CreateCategory(props) {
     }
 
     return (
-        <Modal isOpen={isCreateModel} toggle={() => toggleCreateModal()} centered>
-            <ModalHeader toggle={() => toggleCreateModal()}>Create Category</ModalHeader>
-            <ModalBody>
-                <Row style={{ textAlign: "center" }}>
-                    <Col md="12" style={{ margin: "auto" }}>
-                        <input value={category?.name}
-                            style={{
-                                border: "1px solid",
-                                borderRadius: "5px",
-                                marginRight: "2%"
-                            }}
-                            placeholder="Please enter Category"
-                            onChange={(e) => setCategory({ name: e.target.value })}
-                        />
-                    </Col>
-                </Row>
-            </ModalBody>
-            <ModalFooter>
-                <Button
-                    color="primary"
-                    type="submit"
-                    onClick={() => {
-                        createCategory();
-                    }}
-                >
-                    Add
-                </Button>
-                <Button color="secondary"
-                    onClick={() => toggleCreateModal()}
-                >
-                    Cancel
-                </Button>
-            </ModalFooter>
-        </Modal>
+        <Dialog
+            aria-labelledby="scroll-dialog-title"
+            aria-describedby="scroll-dialog-description"
+            maxWidth={'xs'}
+            fullWidth={true}
+            open={isCreateModel}
+            onClose={toggleCreateModal}
+        >
+            <DialogTitle id="scroll-dialog-title">Create Category</DialogTitle>
+            <DialogContent>
+                <Grid container spacing={gridSpacing} maxWidth={'md'}>
+                    <Grid item md={12}>
+                        <FormControl fullWidth sx={{ m: 1, minWidth: 80 }}>
+                            <TextField
+                                id="category"
+                                label="Please enter Category"
+                                required
+                                value={category?.name}
+                                onChange={(e) => setCategory({ name: e.target.value })}
+                            />
+                        </FormControl>
+                    </Grid>
+                </Grid>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => {
+                    createCategory();
+                }}>Add</Button>
+                <Button onClick={() => toggleCreateModal()}>Cancel</Button>
+            </DialogActions>
+        </Dialog>
     )
 }

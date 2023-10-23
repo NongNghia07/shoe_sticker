@@ -46,7 +46,7 @@ import {
     IconTools,
     IconTypography,
     IconUser,
-    IconUserCheck
+    IconUserCheck,
 } from '@tabler/icons';
 
 const icons = {
@@ -155,7 +155,14 @@ const menuItems = {
 
                     ]
                 },
-
+                {
+                    id: 'manage-product',
+                    title: <FormattedMessage id="Product" />,
+                    type: 'item',
+                    url: '/admin/product',
+                    icon: icons['IconTypography'],
+                    breadcrumbs: false
+                },
 
 
             ]

@@ -38,16 +38,6 @@ const Product = (props) => {
     const [product, setProduct] = useState({})
     const [lstCategory, setLstCategory] = useState([]);
 
-
-    useEffect(() => {
-        loadData()
-        refreshDataCategory()
-    }, [])
-
-    useEffect(() => {
-        setupData(data)
-    }, [data])
-
     useEffect(() => {
         setImageUrls([])
         listAll(imagesListRef).then((response) => {
@@ -59,6 +49,15 @@ const Product = (props) => {
             });
         });
     }, [])
+
+    useEffect(() => {
+        loadData()
+        refreshDataCategory()
+    }, [imageUrls])
+
+    useEffect(() => {
+        setupData(data)
+    }, [data])
 
     const loadData = () => {
         const getData = (data) => {
@@ -132,12 +131,13 @@ const Product = (props) => {
         data.map(p => {
             let images = []
             p.listMediaDTO.map(img => {
+                if (imageUrls.length < 1) return
                 if (imageUrls.map((image) => image.nameImg).includes(img.url)) {
                     let base = imageUrls.filter((o) => o.nameImg == img.url)
-                    images.push({ ...img, urlbase: base[0].url })
+                    images.push({ ...img, file: base[0].url })
                 }
             })
-            fakeData.push({ id: p.id, name: p.name, quantity: p.quantity, category: p.categoryId })
+            fakeData.push({ id: p.id, name: p.name, quantity: p.quantity, category: p.categoryId, img: images })
         })
         setLstProductData(fakeData)
     }
@@ -159,11 +159,9 @@ const Product = (props) => {
         setIsDeleteModal(!isDeleteModal);
         if (!isDeleteModal) {
             setProduct({ id: id })
-            console.log(product);
             return
         }
         setProduct({})
-        console.log(product);
     };
 
     const sortDataAscending = (data) => {
@@ -209,21 +207,19 @@ const Product = (props) => {
 
     return (
         <>
-            <div style={{ width: "90%", margin: "auto" }}>
-                <Tables
-                    title={"Product"}
-                    list={lstproductData}
-                    colNames={[{ title: "Id", id: "id" }, { title: "name", id: "aa" }, { title: "quantity", id: "quantity" }, { title: "category", id: "categoryId" }]}
-                    // pageable={pageable}
-                    // totalPage={totalPageAndNumber.totalPage}
-                    onDetail={onDetail}
-                    onCreate={onCreate}
-                    onUpdate={onUpdate}
-                    onDelete={onDelete}
-                    sortDataAscending={sortDataAscending}
-                    sortDataGraduallySmaller={sortDataGraduallySmaller}
-                />
-            </div>
+            <Tables
+                title={"Product"}
+                list={lstproductData}
+                colNames={[{ title: "Id", id: "id" }, { title: "name", id: "aa" }, { title: "quantity", id: "quantity" }, { title: "category", id: "categoryId" }, { title: "Image" }]}
+                // pageable={pageable}
+                // totalPage={totalPageAndNumber.totalPage}
+                onDetail={onDetail}
+                onCreate={onCreate}
+                onUpdate={onUpdate}
+                onDelete={onDelete}
+                sortDataAscending={sortDataAscending}
+                sortDataGraduallySmaller={sortDataGraduallySmaller}
+            />
             <CreateProduct
                 isCreateModal={isCreateModal}
                 toggleModal={onCreate}

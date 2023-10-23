@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-// import "../assets/css/Carousel.css"
 import Paper from '@mui/material/Paper'
 import Table from '@mui/material/Table'
 import TableRow from '@mui/material/TableRow'
@@ -13,6 +12,7 @@ import {
     makeStyles,
 } from '@material-ui/core';
 
+import CarouselCustom from "../layout/MainLayout/CarouselCustom";
 const useStyles = makeStyles((theme) => ({
     createButton: {
         fontSize: '1rem',
@@ -75,7 +75,6 @@ const Tables = (props) => {
         sortDataAscending,
         sortDataGraduallySmaller
     } = props;
-
     const [isSort, setIsSort] = useState(false)
 
     const sortData = (id) => {
@@ -103,7 +102,7 @@ const Tables = (props) => {
     return (
         <>
             <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-                <TableContainer sx={{ maxHeight: 440 }}>
+                <TableContainer sx={{ maxHeight: 440 }} className="table-container">
                     <Table title aria-label={title}>
                         <TableHead>
                             <TableRow>
@@ -146,6 +145,18 @@ const Tables = (props) => {
                                                             onClick={() => onDetail(id)}
                                                         >
                                                             {value}
+                                                        </TableCell>
+                                                    )
+                                                } else {
+                                                    return (
+                                                        <TableCell
+                                                            sx={{ width: 230 }}
+                                                            key={index2}
+                                                            onClick={() => onDetail(id)}
+                                                        >
+                                                            {value.length > 0 &&
+                                                                <CarouselCustom items={value} />
+                                                            }
                                                         </TableCell>
                                                     )
                                                 }

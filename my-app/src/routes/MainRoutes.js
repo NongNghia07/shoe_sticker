@@ -6,7 +6,7 @@ import MainLayout from './../layout/MainLayout';
 
 const DashboardDefault = lazy(() => import('../views/dashboard/Default'));
 
-const TableBasic = lazy(() => import('../views/forms/tables/TableBasic'));
+const product = lazy(() => import('../views/pages/manage/product'));
 const TableDense = lazy(() => import('../views/forms/tables/TableDense'));
 
 const UtilsTypography = lazy(() => import('../views/utilities/typography'));
@@ -25,7 +25,7 @@ const MainRoutes = () => {
             path={[
                 '/dashboard/default',
 
-                '/tables/tbl-basic',
+                '/admin/product',
                 '/tables/tbl-dense',
 
                 '/utils/util-typography',
@@ -41,7 +41,7 @@ const MainRoutes = () => {
                 <Switch location={location} key={location.pathname}>
                     <Route path="/dashboard/default" component={DashboardDefault} />
 
-                    <Route path="/tables/tbl-basic" component={TableBasic} />
+                    <Route path="/admin/product" component={product} />
                     <Route path="/tables/tbl-dense" component={TableDense} />
 
                     <Route path="/utils/util-typography" component={UtilsTypography} />
