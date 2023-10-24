@@ -4,9 +4,17 @@ import Item from "./Item";
 
 export default function CarouselCustom(props) {
     const { items } = props
-    return (
-        <Carousel animation='slide'>
-            {items.map((item, i) => <Item key={item.id} item={item} />)}
-        </Carousel>
-    )
+    if (Array.isArray(items)) {
+        return (
+            <Carousel duration={100}>
+                {items.map(item => <Item key={item.id} item={item} />)}
+            </Carousel>
+        )
+    } else {
+        return (
+            <Carousel duration={100}>
+                <Item item={items} />
+            </Carousel>
+        )
+    }
 }

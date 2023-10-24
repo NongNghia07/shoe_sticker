@@ -7,7 +7,7 @@ import Product from '../../../../components/product/Product'
 import SearchSection from '../../../../layout/MainLayout/Header/SearchSection';
 
 
-export default function TableBasic() {
+export default function ViewProduct() {
     const [data, setData] = useState([])
 
     const getDataSearch = (data) => {

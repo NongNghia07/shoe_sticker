@@ -27,7 +27,7 @@ const useCallGetAPI = () => {
                 }
                 console.log(e.response);
             }
-            else if (axios.isCancel(e)) {
+            else if (axios?.isCancel(e)) {
                 console.log("Cancelled--> " + e);
             } else {
                 console.log(e);

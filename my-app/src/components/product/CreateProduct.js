@@ -147,7 +147,7 @@ const CreateProduct = (props) => {
             })
             callPost(`http://localhost:8080/api/media/createAll`, lstMedia);
             handleUpdateImages(lstImage)
-            toggleModal()
+            onClose()
         }
 
         // create productDetail
@@ -246,6 +246,11 @@ const CreateProduct = (props) => {
         }
     };
 
+    const onClose = () => {
+        setImage([])
+        toggleModal()
+    }
+
     const colorImg = (color) => {
         let text = 'img' + color + 'Product'
         document.getElementById(text).click()
@@ -261,7 +266,7 @@ const CreateProduct = (props) => {
                 maxWidth={'md'}
                 fullWidth={true}
                 open={isCreateModal}
-                onClose={toggleModal}
+                onClose={onClose}
             >
                 <DialogTitle id="scroll-dialog-title">Create Product</DialogTitle>
                 <DialogContent dividers={scroll === 'paper'} >
@@ -324,7 +329,6 @@ const CreateProduct = (props) => {
                                             </FormControl>
                                         </Grid>
                                     </Grid>
-
                                 </Grid>
                             </Grid>
                             <Grid item container spacing={gridSpacing}>
@@ -365,7 +369,7 @@ const CreateProduct = (props) => {
                             </Grid>
                         </Grid>
                         <Grid item md={5}>
-                            <Grid item container spacing={gridSpacing}>
+                            <Grid item container spacing={1}>
                                 <Grid item md={12}>
                                     <FormControl fullWidth sx={{ m: 1, minWidth: 80 }}>
                                         <Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
@@ -375,9 +379,11 @@ const CreateProduct = (props) => {
                                     </FormControl>
                                 </Grid>
                                 <Grid item md={12}>
-                                    {lstImage.length >= 1 &&
-                                        <CarouselCustom items={lstImage} />
-                                    }
+                                    <FormControl fullWidth sx={{ marginLeft: 1, marginRight: 1, minWidth: 80 }}>
+                                        {lstImage.length >= 1 &&
+                                            <CarouselCustom items={lstImage} />
+                                        }
+                                    </FormControl>
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -518,7 +524,7 @@ const CreateProduct = (props) => {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={(e) => { createProduct(e) }}>Add</Button>
-                    <Button onClick={() => { toggleModal(); setImage([]) }}>Cancel</Button>
+                    <Button onClick={() => onClose()}>Cancel</Button>
                 </DialogActions>
                 <CreateCategory
                     isCreateModel={isCreateCateModal}

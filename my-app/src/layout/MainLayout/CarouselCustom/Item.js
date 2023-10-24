@@ -1,8 +1,8 @@
-import { Paper, Button } from "@mui/material";
+import { Paper } from "@mui/material";
 
 export default function Item({ item }) {
     return (
-        <Paper className="Paper-Carousel">
+        <Paper>
             <img
                 style={{
                     width: "100%",
@@ -12,7 +12,7 @@ export default function Item({ item }) {
                     left: 0,
                     borderRadius: "5%",
                 }}
-                src={!item.id ? URL.createObjectURL(item.file) : item.file} />
+                src={typeof item.file == 'object' ? URL.createObjectURL(item.file) : item.file} />
         </Paper>
     )
 }

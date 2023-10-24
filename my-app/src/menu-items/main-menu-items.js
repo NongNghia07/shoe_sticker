@@ -47,6 +47,7 @@ import {
     IconTypography,
     IconUser,
     IconUserCheck,
+    IconShoe
 } from '@tabler/icons';
 
 const icons = {
@@ -96,7 +97,8 @@ const icons = {
     IconBellRinging: IconBellRinging,
     IconBorderAll: IconBorderAll,
     IconChartCandle: IconChartCandle,
-    IconBasket: IconBasket
+    IconBasket: IconBasket,
+    IconShoe: IconShoe
 };
 
 const menuItems = {
@@ -160,7 +162,7 @@ const menuItems = {
                     title: <FormattedMessage id="Product" />,
                     type: 'item',
                     url: '/admin/product',
-                    icon: icons['IconTypography'],
+                    icon: icons['IconShoe'],
                     breadcrumbs: false
                 },
 

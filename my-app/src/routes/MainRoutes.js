@@ -4,9 +4,12 @@ import { Route, Switch, useLocation } from 'react-router-dom';
 import MainLayout from './../layout/MainLayout';
 
 
+
 const DashboardDefault = lazy(() => import('../views/dashboard/Default'));
 
-const product = lazy(() => import('../views/pages/manage/product'));
+const Product = lazy(() => import('../views/pages/manage/product'));
+const ProductDetail = lazy(() => import('../views/pages/manage/product/productDetail'));
+
 const TableDense = lazy(() => import('../views/forms/tables/TableDense'));
 
 const UtilsTypography = lazy(() => import('../views/utilities/typography'));
@@ -26,6 +29,7 @@ const MainRoutes = () => {
                 '/dashboard/default',
 
                 '/admin/product',
+                '/admin/product-detail/:id',
                 '/tables/tbl-dense',
 
                 '/utils/util-typography',
@@ -38,10 +42,11 @@ const MainRoutes = () => {
             ]}
         >
             <MainLayout showBreadcrumb={true}>
-                <Switch location={location} key={location.pathname}>
+                <Switch >
                     <Route path="/dashboard/default" component={DashboardDefault} />
 
-                    <Route path="/admin/product" component={product} />
+                    <Route path="/admin/product" component={Product} />
+                    <Route path="/admin/product-detail/:id" component={ProductDetail} />
                     <Route path="/tables/tbl-dense" component={TableDense} />
 
                     <Route path="/utils/util-typography" component={UtilsTypography} />

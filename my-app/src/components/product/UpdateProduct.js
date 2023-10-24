@@ -1,28 +1,40 @@
 import { React, useState, useEffect } from "react";
 import {
-    Button,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    FormGroup,
-    Label,
-    Row,
-    Col,
-    Form,
-    Carousel,
-    CarouselItem,
-    CarouselControl,
-    CarouselIndicators,
-} from "reactstrap";
-import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
+    Dialog, DialogActions, DialogContent, DialogTitle
+    , Button, TextField, Select, FormControl, IconButton,
+    OutlinedInput, InputAdornment, InputLabel, Checkbox, MenuItem, ListItemText
+} from '@mui/material';
+import { Grid } from '@material-ui/core';
+import { gridSpacing } from '../../store/constant';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import AddIcon from '@mui/icons-material/Add';
 import useCallPostAPI from "../../hooks/UseCallPostApi";
 import CreateCategory from "../category/CreateCategory";
-import "../../assets/css/Carousel.css"
+import CarouselCustom from "../../layout/MainLayout/CarouselCustom";
+import { styled } from '@mui/material/styles';
 
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
 
-const animatedComponents = makeAnimated();
+const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+});
 
 const UpdateProduct = (props) => {
     const {
@@ -40,7 +52,8 @@ const UpdateProduct = (props) => {
     } = props;
     const [productData, setProductData] = useState({})
     const [lstProductDetail, setLstProductDetail] = useState()
-    let { data: responseData, isError, isLoading, callPost } = useCallPostAPI()
+    let { callPost } = useCallPostAPI()
+    const [scroll, setScroll] = useState('paper');
     let userId = null
     //Category_______________________________________________________________
     const [isCreateCateModal, setIsCreateCateModal] = useState(false)
@@ -63,7 +76,7 @@ const UpdateProduct = (props) => {
         lstMediasProduct.map(p => {
             if (imageUrls.map((image) => image.nameImg).includes(p.url)) {
                 let base = imageUrls.filter((o) => o.nameImg == p.url)
-                arr.push({ url: base[0].url, file: "", fileName: p.url, color: p.color, colorId: p.colorId })
+                arr.push({ file: base[0].url, fileName: p.url, color: p.color, colorId: p.colorId })
             }
         })
         setImage([...arr])
@@ -220,8 +233,6 @@ const UpdateProduct = (props) => {
 
     //Image_______________________________________________________________________
     const [lstImage, setImage] = useState([])
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [animating, setAnimating] = useState(false);
 
     const handleImages = (e, color, colorId) => {
         if (color !== 'imgAll') {
@@ -231,7 +242,6 @@ const UpdateProduct = (props) => {
                 if (index !== -1) {
                     coppy.splice(index, 1)
                     setImage(coppy)
-                    setActiveIndex(0)
                     return
                 }
             } else {
@@ -258,318 +268,211 @@ const UpdateProduct = (props) => {
                 let imageFile = e.target.files[i];
                 setImage((prev) => [...prev, { file: imageFile, fileName: imageFile.name, color: "", colorId: colorId }]);
             }
-            setActiveIndex(0)
         }
     };
-
-    const onExiting = () => {
-        setAnimating(true)
-    }
-
-    const onExited = () => {
-        setAnimating(false)
-    }
-
-    const next = () => {
-        if (animating) return;
-        const nextIndex = activeIndex === lstImage.length - 1 ? 0 : activeIndex + 1;
-        setActiveIndex(nextIndex);
-    }
-
-    const previous = () => {
-        if (animating) return;
-        const nextIndex = activeIndex === 0 ? lstImage.length - 1 : activeIndex - 1;
-        setActiveIndex(nextIndex);
-    }
-
-    const goToIndex = (newIndex) => {
-        if (animating) return;
-        setActiveIndex(newIndex);
-    }
 
     const colorImg = (color) => {
         let text = 'img' + color + 'Product'
         document.getElementById(text).click()
     }
 
-    // const slidesImg = (lstImage) => {
-    let slides = lstImage.map((item) => {
-        if (item.file != "") {
-            return (
-                <CarouselItem
-                    onExiting={onExiting}
-                    onExited={onExited}
-                    key={item.name}
-                >
-                    <img src={URL.createObjectURL(item.file)} alt={item.altText} />
-                    {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption} /> */}
-                </CarouselItem>
-            );
-        } else {
-            return (
-                <CarouselItem
-                    onExiting={onExiting}
-                    onExited={onExited}
-                    key={item.name}
-                >
-                    <img src={item.url} alt={item.altText} />
-                    {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption} /> */}
-                </CarouselItem>
-            );
-        }
-    });
-    //     return slides
-    // }
-
-
     //_____________________________________________________________________________
 
     return (
         <>
-            <Modal isOpen={isUpdateModal} toggle={() => toggleModal()} size="xl" centered>
-                <Form
-                // onSubmit={handleSubmit(createProduct)} innerRef={ref}
-                >
-                    <ModalHeader toggle={() => toggleModal()}>Add</ModalHeader>
-                    <ModalBody>
-                        <Row>
-                            <Col md={7}>
-                                <Row>
-                                    <Col md={6}>
-                                        <FormGroup>
-                                            <Label for="name">Name</Label>
-                                            <div>
-                                                <input
-                                                    style={{
-                                                        border: "1px solid",
-                                                        width: "100%",
-                                                        borderRadius: "5px",
-                                                    }}
-                                                    id="name"
-                                                    name="name"
-                                                    placeholder=""
-                                                    type="text"
-                                                    value={productData.name}
-                                                    onChange={(e) =>
-                                                        handleOnchangeInput(e, "name")
-                                                    }
-                                                />
-                                                {/* {check.name && check.name.length > 0 && (
-                                            <p className="checkError">{check.name}</p>
-                                        )} */}
-                                            </div>
-                                        </FormGroup>
-                                    </Col>
-                                    <Col md={6}>
-                                        <Row>
-                                            <Col md={10}>
-                                                <FormGroup>
-                                                    <Label for="namecate">Category</Label>
-                                                    <div>
-                                                        <select
-                                                            style={{
-                                                                border: "1px solid",
-                                                                width: "100%",
-                                                                borderRadius: "5px",
-                                                            }}
-                                                            id="namecate"
-                                                            name="namecate"
-                                                            placeholder=""
-                                                            type="select"
-                                                            onChange={(event) =>
-                                                                handleOnchangeInput(event, "category")
-                                                            }
-                                                        >
-                                                            <option value="" disabled selected>
-                                                                Chọn loại sản phẩm
-                                                            </option>
-                                                            {lstCategory.map((item) => {
-                                                                if (item.value === product.categoryId) {
-                                                                    return (
-                                                                        <option key={item.value} selected value={item.value}>
-                                                                            {item.label}
-                                                                        </option>
-                                                                    );
-                                                                } else {
-                                                                    return (
-                                                                        <option key={item.value} value={item.value}>
-                                                                            {item.label}
-                                                                        </option>
-                                                                    );
-                                                                }
-                                                            })}
-                                                        </select>
-                                                        {/* {check.categoryId &&
-                                                    check.categoryId.length > 0 && (
-                                                        <p className="checkError">{check.categoryId}</p>
-                                                    )} */}
-                                                    </div>
-                                                </FormGroup>
-                                            </Col>
-                                            <Col
+            <Dialog
+                aria-labelledby="scroll-dialog-title"
+                aria-describedby="scroll-dialog-description"
+                scroll={scroll}
+                maxWidth={'md'}
+                fullWidth={true}
+                open={isUpdateModal}
+                onClose={toggleModal}
+            >
+                <DialogTitle id="scroll-dialog-title">Update Product</DialogTitle>
+                <DialogContent dividers={scroll === 'paper'} >
+                    {lstColorSelected.length > 0 &&
+                        <Grid container spacing={gridSpacing} maxWidth={'md'}>
+                            <Grid item md={7}>
+                                <Grid item container spacing={gridSpacing}>
+                                    <Grid item md={6}>
+                                        <FormControl fullWidth sx={{ m: 1, minWidth: 80 }}>
+                                            <TextField
+                                                id="name"
+                                                label="Name"
+                                                required
+                                                value={productData.name}
+                                                onChange={(e) =>
+                                                    handleOnchangeInput(e, "name")
+                                                }
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item md={6}>
+                                        <Grid item container spacing={gridSpacing}>
+                                            <Grid item md={10}>
+                                                <FormControl fullWidth sx={{ m: 1, minWidth: 80 }}>
+                                                    <InputLabel id="category">Category</InputLabel>
+                                                    <Select
+                                                        labelId="category"
+                                                        id="category"
+                                                        defaultValue={product.categoryId}
+                                                        onChange={(event) =>
+                                                            handleOnchangeInput(event, "category")
+                                                        }
+                                                    >
+                                                        {lstCategory.map((item) => {
+                                                            return (
+                                                                <MenuItem value={item.value}>{item.label}</MenuItem>
+                                                            );
+                                                        })}
+                                                    </Select>
+                                                </FormControl>
+                                            </Grid>
+                                            <Grid item
                                                 md={2}
                                                 style={{
                                                     padding: "0px 12px 0px 0px",
                                                     marginLeft: "0%",
                                                 }}
                                             >
-                                                <Label for="category">Add</Label>
-                                                <button
-                                                    type="button"
-                                                    style={{
-                                                        border: "1px solid",
-                                                        width: "100%",
-                                                        borderRadius: "15px",
-                                                    }}
-                                                    onClick={() => toggleCreateCateModal()}
-                                                >
-                                                    +
-                                                </button>
-                                            </Col>
-                                        </Row>
-
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Col md={12}>
-                                        <FormGroup>
-                                            <Label for="color">Color</Label>
+                                                <FormControl fullWidth sx={{ mt: 4.5, marginLeft: 2.5 }}>
+                                                    <IconButton sx={{
+                                                        backgroundColor: '#90CAF9',
+                                                        '&:hover': {
+                                                            backgroundColor: '#2196F3'
+                                                        }
+                                                    }} onClick={() => toggleCreateCateModal()} aria-label="menu">
+                                                        <AddIcon />
+                                                    </IconButton>
+                                                </FormControl>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid item container spacing={gridSpacing}>
+                                    <Grid item md={12}>
+                                        <FormControl fullWidth sx={{ m: 1, minWidth: 80 }}>
+                                            <InputLabel id="multiple-checkbox-label">Color</InputLabel>
                                             <Select
-                                                closeMenuOnSelect={false}
-                                                components={animatedComponents}
-                                                isMulti
-                                                options={lstColor}
-                                                value={lstColorSelected}
-                                                onChange={(event) => handleOnChangeColor(event)}
-                                            />
-                                        </FormGroup>
-                                    </Col>
-                                    <Col md={12}>
-                                        <FormGroup>
-                                            <Label for="description">Mô tả</Label>
-                                            <div>
-                                                <textarea
-                                                    style={{
-
-                                                        border: "1px solid",
-                                                        width: "100%",
-                                                        borderRadius: "5px",
-                                                        height: "100px",
-                                                    }}
-                                                    id="description"
-                                                    name="description"
-                                                // onChange={(event) => {
-                                                //     handleOnchangeinput(event);
-                                                // }}
-                                                />
-                                                {/* {check.description && check.description.length > 0 && (
-                                            <p className="checkError">{check.description}</p>
-                                        )} */}
-                                            </div>
-                                        </FormGroup>
-                                    </Col>
-                                </Row>
-
-                            </Col>
-                            <Col md={5}>
-                                <Row>
-                                    <Col md={12}>
-                                        <Label>Ảnh</Label>
-                                        <div>
-                                            <input
-                                                type="file"
-                                                id="fileImg"
+                                                labelId="multiple-checkbox-label"
+                                                id="multiple-checkbox"
                                                 multiple
-                                                onChange={(e) => { handleImages(e, "imgAll") }}
+                                                value={lstColorSelected.map((color) => color.label)}
+                                                onChange={(event) => handleOnChangeColor(event)}
+                                                input={<OutlinedInput label="Tag" />}
+                                                renderValue={(selected) => selected.join(', ')}
+                                                MenuProps={MenuProps}
+                                            >
+                                                {lstColor.length > 0 && lstColor.map((p) => (
+                                                    <MenuItem key={p.value} value={p}>
+                                                        <Checkbox checked={lstColorSelected.map(o => o.value).indexOf(p.value) > -1} />
+                                                        <ListItemText primary={p.label} />
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item md={12}>
+                                        <FormControl fullWidth sx={{ m: 1, minWidth: 80 }}>
+                                            <TextField
+                                                id="description"
+                                                name="description"
+                                                label="Mô tả"
+                                                multiline
+                                                maxRows={4}
                                             />
+                                        </FormControl>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                            <Grid item md={5}>
+                                <Grid item container spacing={1}>
+                                    <Grid item md={12}>
+                                        <FormControl fullWidth sx={{ m: 1, minWidth: 80 }}>
+                                            <Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
+                                                Upload file
+                                                <VisuallyHiddenInput multiple onChange={(e) => { handleImages(e, "imgAll") }} type="file" />
+                                            </Button>
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item md={12}>
+                                        <FormControl fullWidth sx={{ marginLeft: 1, marginRight: 1, minWidth: 80 }}>
                                             {lstImage.length >= 1 &&
-                                                <Carousel
-                                                    activeIndex={activeIndex}
-                                                    next={next}
-                                                    previous={previous}
-                                                    style={{
-                                                        border: "1px solid",
-                                                        marginTop: "1%",
-                                                        marginBottom: "2%",
-                                                    }}
-                                                >
-                                                    <CarouselIndicators items={lstImage} activeIndex={activeIndex} onClickHandler={goToIndex} />
-                                                    {slides}
-                                                    <CarouselControl direction="prev" directionText="Previous" onClickHandler={previous} />
-                                                    <CarouselControl direction="next" directionText="Next" onClickHandler={next} />
-                                                </Carousel>
+                                                <CarouselCustom items={lstImage} />
                                             }
-                                        </div>
-                                    </Col>
-                                </Row>
-                            </Col>
+                                        </FormControl>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
                             {lstColorSelected.length >= 1 && (
-                                <Col md={12} >
-                                    <Row >
+                                <Grid item md={12} >
+                                    <Grid item container spacing={gridSpacing}>
                                         {lstColorSelected.map((item) => {
                                             let arrSize = [...item.sizes]
                                             return (
                                                 <>
-                                                    <Col md={8} style={{ borderTop: "1px solid #e5e5e5" }}>
-                                                        <Row>
-                                                            <p>{item.label}</p>
-                                                            <Col md={9} >
-                                                                <FormGroup>
-                                                                    <Label for="description">Size</Label>
+                                                    <Grid item md={8} style={{ borderTop: "1px solid #e5e5e5" }}>
+                                                        <Grid item container spacing={gridSpacing}>
+                                                            <Grid item md={8} >
+                                                                <FormControl fullWidth sx={{ m: 1, minWidth: 80 }}>
+                                                                    <InputLabel id="Size">Size {item.label}</InputLabel>
                                                                     <Select
-                                                                        closeMenuOnSelect={false}
-                                                                        components={animatedComponents}
-                                                                        isMulti
-                                                                        options={lstSize}
-                                                                        value={arrSize}
+                                                                        labelId="Size"
+                                                                        id="Size"
+                                                                        multiple
+                                                                        value={arrSize.map((size) => size.label)}
                                                                         onChange={(event) => handleOnChangeSize(event, item.label)}
+                                                                        input={<OutlinedInput label="Tag" />}
+                                                                        renderValue={(selected) => selected.join(', ')}
+                                                                        MenuProps={MenuProps}
+                                                                    >
+                                                                        {lstSize.map((p) => (
+                                                                            <MenuItem key={p.value} value={p}>
+                                                                                <Checkbox checked={arrSize.map(o => o.value).indexOf(p.value) > -1} />
+                                                                                <ListItemText primary={p.label} />
+                                                                            </MenuItem>
+                                                                        ))}
+                                                                    </Select>
+                                                                </FormControl>
+                                                            </Grid>
+                                                            <Grid item md={4} >
+                                                                <FormControl fullWidth sx={{ m: 1, minWidth: 80 }}>
+                                                                    <InputLabel htmlFor="price">Price</InputLabel>
+                                                                    <OutlinedInput
+                                                                        id="price"
+                                                                        startAdornment={<InputAdornment position="start">VNĐ</InputAdornment>}
+                                                                        label="price"
+                                                                        value={item.price}
+                                                                        onChange={(e) => handleOnchangeInput(e, 'price', item.label)}
                                                                     />
-                                                                </FormGroup>
-                                                            </Col>
-                                                            <Col md={3} >
-                                                                <FormGroup>
-                                                                    <Label for="description">Price</Label>
-                                                                    <div>
-                                                                        <input
-                                                                            style={{
-                                                                                border: "1px solid",
-                                                                                width: "100%",
-                                                                                borderRadius: "5px",
-                                                                            }}
-                                                                            value={item.price}
-                                                                            onChange={(e) => handleOnchangeInput(e, 'price', item.label)}
-                                                                        />
-                                                                    </div>
-                                                                </FormGroup>
-                                                            </Col>
+                                                                </FormControl>
+                                                            </Grid>
                                                             {item?.sizes?.length >= 1 &&
                                                                 item.sizes.map(size => {
                                                                     return (
-                                                                        <Col md={2} key={size.value}>
-                                                                            <FormGroup>
-                                                                                <Label for="description">Size: {size.label}</Label>
-                                                                                <div>
-                                                                                    <input
-                                                                                        style={{
-                                                                                            border: "1px solid",
-                                                                                            width: "100%",
-                                                                                            borderRadius: "5px",
-                                                                                        }}
-                                                                                        value={size.quantity}
-                                                                                        placeholder="Quantity"
-                                                                                        onChange={(e) => handleOnchangeInput(e, 'quantity', item.label, size.label)}
-                                                                                    />
-                                                                                </div>
-                                                                            </FormGroup>
-                                                                        </Col>
+                                                                        <Grid item md={3} key={size.value}>
+                                                                            <FormControl fullWidth sx={{ m: 1, minWidth: 80 }}>
+                                                                                <TextField
+                                                                                    id="outlined-number"
+                                                                                    label={"Quantity Size:" + size.label}
+                                                                                    type="Number"
+                                                                                    InputLabelProps={{
+                                                                                        shrink: true,
+                                                                                    }}
+                                                                                    value={size.quantity}
+                                                                                    onChange={(e) => handleOnchangeInput(e, 'quantity', item.label, size.label)}
+                                                                                />
+                                                                            </FormControl>
+                                                                        </Grid>
                                                                     )
                                                                 })}
-                                                        </Row>
-                                                    </Col>
-                                                    <Col md={4} style={{ borderTop: "1px solid #e5e5e5" }}>
-                                                        <Row>
-                                                            <Col md={12}>
-                                                                <FormGroup>
+                                                        </Grid>
+                                                    </Grid>
+                                                    <Grid item md={4} style={{ borderTop: "1px solid #e5e5e5" }}>
+                                                        <Grid item container spacing={gridSpacing}>
+                                                            <Grid item md={12}>
+                                                                <FormControl fullWidth sx={{ m: 1, minWidth: 80 }}>
                                                                     <input
                                                                         type="file"
                                                                         id={`img${item.label}Product`}
@@ -584,7 +487,7 @@ const UpdateProduct = (props) => {
                                                                     {lstImage.length >= 1 && lstImage.map(p => p.color).includes(item.label) &&
                                                                         lstImage.map(img => {
                                                                             if (img.color == item.label) {
-                                                                                if (img.file != "") {
+                                                                                if (typeof img.file == 'object') {
                                                                                     return (
                                                                                         <img src={URL.createObjectURL(img.file)}
                                                                                             width="100%"
@@ -600,7 +503,7 @@ const UpdateProduct = (props) => {
                                                                                     )
                                                                                 } else {
                                                                                     return (
-                                                                                        <img src={img.url}
+                                                                                        <img src={img.file}
                                                                                             width="100%"
                                                                                             height="242rem"
                                                                                             style={{
@@ -642,42 +545,30 @@ const UpdateProduct = (props) => {
                                                                             onClick={(e) => colorImg(item.label)}
                                                                         />
                                                                     }
-                                                                </FormGroup>
-                                                            </Col>
-                                                        </Row>
-                                                    </Col>
+                                                                </FormControl>
+                                                            </Grid>
+                                                        </Grid>
+                                                    </Grid>
                                                 </>
                                             );
                                         }
                                         )}
-                                    </Row>
-                                </Col>
+                                    </Grid>
+                                </Grid>
                             )}
-                        </Row>
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button
-                            color="primary"
-                            type="submit"
-                            onClick={(e) => {
-                                createProduct(e);
-                            }}
-                        >
-                            Thêm Mới
-                        </Button>
-                        <Button color="secondary"
-                            onClick={() => toggleModal()}
-                        >
-                            Hủy
-                        </Button>
-                    </ModalFooter>
-                </Form>
+                        </Grid>
+                    }
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={(e) => { createProduct(e) }}>Add</Button>
+                    <Button onClick={() => { toggleModal(); setImage([]) }}>Cancel</Button>
+                </DialogActions>
                 <CreateCategory
                     isCreateModel={isCreateCateModal}
                     toggleCreateModal={toggleCreateCateModal}
                     refreshData={refreshDataCategory}
                 />
-            </Modal>
+            </Dialog>
         </>
     )
 }

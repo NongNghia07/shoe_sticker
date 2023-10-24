@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import {
     ref,
     getDownloadURL,
@@ -9,16 +8,31 @@ import { storage } from "../../Firebase";
 import {
     useParams
 } from "react-router-dom";
-import {
-    Container,
-    Row,
-    Col,
-    Carousel,
-    CarouselItem,
-    CarouselControl,
-    CarouselIndicators,
-} from "reactstrap";
 import useCallGetAPI from "../../hooks/UseCallGetApi";
+import CarouselCustom from "../../layout/MainLayout/CarouselCustom";
+import { Grid } from '@material-ui/core';
+import { gridSpacing } from '../../store/constant';
+import {
+    Typography, ToggleButton, ToggleButtonGroup, FormControl
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+import "../../assets/css/Carousel.css"
+
+const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
+    '& .MuiToggleButtonGroup-grouped': {
+        margin: theme.spacing(0.5),
+        border: theme.palette.background.default,
+        '&.Mui-disabled': {
+            border: 0,
+        },
+        '&:not(:first-of-type)': {
+            // borderRadius: theme.palette.borderRadius,
+        },
+        '&:first-of-type': {
+            // borderRadius: theme.palette.borderRadius,
+        },
+    },
+}));
 
 const ProductDetail = () => {
     let { id } = useParams();
@@ -30,10 +44,10 @@ const ProductDetail = () => {
     const [lstMediasProduct, setLstMediasProduct] = useState([])
     const [productDetailSelected, setProductDetailSelected] = useState(null)
     const [lstImage, setImage] = useState([])
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [animating, setAnimating] = useState(false);
     const [priceAndQuantity, setPriceAndQuantity] = useState({})
     const { callGet } = useCallGetAPI()
+    const [colorSelected, setColorSelected] = useState();
+    const [sizeSelected, setSizeSelected] = useState();
 
     useEffect(() => {
         setImageUrls([])
@@ -57,11 +71,11 @@ const ProductDetail = () => {
         lstMediasProduct.map(p => {
             if (imageUrls.map((image) => image.nameImg).includes(p.url)) {
                 let base = imageUrls.filter((o) => o.nameImg == p.url)
-                arr.push({ url: base[0].url, file: "", fileName: p.url, color: p.color, colorId: p.colorId })
+                arr.push({ url: base[0].url, file: base[0].url, fileName: p.url, color: p.color, colorId: p.colorId })
             }
         })
         setImage([...arr])
-    }, [imageUrls])
+    }, [imageUrls, id])
 
     // set  arr sizes
     useEffect(() => {
@@ -86,11 +100,11 @@ const ProductDetail = () => {
     }, [productDetailsOld])
 
     // update Arr sizes
-    const updateSizes = (color_id) => {
-        if (color_id) {
-            let index = productDetails.map(p => p.id).indexOf(color_id)
+    const updateSizes = (id) => {
+        if (id) {
+            let index = productDetails.map(p => p.id).indexOf(id)
             sizes.map(s => {
-                if (productDetails[index].sizes?.map(o => o.id).includes(s.value)) {
+                if (productDetails[index]?.sizes?.map(o => o.id).includes(s.value)) {
                     return s.status = true
                 } else {
                     return s.status = false
@@ -107,26 +121,24 @@ const ProductDetail = () => {
         if (size) {
             productDetails.map(p => {
                 if (p.sizes?.map(s => s.id).includes(size)) {
-                    return p.status = 1
+                    return p.status = true
                 } else {
-                    return p.status = 2
+                    return p.status = false
                 }
             })
         } else {
-            productDetails.map(p => p.status = 1)
+            productDetails.map(p => p.status = true)
         }
         setProductDetails([...productDetails])
     }
 
-    const editPriceAndQuantity = () => {
-        let btnColorActive = document.getElementsByClassName('active-color')
-        let btnSizeActive = document.getElementsByClassName('active-size')
-        if (btnColorActive.length >= 1) {
-            let index = productDetails.map(p => p.colorId).indexOf(Number(btnColorActive[0].value))
+    const editPriceAndQuantity = (color, size) => {
+        if (color) {
+            let index = productDetails.map(p => p.colorId).indexOf(Number(color?.colorId))
             setPriceAndQuantity({ price: productDetails[index]?.price, quantity: "" })
-            if (btnSizeActive.length >= 1) {
+            if (size) {
                 productDetails[index]?.sizes?.map(p => {
-                    if (p.id === Number(btnSizeActive[0].value)) {
+                    if (p.id === Number(size)) {
                         setPriceAndQuantity({ price: productDetails[index]?.price, quantity: p.quantity })
                     }
                 })
@@ -136,73 +148,38 @@ const ProductDetail = () => {
 
     // set sizeActive and update colorStatus
     const handleClickSize = (e, id) => {
-        // find btn-size active
-        let btnSizeActive = document.getElementsByClassName('active-size')
-        if (btnSizeActive.length >= 1) {
-            if (btnSizeActive[0].value == id) {
-                e.target.classList.remove('active-size');
-                updateColoStatus()
-            } else {
-                let btnSize = document.getElementsByClassName('btn-size')
-                for (let i = 0; i < btnSize.length; i++) {
-                    btnSize.item(i).classList.remove('active-size');
-                }
-                e.target.classList.add('active-size')
-                updateColoStatus(id)
-            }
-        } else {
-            e.target.classList.add('active-size')
-            updateColoStatus(id)
-        }
-        editPriceAndQuantity()
+        setSizeSelected(id)
+        updateColoStatus(id)
+        editPriceAndQuantity(colorSelected, id)
     }
 
     // update Arr sizes and set imgColor
     const handleClickColor = (e, color) => {
-        // find btn-color-active
-        let btnColorActive = document.getElementsByClassName('active-color')
-        if (btnColorActive.length >= 1) {
-            if (btnColorActive[0]?.value == color.colorId) {
-                e.target.classList.remove('active-color');
-                setProductDetailSelected(null)
-                updateSizes()
-                return
-            } else {
-                let btnSize = document.getElementsByClassName('btn-color')
-                for (let i = 0; i < btnSize.length; i++) {
-                    btnSize.item(i).classList.remove('active-color');
-                }
-                e.target.classList.add('active-color')
-                updateSizes(color.id)
-            }
-        } else {
-            e.target.classList.add('active-color')
-            updateSizes(color.id)
+        setColorSelected(color)
+        if (!color) {
+            setProductDetailSelected(null)
+            updateSizes()
+            return
         }
+        updateSizes(color.id)
         let media = lstMediasProduct.filter((m) => m.colorId === color.colorId)
         let base = imageUrls.filter((o) => o.nameImg === media[0]?.url)
-        setProductDetailSelected({ ...color, url: base[0]?.url })
-        editPriceAndQuantity()
+        setProductDetailSelected({ ...color, file: base[0]?.url })
+        editPriceAndQuantity(color, sizeSelected)
     }
 
     // set imgColor
     const handleHoveColor = (color) => {
-        let btnColorActive = document.getElementsByClassName('active-color')
         let media = lstMediasProduct.filter((m) => m.colorId === color.colorId)
         let base = imageUrls.filter((o) => o.nameImg === media[0]?.url)
-        if (btnColorActive.length >= 1) {
-            setProductDetailSelected({ ...productDetailSelected, url: base[0]?.url })
+        if (colorSelected) {
             return
         }
-        setProductDetailSelected({ url: base[0]?.url })
+        setProductDetailSelected({ url: base[0]?.url, file: base[0]?.url })
     }
 
     const handleOutHoveColor = () => {
-        let btnColorActive = document.getElementsByClassName('active-color')
-        if (btnColorActive.length >= 1) {
-            let media = lstMediasProduct.filter((m) => m.colorId == btnColorActive[0]?.value)
-            let base = imageUrls.filter((o) => o.nameImg === media[0]?.url)
-            setProductDetailSelected({ ...productDetailSelected, url: base[0]?.url })
+        if (colorSelected) {
             return
         }
         setProductDetailSelected(null)
@@ -222,143 +199,128 @@ const ProductDetail = () => {
         callGet(`http://localhost:8080/api/media/findAllByProductData_Id/${id}`, getData)
     }
 
-    const onExiting = () => {
-        setAnimating(true)
-    }
-
-    const onExited = () => {
-        setAnimating(false)
-    }
-
-    const next = () => {
-        if (animating) return;
-        const nextIndex = activeIndex === lstImage.length - 1 ? 0 : activeIndex + 1;
-        setActiveIndex(nextIndex);
-    }
-
-    const previous = () => {
-        if (animating) return;
-        const nextIndex = activeIndex === 0 ? lstImage.length - 1 : activeIndex - 1;
-        setActiveIndex(nextIndex);
-    }
-
-    const goToIndex = (newIndex) => {
-        if (animating) return;
-        setActiveIndex(newIndex);
-    }
-
-    let slides = lstImage.map((item) => {
-        if (!productDetailSelected) {
-            return (
-                <CarouselItem
-                    onExiting={onExiting}
-                    onExited={onExited}
-                    key={item.url}
-                >
-                    <img src={item.url} alt={item.altText} />
-                    {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption} /> */}
-                </CarouselItem>
-            );
-        } else {
-            return (
-                <CarouselItem
-                    onExiting={onExiting}
-                    onExited={onExited}
-                    key={item.url}
-                >
-                    <img src={productDetailSelected.url} alt={item.altText} />
-                    {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption} /> */}
-                </CarouselItem>
-            )
-        }
-    });
-
     return (
         <>
-            <Container
-                className="bg-light border"
-                fluid="sm"
-            >
-                {productDetails.length >= 1 &&
-                    <Row>
-                        <Col md={5} style={{ textAlign: "left" }}>
-                            {lstImage.length >= 1 &&
-                                <Carousel
-                                    className="carousel-Prodetail"
-                                    activeIndex={activeIndex}
-                                    next={next}
-                                    previous={previous}
-                                    style={{
-                                        // border: "1px solid",
-                                        marginTop: "1%",
-                                        marginBottom: "2%",
-                                        width: "100%"
-                                    }}
-                                >
-                                    {slides}
-                                    {!productDetailSelected &&
-                                        <>
-                                            <CarouselIndicators items={lstImage} activeIndex={activeIndex} onClickHandler={goToIndex} />
-                                            <CarouselControl direction="prev" directionText="Previous" onClickHandler={previous} />
-                                            <CarouselControl direction="next" directionText="Next" onClickHandler={next} />
-                                        </>
-                                    }
-                                </Carousel>
+            {productDetails.length >= 1 &&
+                <Grid container spacing={gridSpacing} maxWidth={'md'}>
+                    <Grid item md={5}>
+                        <FormControl fullWidth sx={{ m: 1, p: 2, minWidth: 80 }}>
+                            {lstImage.length >= 1 && !productDetailSelected &&
+                                <CarouselCustom items={lstImage} />
                             }
-                            {/* <div className="cover object">
-                                <img className="contain" src={imageUrls[0]?.url} alt="Paris" style={{ width: "100%", height: "350px" }} />
-                            </div> */}
-                        </Col>
-                        <Col md={7}>
-                            <Row>
-                                <Col md={12} style={{ textAlign: "left", marginBottom: "3%" }}>
-                                    <h1>{productDetails[0].productDataName}</h1>
-                                </Col>
-                                <Col md={12} style={{ textAlign: "left", marginBottom: "3%" }}>
-                                    {priceAndQuantity.price &&
-                                        <h5>Giá: {priceAndQuantity.price}</h5>
-                                    }
-                                    {!priceAndQuantity.price &&
-                                        <h5>Giá: {productDetails[0].price}</h5>
-                                    }
-                                </Col>
-                                <Col md={2} style={{ textAlign: "left" }}>
-                                    <h5><span style={{ marginRight: "5%", marginBottom: "3%" }}>Color</span></h5>
-                                </Col>
-                                <Col md={10} style={{ textAlign: "left", marginBottom: "3%" }}>
+                            {lstImage.length >= 1 && productDetailSelected &&
+                                <CarouselCustom items={productDetailSelected} />
+                            }
+                        </FormControl>
+                    </Grid>
+                    <Grid item md={7}>
+                        <Grid item container spacing={gridSpacing}>
+                            <Grid item md={12}>
+                                <FormControl fullWidth sx={{ mt: 3, minWidth: 80 }}>
+                                    <Typography variant="h1" component="h2" >
+                                        {productDetails[0].productDataName}
+                                    </Typography>
+                                </FormControl>
+                            </Grid>
+                            <Grid item md={12} >
+                                {priceAndQuantity.price &&
+                                    <Typography variant="h3">
+                                        Giá: {priceAndQuantity.price}
+                                    </Typography>
+                                }
+                                {!priceAndQuantity.price &&
+                                    <Typography variant="h3">
+                                        Giá: {productDetails[0].price}
+                                    </Typography>
+                                }
+                            </Grid>
+                            <Grid item md={2} sx={{ mt: 1.2 }}>
+                                <Typography variant="h3">
+                                    Color
+                                </Typography>
+                            </Grid>
+                            <Grid item md={10}>
+                                <StyledToggleButtonGroup
+                                    size="small"
+                                    color="primary"
+                                    value={colorSelected}
+                                    exclusive
+                                    onChange={handleClickColor}
+                                    aria-label="text alignment"
+                                >
                                     {productDetails.map((item) => {
-                                        if (item.status === 1) {
-                                            return <button key={item.id} style={{ marginRight: "2%" }} onClick={(e) => { handleClickColor(e, item) }} onMouseOver={() => handleHoveColor(item)} onMouseLeave={() => handleOutHoveColor()} value={item.colorId} className="btn-color">{item.label}</button>
+                                        if (item.status) {
+                                            return (
+                                                <ToggleButton sx={{
+                                                    color: 'black', '&:hover': {
+                                                        backgroundColor: '#ebebeb'
+                                                    },
+                                                }} onMouseOver={() => handleHoveColor(item)}
+                                                    onMouseLeave={() => handleOutHoveColor()}
+                                                    value={item} aria-label="left aligned">
+                                                    {item.label}
+                                                </ToggleButton>
+                                            )
                                         } else {
-                                            return <button key={item.id} className="btn-color" style={{ marginRight: "2%", borderColor: 'white', color: '#b6b6b6fe' }} disabled >{item.label}</button>
+                                            return (
+                                                <ToggleButton disabled
+                                                    value={item} aria-label="left aligned">
+                                                    {item.label}
+                                                </ToggleButton>
+                                            )
                                         }
                                     })}
-                                </Col>
-                                <Col md={2} style={{ textAlign: "left", marginBottom: "3%" }}>
-                                    <h5><span style={{ marginRight: "5%" }}>Size</span> </h5>
-                                </Col>
-                                <Col md={10} style={{ textAlign: "left", marginBottom: "3%" }}>
+                                </StyledToggleButtonGroup>
+                            </Grid>
+                            <Grid item md={2} sx={{ mt: 1.2 }}>
+                                <Typography variant="h3">
+                                    Size
+                                </Typography>
+                            </Grid>
+                            <Grid item md={10}>
+                                <StyledToggleButtonGroup
+                                    size="small"
+                                    color="primary"
+                                    value={sizeSelected}
+                                    exclusive
+                                    onChange={handleClickSize}
+                                    aria-label="text alignment"
+                                >
                                     {sizes.map((item) => {
-                                        if (item.status === true) {
-                                            return <button key={item.value} style={{ marginRight: "2%" }} onClick={(e) => { handleClickSize(e, item.value) }} value={item.value} className="btn-size">{item.label}</button>
+                                        if (item.status) {
+                                            return (
+                                                <ToggleButton sx={{
+                                                    color: 'black', '&:hover': {
+                                                        backgroundColor: '#ebebeb'
+                                                    },
+                                                }}
+                                                    value={item.value} aria-label="left aligned">
+                                                    {item.label}
+                                                </ToggleButton>
+                                            )
                                         } else {
-                                            return <button key={item.value} className="btn-size" style={{ marginRight: "2%", borderColor: 'white', color: '#b6b6b6fe' }} disabled >{item.label}</button>
+                                            return (
+                                                <ToggleButton disabled
+                                                    value={item.value} aria-label="left aligned">
+                                                    {item.label}
+                                                </ToggleButton>
+                                            )
                                         }
                                     })}
-                                </Col>
-                                <Col md={12} style={{ textAlign: "left" }}>
-                                    {priceAndQuantity.quantity &&
-                                        <p>Còn: {priceAndQuantity.quantity} sản phẩm</p>
-                                    }
-                                    {!priceAndQuantity.quantity &&
-                                        <p>Còn: {productDetails[0].sizes[0].quantity} sản phẩm</p>
-                                    }
-                                </Col>
-                            </Row>
-                        </Col>
-                    </Row>
-                }
-            </Container>
+                                </StyledToggleButtonGroup>
+                            </Grid>
+                            <Grid item md={12}>
+                                {priceAndQuantity.quantity &&
+                                    <p>Còn: {priceAndQuantity.quantity} sản phẩm</p>
+                                }
+                                {!priceAndQuantity.quantity &&
+                                    <p>Còn: {productDetails[0].sizes[0].quantity} sản phẩm</p>
+                                }
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            }
         </>
     )
 }

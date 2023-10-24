@@ -18,7 +18,7 @@ import {
     ModalFooter,
 } from "reactstrap";
 import { storage } from "../../Firebase";
-// import { useNavigate } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const Product = (props) => {
     const { data } = props
@@ -34,7 +34,7 @@ const Product = (props) => {
     const [imageUrls, setImageUrls] = useState([]);
     // const [totalPageAndNumber, setTotalPageAndNumber] = useState({ totalPage: 0, numberPage: 0 })
     const imagesListRef = ref(storage, "images/");
-    // const navigate = useNavigate()
+    const navigate = useHistory()
     const [product, setProduct] = useState({})
     const [lstCategory, setLstCategory] = useState([]);
 
@@ -123,7 +123,7 @@ const Product = (props) => {
     };
 
     const onDetail = (id) => {
-        //     navigate(`${id}`)
+        navigate.push(`product-detail/${id}`)
     }
 
     const setupData = (data) => {
