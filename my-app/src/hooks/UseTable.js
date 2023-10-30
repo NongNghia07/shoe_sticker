@@ -12,8 +12,8 @@ import {
     makeStyles,
 } from '@material-ui/core';
 import "../assets/css/Carousel.css"
-
 import CarouselCustom from "../layout/MainLayout/CarouselCustom";
+
 const useStyles = makeStyles((theme) => ({
     createButton: {
         fontSize: '1rem',

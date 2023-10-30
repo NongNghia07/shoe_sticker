@@ -4,7 +4,7 @@ import { IntlProvider } from 'react-intl';
 import { jssPreset, StylesProvider, ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import StyledEngineProvider from '@material-ui/core/StyledEngineProvider';
-
+import { SnackbarProvider } from 'notistack';
 
 import theme from './themes';
 import Routes from './routes';
@@ -51,21 +51,23 @@ const App = () => {
     return (
         <React.Fragment>
             <StylesProvider jss={jss}>
-                <CacheProvider value={cacheRtl}>
-                    {messages && (
-                        <IntlProvider locale={customization.locale} defaultLocale="en" messages={messages}>
-                            <StyledEngineProvider injectFirst>
-                                <NavigationScroll>
-                                    <ThemeProvider theme={theme(customization)}>
-                                        <CssBaseline />
-                                        <Routes />
-                                        <Snackbar />
-                                    </ThemeProvider>
-                                </NavigationScroll>
-                            </StyledEngineProvider>
-                        </IntlProvider>
-                    )}
-                </CacheProvider>
+                <SnackbarProvider maxSnack={3}>
+                    <CacheProvider value={cacheRtl}>
+                        {messages && (
+                            <IntlProvider locale={customization.locale} defaultLocale="en" messages={messages}>
+                                <StyledEngineProvider injectFirst>
+                                    <NavigationScroll>
+                                        <ThemeProvider theme={theme(customization)}>
+                                            <CssBaseline />
+                                            <Routes />
+                                            <Snackbar />
+                                        </ThemeProvider>
+                                    </NavigationScroll>
+                                </StyledEngineProvider>
+                            </IntlProvider>
+                        )}
+                    </CacheProvider>
+                </SnackbarProvider>
             </StylesProvider>
         </React.Fragment>
     );

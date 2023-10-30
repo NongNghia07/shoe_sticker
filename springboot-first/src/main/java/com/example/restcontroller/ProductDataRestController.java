@@ -47,7 +47,7 @@ public class ProductDataRestController {
         return ResponseEntity.ok().body(this.productDataService.create(productDataDTO));
     }
 
-    @PutMapping("/update")
+    @PostMapping("/update")
     public ResponseEntity<?> update(@RequestBody ProductDataDTO productDataDTO) {
         return ResponseEntity.ok().body(this.productDataService.update(productDataDTO));
     }

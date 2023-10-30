@@ -89,12 +89,6 @@ public class ProductDataServiceImpl implements ProductDataService {
     @Override
     public ProductDataDTO update(ProductDataDTO productDataDTO) {
         ProductData productData = modelMapper.map(productDataDTO, ProductData.class);
-        ProductData productDataOld2 = this.productDataRepository.findByName(productData.getName());
-        if(productDataOld2 != null){
-            if(productDataOld2.getStatus() == 1){
-                throw new ApiRequestException("Tên product đã tồn tại");
-            }
-        }
         ProductData productDataOld = this.productDataRepository.findById(Long.valueOf(productData.getId())).orElseThrow();
         productData.setCreated(productDataOld.getCreated());
         productData.setCreatedDate(productDataOld.getCreatedDate());

@@ -103,6 +103,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
                 } else if (productDetail == null) {
                     p.setCreated(p.getUpdated());
                     p.setCreatedDate(LocalDateTime.now());
+                    p.setUpdated(null);
                     p.setStatus((byte) 1);
                     this.productDetailRepository.save(p);
                 } else {

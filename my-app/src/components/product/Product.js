@@ -11,23 +11,55 @@ import {
     listAll,
 } from "firebase/storage";
 import {
-    Button,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-} from "reactstrap";
+    Dialog, DialogActions, DialogContent, DialogTitle, Button,
+} from '@mui/material';
 import { storage } from "../../Firebase";
 import { useHistory } from "react-router-dom";
+import { useSnackbar } from 'notistack';
+import { makeStyles } from '@material-ui/core';
+
+const useStyles = makeStyles((theme) => ({
+    deleteButton: {
+        fontSize: '1rem',
+        fontWeight: 500,
+        backgroundColor: theme.palette.error.main,
+        border: '1px solid',
+        borderColor: theme.palette.error.main,
+        color: theme.palette.text.dark,
+        textTransform: 'none',
+        '&:hover': {
+            backgroundColor: theme.palette.error.dark
+        },
+        [theme.breakpoints.down('sm')]: {
+            fontSize: '0.875rem'
+        }
+    },
+    cancelButton: {
+        fontSize: '1rem',
+        fontWeight: 500,
+        backgroundColor: theme.palette.grey[500],
+        border: '1px solid',
+        borderColor: theme.palette.grey[500],
+        color: theme.palette.text.dark,
+        textTransform: 'none',
+        '&:hover': {
+            backgroundColor: theme.palette.grey[600]
+        },
+        [theme.breakpoints.down('sm')]: {
+            fontSize: '0.875rem'
+        }
+    },
+}));
 
 const Product = (props) => {
     const { data } = props
+    const classes = useStyles();
     const [isCreateModal, setIsCreateModal] = useState(false);
     const [isUpdateModal, setIsUpdateModal] = useState(false);
     const [isDeleteModal, setIsDeleteModal] = useState(false);
     const { callGet } = useCallGetAPI()
     const { callPost } = useCallPostAPI()
-
+    const { enqueueSnackbar } = useSnackbar();
     const [lstproductData, setLstProductData] = useState([])
     const [productDetails, setProductDetails] = useState([])
     const [lstMediasProduct, setLstMediasProduct] = useState([])
@@ -184,6 +216,7 @@ const Product = (props) => {
             const deleteProductAllDetailByProductDataId = () => {
                 const refresh = () => {
                     loadData()
+                    enqueueSnackbar('Delete success', { variant: 'success' })
                     onDelete()
                 }
                 callPost(`http://localhost:8080/api/productDetail/deleteAllByProductData/${product.id}`, "", refresh)
@@ -210,7 +243,7 @@ const Product = (props) => {
             <Tables
                 title={"Product"}
                 list={lstproductData}
-                colNames={[{ title: "Id", id: "id" }, { title: "name", id: "aa" }, { title: "quantity", id: "quantity" }, { title: "category", id: "categoryId" }, { title: "Image" }]}
+                colNames={[{ title: "Id", id: "id" }, { title: "name", id: "name" }, { title: "quantity", id: "quantity" }, { title: "category", id: "categoryId" }, { title: "Image" }]}
                 // pageable={pageable}
                 // totalPage={totalPageAndNumber.totalPage}
                 onDetail={onDetail}
@@ -228,6 +261,7 @@ const Product = (props) => {
                 callGet={callGet}
                 refreshDataCategory={refreshDataCategory}
                 lstCategory={lstCategory}
+                enqueueSnackbar={enqueueSnackbar}
             />
             <UpdateProduct
                 isUpdateModal={isUpdateModal}
@@ -241,29 +275,24 @@ const Product = (props) => {
                 callGet={callGet}
                 refreshDataCategory={refreshDataCategory}
                 lstCategory={lstCategory}
+                enqueueSnackbar={enqueueSnackbar}
             />
-            <Modal isOpen={isDeleteModal} toggle={() => onDelete()} centered>
-                <ModalHeader toggle={() => onDelete()}>Thông báo</ModalHeader>
-                <ModalBody>
+            <Dialog
+                aria-labelledby="scroll-dialog-title"
+                aria-describedby="scroll-dialog-description"
+                fullWidth={true}
+                open={isDeleteModal}
+                onClose={onDelete}
+            >
+                <DialogTitle id="scroll-dialog-title">Thông báo</DialogTitle>
+                <DialogContent>
                     Do you want delete?
-                </ModalBody>
-                <ModalFooter>
-                    <Button
-                        color="primary"
-                        type="submit"
-                        onClick={() => {
-                            deleteProductData();
-                        }}
-                    >
-                        Delete
-                    </Button>
-                    <Button color="secondary"
-                        onClick={() => onDelete()}
-                    >
-                        Cancel
-                    </Button>
-                </ModalFooter>
-            </Modal>
+                </DialogContent>
+                <DialogActions>
+                    <Button className={classes.deleteButton} onClick={() => { deleteProductData() }}>Delete</Button>
+                    <Button className={classes.cancelButton} onClick={() => onDelete()}>Cancel</Button>
+                </DialogActions>
+            </Dialog>
         </>
     )
 }

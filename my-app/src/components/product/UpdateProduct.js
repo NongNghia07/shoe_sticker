@@ -1,10 +1,10 @@
 import { React, useState, useEffect } from "react";
 import {
-    Dialog, DialogActions, DialogContent, DialogTitle
+    Dialog, DialogActions, DialogContent, DialogTitle, FormHelperText
     , Button, TextField, Select, FormControl, IconButton,
     OutlinedInput, InputAdornment, InputLabel, Checkbox, MenuItem, ListItemText
 } from '@mui/material';
-import { Grid } from '@material-ui/core';
+import { makeStyles, Grid } from '@material-ui/core';
 import { gridSpacing } from '../../store/constant';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AddIcon from '@mui/icons-material/Add';
@@ -36,6 +36,39 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
+const useStyles = makeStyles((theme) => ({
+    createButton: {
+        fontSize: '1rem',
+        fontWeight: 500,
+        backgroundColor: theme.palette.primary[200],
+        border: '1px solid',
+        borderColor: theme.palette.primary[200],
+        color: theme.palette.text.dark,
+        textTransform: 'none',
+        '&:hover': {
+            backgroundColor: theme.palette.primary.main
+        },
+        [theme.breakpoints.down('sm')]: {
+            fontSize: '0.875rem'
+        }
+    },
+    cancelButton: {
+        fontSize: '1rem',
+        fontWeight: 500,
+        backgroundColor: theme.palette.grey[500],
+        border: '1px solid',
+        borderColor: theme.palette.grey[500],
+        color: theme.palette.text.dark,
+        textTransform: 'none',
+        '&:hover': {
+            backgroundColor: theme.palette.grey[600]
+        },
+        [theme.breakpoints.down('sm')]: {
+            fontSize: '0.875rem'
+        }
+    },
+}));
+
 const UpdateProduct = (props) => {
     const {
         isUpdateModal,
@@ -48,13 +81,16 @@ const UpdateProduct = (props) => {
         callGet,
         product,
         refreshDataCategory,
-        lstCategory
+        lstCategory,
+        enqueueSnackbar
     } = props;
+    const classes = useStyles();
     const [productData, setProductData] = useState({})
     const [lstProductDetail, setLstProductDetail] = useState()
     let { callPost } = useCallPostAPI()
     const [scroll, setScroll] = useState('paper');
     let userId = null
+    const [errorValue, setErrorValue] = useState({})
     //Category_______________________________________________________________
     const [isCreateCateModal, setIsCreateCateModal] = useState(false)
 
@@ -101,25 +137,38 @@ const UpdateProduct = (props) => {
         callGet(`http://localhost:8080/api/color/findAll`, getData)
     }, [])
 
-    const handleOnChangeColor = (items) => {
+    const handleOnChangeColor = (e) => {
+        let items = e.target.value
         let copyLstColorSelected = [...lstColorSelected];
-        if (items.length < copyLstColorSelected.length) {
-            let arr = copyLstColorSelected.filter(function (x) {
-                return items.filter(function (y) {
-                    return y.value == x.value;
-                }).length !== 0
-            });
-            setLstColorSelected(arr)
-            return
-        } else {
-            for (let i in items) {
-                let item = items[i];
+        let copyErrorValue = { ...errorValue }
+        if (items.length > 0) {
+            delete copyErrorValue['color']
+        }
+        for (let i in items) {
+            let item = items[i];
+            if (typeof item == 'object') {
                 if (!copyLstColorSelected.map((p) => p.value).includes(item.value)) {
                     copyLstColorSelected.push({ value: item.value, label: item.label, price: '', sizes: [], length: 0 });
+                } else {
+                    let key
+                    let index = copyLstColorSelected.findIndex(v => v.value === item.value)
+                    if (copyLstColorSelected[index]?.sizes?.length > 0) {
+                        copyLstColorSelected[index]?.sizes?.map((x) => {
+                            for (key in copyErrorValue) {
+                                delete copyErrorValue['quantity' + x.label + item.label]
+                            }
+                        })
+                    }
+                    copyLstColorSelected.splice(index, 1);
+                    for (key in copyErrorValue) {
+                        delete copyErrorValue[item.label]
+                        delete copyErrorValue['price' + item.label]
+                    }
                 }
             }
         }
         setLstColorSelected(copyLstColorSelected)
+        setErrorValue({ ...copyErrorValue })
     }
     //End Color ________________________________________________________________________
 
@@ -135,27 +184,28 @@ const UpdateProduct = (props) => {
         callGet(`http://localhost:8080/api/size/findAll`, getData)
     }, [])
 
-    const handleOnChangeSize = (items, color) => {
+    const handleOnChangeSize = (e, color) => {
+        let items = e.target.value
         let copyLstColorSelected = [...lstColorSelected];
+        let copyErrorValue = { ...errorValue }
         let index = copyLstColorSelected.map(p => p.label).indexOf(color)
-        if (items.length < copyLstColorSelected[index].sizes.length) {
-            let arr = copyLstColorSelected[index].sizes.filter(function (x) {
-                return items.filter(function (y) {
-                    return y.value == x.value;
-                }).length !== 0
-            });
-            copyLstColorSelected[index].sizes = arr;
-            copyLstColorSelected[index].length = copyLstColorSelected[index].sizes.length
-        } else {
-            for (let i in items) {
-                let item = items[i];
+        if (items.length > 0) {
+            delete copyErrorValue[color]
+        }
+        for (let i in items) {
+            let item = items[i];
+            if (typeof item == 'object') {
                 if (!copyLstColorSelected[index].sizes.map((o) => o.value).includes(item.value)) {
                     copyLstColorSelected[index].sizes.push({ value: item.value, label: item.label })
                     copyLstColorSelected[index].length = copyLstColorSelected[index].sizes.length
+                } else {
+                    copyLstColorSelected[index].sizes.splice(copyLstColorSelected[index].sizes.findIndex(v => v.value === item.value), 1);
+                    delete copyErrorValue['quantity' + item.label + color]
                 }
             }
         }
         setLstColorSelected(copyLstColorSelected);
+        setErrorValue({ ...copyErrorValue })
     }
     //End Size ________________________________________________________________________
 
@@ -173,6 +223,7 @@ const UpdateProduct = (props) => {
             })
             callPost(`http://localhost:8080/api/media/updateAll`, lstMedia);
             handleUpdateImages(lstImage)
+            enqueueSnackbar('Success created product!', { variant: 'success' })
             toggleModal()
         }
 
@@ -190,7 +241,45 @@ const UpdateProduct = (props) => {
 
     //Product________________________________________________________________
     const createProduct = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
+        let copyErrorValue = { ...errorValue }
+        if (!productData?.name || productData?.name?.trim().length < 1) {
+            copyErrorValue['name'] = 'Name is not null'
+        }
+        if (!productData?.categoryId || productData?.categoryId?.length < 1) {
+            copyErrorValue['category'] = 'Category is not null'
+        }
+        if (lstColorSelected.length < 1) {
+            copyErrorValue['color'] = 'Color is not null'
+        }
+        if (lstColorSelected.length > 0) {
+            lstColorSelected.map((p) => {
+                if (p.sizes?.length < 1) {
+                    copyErrorValue[p.label] = 'Size is not null'
+                }
+                if (!p.price || p.price < 1) {
+                    copyErrorValue['price' + p.label] = 'Price is not null and > >= 1VND'
+                }
+                if (p.sizes?.length > 0) {
+                    p.sizes.map((size) => {
+                        if (!size.quantity || size.quantity < 1) {
+                            copyErrorValue['quantity' + size.label + p.label] = 'Quantiy need >= 1'
+                        }
+                    })
+                }
+                if (!lstImage.map(img => img.color).includes(p.label)) {
+                    copyErrorValue['image' + p.label] = 'Image not null'
+                }
+            })
+        }
+        if (lstImage.length < 1) {
+            copyErrorValue['images'] = 'Image not null'
+        }
+        setErrorValue({ ...copyErrorValue })
+        if (Object.keys(copyErrorValue).length > 0) {
+            enqueueSnackbar('Cần nhập đầy đủ thông tin', { variant: 'warning' })
+            return
+        }
         const createPro = async (data) => {
             userId = data.id
             let copyProductData = { ...productData }
@@ -210,10 +299,17 @@ const UpdateProduct = (props) => {
     const handleOnchangeInput = (e, id, color, size) => {
         let copyLstColorSelected = [...lstColorSelected];
         let copyProductData = { ...productData };
+        let copyErrorValue = { ...errorValue }
         if (id === 'name') {
+            if (e.target.value?.trim()?.length > 0) {
+                delete copyErrorValue[id]
+            }
             copyProductData[id] = e.target.value;
             setProductData({ ...copyProductData });
         } else if (id === 'category') {
+            if (e.target.value !== null || e.target.value !== '' || e.target.value !== 'undefined') {
+                delete copyErrorValue[id]
+            }
             copyProductData["categoryId"] = e.target.value;
             setProductData({ ...copyProductData });
         } else {
@@ -222,19 +318,25 @@ const UpdateProduct = (props) => {
                 copyLstColorSelected[index].sizes.map(p => {
                     if (p.label === size) {
                         p['quantity'] = e.target.value
+                        if (e.target.value >= 1) {
+                            delete copyErrorValue['quantity' + size + color]
+                        }
                     }
                 })
             } else if (id === 'price') {
                 copyLstColorSelected[index].price = e.target.value;
+                if (e.target.value >= 1) delete copyErrorValue['price' + color]
             }
             setLstColorSelected([...copyLstColorSelected])
         }
+        setErrorValue({ ...copyErrorValue })
     }
 
     //Image_______________________________________________________________________
     const [lstImage, setImage] = useState([])
 
     const handleImages = (e, color, colorId) => {
+        let copyErrorValue = { ...errorValue }
         if (color !== 'imgAll') {
             let coppy = [...lstImage]
             if (e.target.files.length <= 0) {
@@ -246,6 +348,16 @@ const UpdateProduct = (props) => {
                 }
             } else {
                 let imageFile = e.target.files[0];
+                let fileType = imageFile['type'];
+                const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+                if (!validImageTypes.includes(fileType)) {
+                    enqueueSnackbar('File không phải là ảnh', { variant: 'warning' })
+                    return
+                }
+                if (imageFile.size > 5242880) {
+                    enqueueSnackbar('Image files need to be less than 5MB', { variant: 'warning' })
+                    return
+                }
                 let index = coppy.map(p => p.fileName).indexOf(imageFile.name)
                 if (index !== -1) {
                     coppy.map(p => { if (p.color === color) return p.color = "", p.colorId = "" })
@@ -257,18 +369,33 @@ const UpdateProduct = (props) => {
                     coppy.push({ file: imageFile, fileName: imageFile.name, color: color, colorId: colorId })
                     setImage(coppy)
                 }
+                if (e.target.files.length > 0) {
+                    delete copyErrorValue['image' + color]
+                    delete copyErrorValue['images']
+                }
             }
         } else {
             setImage([]);
-            //Get files
+            if (e.target.files.length > 0) delete copyErrorValue['images']
+            let fileNoImage = 0
+            let fileSizeToBig = 0
             for (let i = 0; i < e.target.files.length; i++) {
-                // if(!".jpg" in e.target.files[i]){
-                //     continue;
-                // }
                 let imageFile = e.target.files[i];
-                setImage((prev) => [...prev, { file: imageFile, fileName: imageFile.name, color: "", colorId: colorId }]);
+                let fileType = imageFile['type'];
+                const validImageTypes = ['image/gif', 'image/jpeg', 'image/png'];
+                if (validImageTypes.includes(fileType)) {
+                    setImage((prev) => [...prev, { file: imageFile, fileName: imageFile.name, color: "", colorId: colorId }]);
+                    if (imageFile.size > 5242880) fileSizeToBig++
+                } else {
+                    fileNoImage++
+                }
+            }
+            if (fileNoImage > 0) enqueueSnackbar(fileNoImage + ' file không phải là ảnh', { variant: 'warning' })
+            if (fileSizeToBig > 0) {
+                enqueueSnackbar(fileSizeToBig + ' image files need to be less than 5MB', { variant: 'warning' })
             }
         }
+        setErrorValue({ ...copyErrorValue })
     };
 
     const colorImg = (color) => {
@@ -302,6 +429,8 @@ const UpdateProduct = (props) => {
                                                 label="Name"
                                                 required
                                                 value={productData.name}
+                                                error={errorValue.name ? errorValue?.name?.length === 0 ? false : true : false}
+                                                helperText={errorValue?.name}
                                                 onChange={(e) =>
                                                     handleOnchangeInput(e, "name")
                                                 }
@@ -311,7 +440,7 @@ const UpdateProduct = (props) => {
                                     <Grid item md={6}>
                                         <Grid item container spacing={gridSpacing}>
                                             <Grid item md={10}>
-                                                <FormControl fullWidth sx={{ m: 1, minWidth: 80 }}>
+                                                <FormControl fullWidth sx={{ m: 1, minWidth: 80 }} error={errorValue.category ? errorValue?.category?.length === 0 ? false : true : false}>
                                                     <InputLabel id="category">Category</InputLabel>
                                                     <Select
                                                         labelId="category"
@@ -327,6 +456,7 @@ const UpdateProduct = (props) => {
                                                             );
                                                         })}
                                                     </Select>
+                                                    {errorValue?.category && <FormHelperText>{errorValue?.category}</FormHelperText>}
                                                 </FormControl>
                                             </Grid>
                                             <Grid item
@@ -352,7 +482,7 @@ const UpdateProduct = (props) => {
                                 </Grid>
                                 <Grid item container spacing={gridSpacing}>
                                     <Grid item md={12}>
-                                        <FormControl fullWidth sx={{ m: 1, minWidth: 80 }}>
+                                        <FormControl fullWidth sx={{ m: 1, minWidth: 80 }} error={errorValue.color ? errorValue?.color?.length === 0 ? false : true : false}>
                                             <InputLabel id="multiple-checkbox-label">Color</InputLabel>
                                             <Select
                                                 labelId="multiple-checkbox-label"
@@ -371,6 +501,7 @@ const UpdateProduct = (props) => {
                                                     </MenuItem>
                                                 ))}
                                             </Select>
+                                            {errorValue?.color && <FormHelperText>{errorValue?.color}</FormHelperText>}
                                         </FormControl>
                                     </Grid>
                                     <Grid item md={12}>
@@ -397,10 +528,11 @@ const UpdateProduct = (props) => {
                                         </FormControl>
                                     </Grid>
                                     <Grid item md={12}>
-                                        <FormControl fullWidth sx={{ marginLeft: 1, marginRight: 1, minWidth: 80 }}>
+                                        <FormControl fullWidth sx={{ marginLeft: 1, marginRight: 1, minWidth: 80 }} error={errorValue['images'] ? errorValue['images'].length === 0 ? false : true : false}>
                                             {lstImage.length >= 1 &&
                                                 <CarouselCustom items={lstImage} />
                                             }
+                                            {errorValue['images'] && <FormHelperText>{errorValue['images']}</FormHelperText>}
                                         </FormControl>
                                     </Grid>
                                 </Grid>
@@ -415,7 +547,7 @@ const UpdateProduct = (props) => {
                                                     <Grid item md={8} style={{ borderTop: "1px solid #e5e5e5" }}>
                                                         <Grid item container spacing={gridSpacing}>
                                                             <Grid item md={8} >
-                                                                <FormControl fullWidth sx={{ m: 1, minWidth: 80 }}>
+                                                                <FormControl fullWidth sx={{ m: 1, minWidth: 80 }} error={errorValue[item.label] ? errorValue[item.label].length === 0 ? false : true : false}>
                                                                     <InputLabel id="Size">Size {item.label}</InputLabel>
                                                                     <Select
                                                                         labelId="Size"
@@ -434,10 +566,11 @@ const UpdateProduct = (props) => {
                                                                             </MenuItem>
                                                                         ))}
                                                                     </Select>
+                                                                    {errorValue[item.label] && <FormHelperText>{errorValue[item.label]}</FormHelperText>}
                                                                 </FormControl>
                                                             </Grid>
                                                             <Grid item md={4} >
-                                                                <FormControl fullWidth sx={{ m: 1, minWidth: 80 }}>
+                                                                <FormControl fullWidth sx={{ m: 1, minWidth: 80 }} error={errorValue['price' + item.label] ? errorValue['price' + item.label].length === 0 ? false : true : false}>
                                                                     <InputLabel htmlFor="price">Price</InputLabel>
                                                                     <OutlinedInput
                                                                         id="price"
@@ -446,13 +579,14 @@ const UpdateProduct = (props) => {
                                                                         value={item.price}
                                                                         onChange={(e) => handleOnchangeInput(e, 'price', item.label)}
                                                                     />
+                                                                    {errorValue['price' + item.label] && <FormHelperText>{errorValue['price' + item.label]}</FormHelperText>}
                                                                 </FormControl>
                                                             </Grid>
                                                             {item?.sizes?.length >= 1 &&
                                                                 item.sizes.map(size => {
                                                                     return (
                                                                         <Grid item md={3} key={size.value}>
-                                                                            <FormControl fullWidth sx={{ m: 1, minWidth: 80 }}>
+                                                                            <FormControl fullWidth sx={{ m: 1, minWidth: 80 }} error={errorValue['quantity' + size.label + item.label] ? errorValue['quantity' + size.label + item.label].length === 0 ? false : true : false}>
                                                                                 <TextField
                                                                                     id="outlined-number"
                                                                                     label={"Quantity Size:" + size.label}
@@ -463,6 +597,7 @@ const UpdateProduct = (props) => {
                                                                                     value={size.quantity}
                                                                                     onChange={(e) => handleOnchangeInput(e, 'quantity', item.label, size.label)}
                                                                                 />
+                                                                                {errorValue['quantity' + size.label + item.label] && <FormHelperText>{errorValue['quantity' + size.label + item.label]}</FormHelperText>}
                                                                             </FormControl>
                                                                         </Grid>
                                                                     )
@@ -472,7 +607,7 @@ const UpdateProduct = (props) => {
                                                     <Grid item md={4} style={{ borderTop: "1px solid #e5e5e5" }}>
                                                         <Grid item container spacing={gridSpacing}>
                                                             <Grid item md={12}>
-                                                                <FormControl fullWidth sx={{ m: 1, minWidth: 80 }}>
+                                                                <FormControl fullWidth sx={{ m: 1, minWidth: 80 }} error={errorValue['image' + item.label] ? errorValue['image' + item.label].length === 0 ? false : true : false}>
                                                                     <input
                                                                         type="file"
                                                                         id={`img${item.label}Product`}
@@ -545,6 +680,7 @@ const UpdateProduct = (props) => {
                                                                             onClick={(e) => colorImg(item.label)}
                                                                         />
                                                                     }
+                                                                    {errorValue['image' + item.label] && <FormHelperText>{errorValue['image' + item.label]}</FormHelperText>}
                                                                 </FormControl>
                                                             </Grid>
                                                         </Grid>
