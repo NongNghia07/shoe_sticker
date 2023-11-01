@@ -56,11 +56,9 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO create(CategoryDTO categoryDTO) {
         Category category = modelMapper.map(categoryDTO, Category.class);
-        Category categoryOld = this.categoryRepository.findByName(category.getName());
+        Category categoryOld = this.categoryRepository.findByNameAndStatus(category.getName().replaceAll(" ", ""), 1);
         if(categoryOld != null){
-            if(categoryOld.getStatus() == 1){
-               throw new ApiRequestException("Tên đã tồn tại");
-            }
+            throw new ApiRequestException("Tên đã tồn tại");
         }
         category.setCreatedDate(LocalDateTime.now());
         category.setStatus((byte) 1);
@@ -72,9 +70,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO update(CategoryDTO categoryDTO) {
         Category category = modelMapper.map(categoryDTO, Category.class);
-        Category categoryOld = this.categoryRepository.findByName(category.getName());
-        if(categoryOld != null){
-            if(categoryOld.getStatus() == 1){
+        Category category1 = this.categoryRepository.findById(Long.valueOf(category.getId())).orElseThrow();
+        if(!category.getName().replaceAll(" ", "").equals(category1.getName().replaceAll(" ", ""))){
+            Category categoryOld = this.categoryRepository.findByNameAndStatus(category.getName().replaceAll(" ", ""), 1);
+            if(categoryOld != null){
                 throw new ApiRequestException("Tên đã tồn tại");
             }
         }

@@ -12,8 +12,8 @@ import java.util.List;
 @Repository
 public interface ColorRepository extends JpaRepository<Color, Long> {
     List<Color> findAllByStatusOrderByIdDesc(Integer status);
-
-    Color findByName(String name);
+    @Query("SELECT c FROM Color c WHERE REPLACE(c.name, ' ', '') = ?1")
+    Color findByNameAndStatus(String name,Integer status);
     Page<Color> findAllPageByStatusOrderByIdDesc(Integer status, Pageable pageable);
 
     @Query("SELECT c FROM Color c WHERE c.name like %?1% AND c.status = ?2 order by c.id desc")

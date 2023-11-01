@@ -3,56 +3,115 @@ import useCallGetAPI from "../../hooks/UseCallGetApi";
 import useCallPostAPI from "../../hooks/UseCallPostApi";
 import Tables from "../../hooks/UseTable";
 import {
-    Container,
-    Row,
-    Col,
-    Button,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-} from "reactstrap";
+    Dialog, DialogActions, DialogContent, DialogTitle,
+    Button, TextField, FormControl
+} from '@mui/material';
 import {
     useParams
 } from "react-router-dom";
+import { makeStyles } from '@material-ui/core';
+import { useSnackbar } from 'notistack';
 
-export default function SizeOrColor() {
+const useStyles = makeStyles((theme) => ({
+    createButton: {
+        fontSize: '1rem',
+        fontWeight: 500,
+        backgroundColor: theme.palette.primary[200],
+        border: '1px solid',
+        borderColor: theme.palette.primary[200],
+        color: theme.palette.text.dark,
+        textTransform: 'none',
+        '&:hover': {
+            backgroundColor: theme.palette.primary.main
+        },
+        [theme.breakpoints.down('sm')]: {
+            fontSize: '0.875rem'
+        }
+    },
+    deleteButton: {
+        fontSize: '1rem',
+        fontWeight: 500,
+        backgroundColor: theme.palette.error.main,
+        border: '1px solid',
+        borderColor: theme.palette.error.main,
+        color: theme.palette.text.dark,
+        textTransform: 'none',
+        '&:hover': {
+            backgroundColor: theme.palette.error.dark
+        },
+        [theme.breakpoints.down('sm')]: {
+            fontSize: '0.875rem'
+        }
+    },
+    cancelButton: {
+        fontSize: '1rem',
+        fontWeight: 500,
+        backgroundColor: theme.palette.grey[500],
+        border: '1px solid',
+        borderColor: theme.palette.grey[500],
+        color: theme.palette.text.dark,
+        textTransform: 'none',
+        '&:hover': {
+            backgroundColor: theme.palette.grey[600]
+        },
+        [theme.breakpoints.down('sm')]: {
+            fontSize: '0.875rem'
+        }
+    },
+}));
+
+export default function SizeOrColor(props) {
+    const { data } = props
     const { param } = useParams();
+    const classes = useStyles();
     const [sizesOrColors, setSizesOrColors] = useState([])
-    const [sizeOrColor, setSizeOrColor] = useState({ id: null, name: "" })
+    const [sizeOrColor, setSizeOrColor] = useState({})
+    const [errorValue, setErrorValue] = useState({})
     const { callPost } = useCallPostAPI()
     const { callGet } = useCallGetAPI()
-    const [totalPageAndNumber, setTotalPageAndNumber] = useState({ totalPage: 0, numberPage: 0 })
-    const [isUpdateModel, setIsUpdateModel] = useState(false)
+    const [isModel, setIsModel] = useState(false)
     const [isDeleteModel, setIsDeleteModel] = useState(false)
+    const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
         refreshData()
     }, [])
+
+
+    useEffect(() => {
+        let arr = []
+        data?.map(p => arr.push({ id: p.id, name: p.name }))
+        setSizesOrColors(arr)
+    }, [data])
 
     const refreshData = () => {
         const getData = (data) => {
             let arr = []
             data?.map(p => arr.push({ id: p.id, name: p.name }))
             setSizesOrColors(arr)
-            setTotalPageAndNumber({ totalPage: data.totalPages, numberPage: data.number })
         }
         callGet(`http://localhost:8080/api/${param}/findAll`, getData)
     }
 
     const saveSizeOrColor = (id) => {
+
         const refresh = () => {
             refreshData()
-            if (id) toggleModal()
+            enqueueSnackbar('Delete success', { variant: 'success' })
+            onClose()
+        }
+
+        let copy = { ...sizeOrColor }
+        let copyErrorValue = { ...errorValue }
+        if (!copy.name || copy.name.trim().length < 1) {
+            copyErrorValue['name'] = 'Cần nhập thông tin'
+        }
+        setErrorValue({ ...copyErrorValue })
+        if (Object.keys(copyErrorValue).length > 0) {
+            enqueueSnackbar('Cần nhập đầy đủ thông tin', { variant: 'warning' })
+            return
         }
         callPost(`http://localhost:8080/api/${param}/save`, sizeOrColor, refresh)
-    }
-
-    const toggleModal = () => {
-        setIsUpdateModel(!isUpdateModel)
-        if (isUpdateModel) {
-            setSizeOrColor({ id: null, name: "" })
-        }
     }
 
     const toggleDeleteModal = (id) => {
@@ -67,7 +126,7 @@ export default function SizeOrColor() {
     const findSizeOrColorById = (id) => {
         const getData = (data) => {
             setSizeOrColor(data)
-            toggleModal()
+            setIsModel(!isModel)
         }
         callGet(`http://localhost:8080/api/${param}/find/${id}`, getData)
     }
@@ -75,9 +134,14 @@ export default function SizeOrColor() {
     const deleteSizeOrColor = () => {
         const refresh = () => {
             refreshData()
+            enqueueSnackbar('Delete success', { variant: 'success' })
             toggleDeleteModal()
         }
         callPost(`http://localhost:8080/api/${param}/delete/${sizeOrColor.id}`, "", refresh)
+    }
+
+    const onCreate = () => {
+        setIsModel(!isModel)
     }
 
     const onUpdate = (id) => {
@@ -105,137 +169,67 @@ export default function SizeOrColor() {
         setSizesOrColors(newData)
     }
 
-    const pageable = (id) => {
-        if (id <= 0) {
-            id = 0
-        } else if (id >= totalPageAndNumber.totalPage) {
-            id = totalPageAndNumber.totalPage
-        }
-        const getData = (data) => {
-            let arr = []
-            data?.map(p => arr.push({ id: p.id, name: p.name }))
-            setSizesOrColors(arr)
-            setTotalPageAndNumber({ totalPage: data.totalPages, numberPage: data.number })
-        }
-        callGet(`http://localhost:8080/api/${param}/findAll`, getData)
-    }
-
-    const search = (e) => {
-        const getData = (data) => {
-            if (data) {
-                let arr = []
-                data?.map(p => arr.push({ id: p.id, name: p.name }))
-                setSizesOrColors(arr)
-                setTotalPageAndNumber({ totalPage: data.totalPages, numberPage: data.number })
-            }
-        }
-        setTimeout(() => {
-            callGet(`http://localhost:8080/api/${param}/searchAllByName?keyword=${e.target.value}`, getData)
-        }, 1000);
+    const onClose = () => {
+        setErrorValue({})
+        setSizeOrColor({})
+        setIsModel(!isModel)
     }
 
 
     return (
         <>
-            <Container
-                className="bg-light border"
-                fluid="sm"
+            <Dialog
+                aria-labelledby="scroll-dialog-title"
+                aria-describedby="scroll-dialog-description"
+                open={isModel}
+                onClose={onClose}
             >
-                <Row>
-                    <Col md="5" style={{ margin: "auto" }}>
-                        <input value={sizeOrColor?.name}
-                            style={{
-                                border: "1px solid",
-                                borderRadius: "5px",
-                                marginRight: "2%"
-                            }}
-                            placeholder={"Please enter " + param}
-                            onChange={(e) => setSizeOrColor({ id: sizeOrColor.id, name: e.target.value })}
+                <DialogTitle id="scroll-dialog-title">{param}</DialogTitle>
+                <DialogContent>
+                    <FormControl sx={{ m: 1, width: 380 }}>
+                        <TextField
+                            id={param}
+                            label={param}
+                            required
+                            error={errorValue.name ? errorValue?.name?.length === 0 ? false : true : false}
+                            helperText={errorValue?.name}
+                            value={sizeOrColor?.name}
+                            onChange={(e) => { setSizeOrColor({ id: sizeOrColor.id, name: e.target.value }); setErrorValue({}) }}
                         />
-                        <Button
-                            color="primary"
-                            type="submit"
-                            onClick={() => {
-                                saveSizeOrColor();
-                            }}
-                        >
-                            Add
-                        </Button>
-                    </Col>
-                    <Col md="5">
-                        <input onChange={(e) => search(e)} />
-                    </Col>
-                </Row>
+                    </FormControl>
+                </DialogContent>
+                <DialogActions>
+                    <Button className={classes.createButton} onClick={() => { saveSizeOrColor(sizeOrColor.id); }}>Save</Button>
+                    <Button className={classes.cancelButton} onClick={() => onClose()}>Cancel</Button>
+                </DialogActions>
+            </Dialog>
 
-                <Modal isOpen={isUpdateModel} toggle={() => toggleModal()} centered>
-                    <ModalHeader toggle={() => toggleModal()}>Update {param}</ModalHeader>
-                    <ModalBody>
-                        <Row style={{ textAlign: "center" }}>
-                            <Col md="12" style={{ margin: "auto" }}>
-                                <input value={sizeOrColor?.name}
-                                    style={{
-                                        border: "1px solid",
-                                        borderRadius: "5px",
-                                        marginRight: "2%"
-                                    }}
-                                    placeholder={"Please enter " + param}
-                                    onChange={(e) => setSizeOrColor({ id: sizeOrColor.id, name: e.target.value })}
-                                />
-                            </Col>
-                        </Row>
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button
-                            color="primary"
-                            type="submit"
-                            onClick={() => {
-                                saveSizeOrColor(sizeOrColor.id);
-                            }}
-                        >
-                            Update
-                        </Button>
-                        <Button color="secondary"
-                            onClick={() => toggleModal()}
-                        >
-                            Cancel
-                        </Button>
-                    </ModalFooter>
-                </Modal>
-                <Modal isOpen={isDeleteModel} toggle={() => toggleDeleteModal()} centered>
-                    <ModalHeader toggle={() => toggleDeleteModal()}>Thông báo</ModalHeader>
-                    <ModalBody>
-                        Do you want delete?
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button
-                            color="primary"
-                            type="submit"
-                            onClick={() => {
-                                deleteSizeOrColor();
-                            }}
-                        >
-                            Delete
-                        </Button>
-                        <Button color="secondary"
-                            onClick={() => toggleDeleteModal()}
-                        >
-                            Cancel
-                        </Button>
-                    </ModalFooter>
-                </Modal>
-                <Tables
-                    title={param}
-                    list={sizesOrColors}
-                    colNames={[{ title: "ID", id: "id" }, { title: "Name", id: "name" }, { title: "Update" }, { title: "Delete" }]}
-                    pageable={pageable}
-                    totalPage={totalPageAndNumber.totalPage}
-                    onDetail={onDetail}
-                    onUpdate={onUpdate}
-                    onDelete={onDelete}
-                    sortDataAscending={sortDataAscending}
-                    sortDataGraduallySmaller={sortDataGraduallySmaller}
-                />
-            </Container>
+            <Dialog
+                aria-labelledby="scroll-dialog-title"
+                aria-describedby="scroll-dialog-description"
+                open={isDeleteModel}
+                onClose={toggleDeleteModal}
+            >
+                <DialogTitle id="scroll-dialog-title">Thông báo</DialogTitle>
+                <DialogContent>
+                    Do you want delete?
+                </DialogContent>
+                <DialogActions>
+                    <Button className={classes.deleteButton} onClick={() => { deleteSizeOrColor() }}>Delete</Button>
+                    <Button className={classes.cancelButton} onClick={() => toggleDeleteModal()}>Cancel</Button>
+                </DialogActions>
+            </Dialog>
+            <Tables
+                title={param}
+                list={sizesOrColors}
+                colNames={[{ title: "ID", id: "id" }, { title: "Name", id: "name" }]}
+                onCreate={onCreate}
+                onDetail={onDetail}
+                onUpdate={onUpdate}
+                onDelete={onDelete}
+                sortDataAscending={sortDataAscending}
+                sortDataGraduallySmaller={sortDataGraduallySmaller}
+            />
         </>
     )
 }

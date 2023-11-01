@@ -12,7 +12,8 @@ import java.util.List;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findAllByStatusOrderByIdDesc(Byte status);
-    Category findByName(String name);
+    @Query("SELECT c FROM Category c WHERE REPLACE(c.name, ' ', '') = ?1")
+    Category findByNameAndStatus(String name,Integer status);
     Page<Category> findAllPageByStatusOrderByIdDesc(Integer status, Pageable pageable);
 
     @Query("SELECT c FROM Category c WHERE c.name like %?1% AND c.status = ?2 order by c.id desc")

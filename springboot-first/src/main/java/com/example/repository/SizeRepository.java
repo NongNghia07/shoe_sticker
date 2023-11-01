@@ -12,7 +12,8 @@ import java.util.List;
 public interface SizeRepository extends JpaRepository<Size, Long> {
     List<Size> findAllByStatusOrderByIdDesc(Integer status);
 
-    Size findByName(String name);
+    @Query("SELECT c FROM Color c WHERE REPLACE(c.name, ' ', '') = ?1")
+    Size findByNameAndStatus(String name,Integer status);
 
     Page<Size> findAllPageByStatusOrderByIdDesc(Integer status, Pageable pageable);
 

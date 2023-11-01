@@ -55,10 +55,17 @@ public class ColorServiceImpl implements ColorService {
     @Override
     public ColorDTO save(ColorDTO colorDTO) {
         Color color = modelMapper.map(colorDTO, Color.class);
-        Color colorOld = this.colorRepository.findByName(color.getName());
-        if(colorOld != null){
-            if(colorOld.getStatus() == 1){
+        Color colorOld = this.colorRepository.findByNameAndStatus(color.getName().replaceAll(" ", ""), 1);
+        if(color.getId()==null){
+            if(colorOld != null){
                 throw new ApiRequestException("Tên đã tồn tại");
+            }
+        }else{
+            Color color1 = this.colorRepository.findById(Long.valueOf(color.getId())).orElseThrow();
+            if(!color.getName().replaceAll(" ", "").equals(color1.getName().replaceAll(" ", ""))){
+                if(colorOld != null){
+                    throw new ApiRequestException("Tên đã tồn tại");
+                }
             }
         }
         color.setStatus((byte) 1);

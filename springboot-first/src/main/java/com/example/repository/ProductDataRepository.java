@@ -15,7 +15,8 @@ public interface ProductDataRepository extends JpaRepository<ProductData, Long> 
 
     List<ProductData> findAllByStatusOrderByIdDesc(Integer status);
 
-    ProductData findByName(String name);
+    @Query("SELECT p FROM ProductData p WHERE REPLACE(p.name, ' ', '') = ?1")
+    ProductData findByNameAndStatus(String name,Integer status);
 
     @Query("SELECT p FROM ProductData p WHERE p.name like %?1% AND p.status = ?2 order by p.id desc")
     List<ProductData> findAllByNameAndStatusOrderByIdDesc(String keyword,Integer status);

@@ -72,11 +72,9 @@ public class ProductDataServiceImpl implements ProductDataService {
     @Override
     public ProductDataDTO create(ProductDataDTO productDataDTO) {
         ProductData productData = modelMapper.map(productDataDTO, ProductData.class);
-        ProductData productDataOld = this.productDataRepository.findByName(productData.getName());
+        ProductData productDataOld = this.productDataRepository.findByNameAndStatus(productData.getName().replaceAll(" ", ""), 1);
         if(productDataOld != null){
-            if(productDataOld.getStatus() == 1){
                 throw new ApiRequestException("Tên product đã tồn tại");
-            }
         }
         productData.setCreatedDate(LocalDateTime.now());
         productData.setStatus((byte) 1);
@@ -90,6 +88,12 @@ public class ProductDataServiceImpl implements ProductDataService {
     public ProductDataDTO update(ProductDataDTO productDataDTO) {
         ProductData productData = modelMapper.map(productDataDTO, ProductData.class);
         ProductData productDataOld = this.productDataRepository.findById(Long.valueOf(productData.getId())).orElseThrow();
+        if(!productDataOld.getName().replaceAll(" ", "").equals(productData.getName().replaceAll(" ", ""))){
+            ProductData productDataOld1 = this.productDataRepository.findByNameAndStatus(productData.getName().replaceAll(" ", ""), 1);
+            if(productDataOld1 != null){
+                throw new ApiRequestException("Tên product đã tồn tại");
+            }
+        }
         productData.setCreated(productDataOld.getCreated());
         productData.setCreatedDate(productDataOld.getCreatedDate());
         productData.setUpdatedDate(LocalDateTime.now());

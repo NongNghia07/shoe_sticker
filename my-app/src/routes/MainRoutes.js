@@ -9,6 +9,8 @@ const DashboardDefault = lazy(() => import('../views/dashboard/Default'));
 
 const Product = lazy(() => import('../views/pages/manage/product'));
 const ProductDetail = lazy(() => import('../views/pages/manage/product/productDetail'));
+const Category = lazy(() => import('../views/pages/manage/category'));
+const SizeOrColor = lazy(() => import('../views/pages/manage/sizeAndColor'));
 
 const TableDense = lazy(() => import('../views/forms/tables/TableDense'));
 
@@ -30,7 +32,8 @@ const MainRoutes = () => {
 
                 '/admin/product',
                 '/admin/product-detail/:id',
-                '/tables/tbl-dense',
+                '/admin/category',
+                '/admin/sizeOrColor/:param',
 
                 '/utils/util-typography',
                 '/utils/util-color',
@@ -47,7 +50,8 @@ const MainRoutes = () => {
 
                     <Route path="/admin/product" component={Product} />
                     <Route path="/admin/product-detail/:id" component={ProductDetail} />
-                    <Route path="/tables/tbl-dense" component={TableDense} />
+                    <Route path="/admin/category" component={Category} />
+                    <Route path="/admin/sizeOrColor/:param" component={SizeOrColor} />
 
                     <Route path="/utils/util-typography" component={UtilsTypography} />
                     <Route path="/utils/util-color" component={UtilsColor} />

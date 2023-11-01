@@ -57,9 +57,18 @@ public class SizeServiceImpl implements SizeService {
     @Override
     public SizeDTO save(SizeDTO sizeDTO) {
         Size size = modelMapper.map(sizeDTO, Size.class);
-        Size sizeOld = this.sizeRepository.findByName(size.getName());
-        if(sizeOld != null){
-            if(sizeOld.getStatus() == 1) throw new ApiRequestException("Tên đã tồn tại");
+        Size sizeOld = this.sizeRepository.findByNameAndStatus(size.getName().replaceAll(" ", ""), 1);
+        if(size.getId()==null){
+            if(sizeOld != null){
+                if(sizeOld.getStatus() == 1) throw new ApiRequestException("Tên đã tồn tại");
+            }
+        }else{
+            Size size1 = this.sizeRepository.findById(Long.valueOf(size.getId())).orElseThrow();
+            if(!size.getName().replaceAll(" ", "").equals(size1.getName().replaceAll(" ", ""))){
+                if(sizeOld != null){
+                    throw new ApiRequestException("Tên đã tồn tại");
+                }
+            }
         }
         size.setStatus((byte) 1);
         this.sizeRepository.save(size);

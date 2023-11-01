@@ -3,37 +3,89 @@ import useCallGetAPI from "../../hooks/UseCallGetApi";
 import useCallPostAPI from "../../hooks/UseCallPostApi";
 import Tables from "../../hooks/UseTable";
 import CreateCategory from "./CreateCategory";
+import { useSnackbar } from 'notistack';
 import {
-    Container,
-    Row,
-    Col,
-    Button,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-} from "reactstrap";
+    Dialog, DialogActions, DialogContent, DialogTitle,
+    Button, TextField, FormControl
+} from '@mui/material';
+import { makeStyles } from '@material-ui/core';
 
-export default function Category() {
+const useStyles = makeStyles((theme) => ({
+    createButton: {
+        fontSize: '1rem',
+        fontWeight: 500,
+        backgroundColor: theme.palette.primary[200],
+        border: '1px solid',
+        borderColor: theme.palette.primary[200],
+        color: theme.palette.text.dark,
+        textTransform: 'none',
+        '&:hover': {
+            backgroundColor: theme.palette.primary.main
+        },
+        [theme.breakpoints.down('sm')]: {
+            fontSize: '0.875rem'
+        }
+    },
+    deleteButton: {
+        fontSize: '1rem',
+        fontWeight: 500,
+        backgroundColor: theme.palette.error.main,
+        border: '1px solid',
+        borderColor: theme.palette.error.main,
+        color: theme.palette.text.dark,
+        textTransform: 'none',
+        '&:hover': {
+            backgroundColor: theme.palette.error.dark
+        },
+        [theme.breakpoints.down('sm')]: {
+            fontSize: '0.875rem'
+        }
+    },
+    cancelButton: {
+        fontSize: '1rem',
+        fontWeight: 500,
+        backgroundColor: theme.palette.grey[500],
+        border: '1px solid',
+        borderColor: theme.palette.grey[500],
+        color: theme.palette.text.dark,
+        textTransform: 'none',
+        '&:hover': {
+            backgroundColor: theme.palette.grey[600]
+        },
+        [theme.breakpoints.down('sm')]: {
+            fontSize: '0.875rem'
+        }
+    },
+}));
+
+export default function Category(props) {
+    const { data } = props
+    const classes = useStyles();
     const [categories, setCategories] = useState([])
     const [category, setCategory] = useState({})
+    const [errorValue, setErrorValue] = useState({})
     const { callPost } = useCallPostAPI()
     const { callGet } = useCallGetAPI()
-    const [totalPageAndNumber, setTotalPageAndNumber] = useState({ totalPage: 0, numberPage: 0 })
     const [isUpdateModel, setIsUpdateModel] = useState(false)
     const [isCreateModel, setIsCreateModel] = useState(false)
     const [isDeleteModel, setIsDeleteModel] = useState(false)
+    const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
         refreshData()
     }, [])
+
+    useEffect(() => {
+        let arr = []
+        data?.map(p => arr.push({ id: p.id, name: p.name }))
+        setCategories(arr)
+    }, [data])
 
     const refreshData = () => {
         const getData = (data) => {
             let arr = []
             data?.map(p => arr.push({ id: p.id, name: p.name }))
             setCategories(arr)
-            setTotalPageAndNumber({ totalPage: data.totalPages, numberPage: data.number })
         }
         callGet(`http://localhost:8080/api/category/findAll`, getData)
     }
@@ -43,8 +95,18 @@ export default function Category() {
             const refresh = () => {
                 refreshData()
                 if (id) toggleUpdateModal()
+                enqueueSnackbar('Update success', { variant: 'success' })
             }
             let copyCategory = { ...category }
+            let copyErrorValue = { ...errorValue }
+            if (!copyCategory.name || copyCategory.name?.trim().length < 1) {
+                copyErrorValue['name'] = 'Cần nhập thông tin'
+            }
+            setErrorValue({ ...copyErrorValue })
+            if (Object.keys(copyErrorValue).length > 0) {
+                enqueueSnackbar('Cần nhập đầy đủ thông tin', { variant: 'warning' })
+                return
+            }
             copyCategory["updated"] = user.id
             callPost(`http://localhost:8080/api/category/update`, copyCategory, refresh)
         }
@@ -80,6 +142,7 @@ export default function Category() {
     const deleteCategory = () => {
         const refresh = () => {
             refreshData()
+            enqueueSnackbar('Delete success', { variant: 'success' })
             toggleDeleteModal()
         }
         callPost(`http://localhost:8080/api/category/delete/${category.id}`, "", refresh)
@@ -116,33 +179,9 @@ export default function Category() {
 
     }
 
-    const pageable = async (id) => {
-        if (id <= 0) {
-            id = 0
-        } else if (id >= totalPageAndNumber.totalPage) {
-            id = totalPageAndNumber.totalPage
-        }
-        const getData = (data) => {
-            let arr = []
-            data?.map(p => arr.push({ id: p.id, name: p.name }))
-            setCategories(arr)
-            setTotalPageAndNumber({ totalPage: data.totalPages, numberPage: data.number })
-        }
-        callGet(`http://localhost:8080/api/category/`, getData)
-    }
-
-    const search = (e) => {
-        const getData = (data) => {
-            if (data) {
-                let arr = []
-                data?.map(p => arr.push({ id: p.id, name: p.name }))
-                setCategories(arr)
-                setTotalPageAndNumber({ totalPage: data.totalPages, numberPage: data.number })
-            }
-        }
-        setTimeout(() => {
-            callGet(`http://localhost:8080/api/category/searchAllByName?keyword=${e.target.value}`, getData)
-        }, 1000);
+    const onClose = () => {
+        setErrorValue({})
+        toggleUpdateModal()
     }
 
     return (
@@ -152,81 +191,58 @@ export default function Category() {
                 toggleCreateModal={toggleCreateModal}
                 refreshData={refreshData}
             />
-            <input onChange={(e) => search(e)} />
-            <Container
-                className="bg-light border"
-                fluid="sm"
+            <Dialog
+                aria-labelledby="scroll-dialog-title"
+                aria-describedby="scroll-dialog-description"
+                open={isUpdateModel}
+                onClose={onClose}
             >
-                <Modal isOpen={isUpdateModel} toggle={() => toggleUpdateModal()} centered>
-                    <ModalHeader toggle={() => toggleUpdateModal()}>Update Category</ModalHeader>
-                    <ModalBody>
-                        <Row style={{ textAlign: "center" }}>
-                            <Col md="12" style={{ margin: "auto" }}>
-                                <input value={category?.name}
-                                    style={{
-                                        border: "1px solid",
-                                        borderRadius: "5px",
-                                        marginRight: "2%"
-                                    }}
-                                    placeholder="Please enter Category"
-                                    onChange={(e) => setCategory({ id: category.id, name: e.target.value })}
-                                />
-                            </Col>
-                        </Row>
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button
-                            color="primary"
-                            type="submit"
-                            onClick={() => {
-                                updateCategory(category.id);
-                            }}
-                        >
-                            Update
-                        </Button>
-                        <Button color="secondary"
-                            onClick={() => toggleUpdateModal()}
-                        >
-                            Cancel
-                        </Button>
-                    </ModalFooter>
-                </Modal>
-                <Modal isOpen={isDeleteModel} toggle={() => toggleDeleteModal()} centered>
-                    <ModalHeader toggle={() => toggleDeleteModal()}>Thông báo</ModalHeader>
-                    <ModalBody>
-                        Do you want delete?
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button
-                            color="primary"
-                            type="submit"
-                            onClick={() => {
-                                deleteCategory();
-                            }}
-                        >
-                            Delete
-                        </Button>
-                        <Button color="secondary"
-                            onClick={() => toggleDeleteModal()}
-                        >
-                            Cancel
-                        </Button>
-                    </ModalFooter>
-                </Modal>
-                <Tables
-                    title={"Category"}
-                    list={categories}
-                    colNames={[{ title: "ID", id: "id" }, { title: "Name", id: "name" }]}
-                    pageable={pageable}
-                    totalPage={totalPageAndNumber.totalPage}
-                    onCreate={onCreate}
-                    onDetail={onDetail}
-                    onUpdate={onUpdate}
-                    onDelete={onDelete}
-                    sortDataAscending={sortDataAscending}
-                    sortDataGraduallySmaller={sortDataGraduallySmaller}
-                />
-            </Container>
+                <DialogTitle id="scroll-dialog-title">Update Category</DialogTitle>
+                <DialogContent >
+                    <FormControl sx={{ m: 1, width: 380 }}>
+                        <TextField
+                            id="category"
+                            label="Category"
+                            required
+                            error={errorValue.name ? errorValue?.name?.length === 0 ? false : true : false}
+                            helperText={errorValue?.name}
+                            value={category.name}
+                            onChange={(e) => { setCategory({ id: category.id, name: e.target.value }); setErrorValue({}) }}
+                        />
+                    </FormControl>
+                </DialogContent>
+                <DialogActions>
+                    <Button className={classes.createButton} onClick={() => { updateCategory(category.id) }}>Update</Button>
+                    <Button className={classes.cancelButton} onClick={() => onClose()}>Cancel</Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog
+                aria-labelledby="scroll-dialog-title"
+                aria-describedby="scroll-dialog-description"
+                fullWidth={true}
+                open={isDeleteModel}
+                onClose={toggleDeleteModal}
+            >
+                <DialogTitle id="scroll-dialog-title">Thông báo</DialogTitle>
+                <DialogContent>
+                    Do you want delete?
+                </DialogContent>
+                <DialogActions>
+                    <Button className={classes.deleteButton} onClick={() => { deleteCategory() }}>Delete</Button>
+                    <Button className={classes.cancelButton} onClick={() => toggleDeleteModal()}>Cancel</Button>
+                </DialogActions>
+            </Dialog>
+            <Tables
+                title={"Category"}
+                list={categories}
+                colNames={[{ title: "ID", id: "id" }, { title: "Name", id: "name" }]}
+                onCreate={onCreate}
+                onDetail={onDetail}
+                onUpdate={onUpdate}
+                onDelete={onDelete}
+                sortDataAscending={sortDataAscending}
+                sortDataGraduallySmaller={sortDataGraduallySmaller}
+            />
         </>
     )
 }

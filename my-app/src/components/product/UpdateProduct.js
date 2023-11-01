@@ -405,6 +405,11 @@ const UpdateProduct = (props) => {
 
     //_____________________________________________________________________________
 
+    const onClose = () => {
+        setErrorValue({})
+        toggleModal()
+    }
+
     return (
         <>
             <Dialog
@@ -414,7 +419,7 @@ const UpdateProduct = (props) => {
                 maxWidth={'md'}
                 fullWidth={true}
                 open={isUpdateModal}
-                onClose={toggleModal}
+                onClose={onClose}
             >
                 <DialogTitle id="scroll-dialog-title">Update Product</DialogTitle>
                 <DialogContent dividers={scroll === 'paper'} >
@@ -696,8 +701,8 @@ const UpdateProduct = (props) => {
                     }
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={(e) => { createProduct(e) }}>Add</Button>
-                    <Button onClick={() => { toggleModal(); setImage([]) }}>Cancel</Button>
+                    <Button className={classes.createButton} onClick={(e) => { createProduct(e) }}>Save</Button>
+                    <Button className={classes.cancelButton} onClick={() => { onClose() }}>Cancel</Button>
                 </DialogActions>
                 <CreateCategory
                     isCreateModel={isCreateCateModal}
