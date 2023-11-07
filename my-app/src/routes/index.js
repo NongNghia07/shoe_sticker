@@ -5,6 +5,7 @@ import { AnimatePresence } from 'framer-motion';
 import config from './../config';
 import MainRoutes from './MainRoutes';
 import LoginRoutes from './LoginRoutes';
+import Error from './Error'
 
 import Loader from '../ui-component/extended/Loader/Loader';
 
@@ -25,6 +26,9 @@ const Routes = () => {
 
                         {/* Routes for main layouts */}
                         <MainRoutes />
+
+                        {/* Routes for Error */}
+                        <Error />
                     </>
                 </Switch>
             </Suspense>

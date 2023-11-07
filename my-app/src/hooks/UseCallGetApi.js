@@ -25,6 +25,7 @@ const useCallGetAPI = () => {
                 if (e.response.status === 403) {
                     console.log("K có quền truy cập");
                 }
+                window.location.href = 'http://localhost:3000/404'
                 console.log(e.response);
             }
             else if (axios?.isCancel(e)) {

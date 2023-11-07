@@ -11,7 +11,7 @@ import {
     Button,
     makeStyles,
 } from '@material-ui/core';
-import "../assets/css/Carousel.css"
+import "../assets/css/Carousel.scss"
 import CarouselCustom from "../layout/MainLayout/CarouselCustom";
 
 const useStyles = makeStyles((theme) => ({

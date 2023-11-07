@@ -4,22 +4,19 @@ import MinimalLayout from '../layout/MinimalLayout';
 import NavMotion from '../layout/NavMotion';
 
 
-const AuthLogin = lazy(() => import('../views/pages/authentication/login'));
-const AuthRegister = lazy(() => import('../views/pages/authentication/register'));
+const Error404 = lazy(() => import('../views/error/404'));
 
 const LoginRoutes = () => {
     const location = useLocation();
 
     return (
-        <Route path={[
-            '/login',
-            '/register'
-        ]}>
+        <Route path={['/404']}>
             <MinimalLayout>
                 <Switch location={location} key={location.pathname}>
                     <NavMotion>
-                        <Route path="/login" component={AuthLogin} />
-                        <Route path="/register" component={AuthRegister} />
+
+                        <Route path="/404" component={Error404} />
+
                     </NavMotion>
                 </Switch>
             </MinimalLayout>

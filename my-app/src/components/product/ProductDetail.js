@@ -16,7 +16,7 @@ import {
     Typography, ToggleButton, ToggleButtonGroup, FormControl
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import "../../assets/css/Carousel.css"
+import "../../assets/css/Carousel.scss"
 
 const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
     '& .MuiToggleButtonGroup-grouped': {

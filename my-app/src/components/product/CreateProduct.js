@@ -8,7 +8,7 @@ import { makeStyles, Grid } from '@material-ui/core';
 import { gridSpacing } from '../../store/constant';
 
 import AddIcon from '@mui/icons-material/Add';
-import "../../assets/css/Carousel.css"
+import "../../assets/css/Carousel.scss"
 import useCallPostAPI from "../../hooks/UseCallPostApi";
 import CreateCategory from "../category/CreateCategory";
 import CarouselCustom from "../../layout/MainLayout/CarouselCustom";

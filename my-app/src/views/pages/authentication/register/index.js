@@ -6,7 +6,7 @@ import Carousel from 'react-material-ui-carousel';
 
 //import JWTLogin from './JWTLogin';
 //import Auth0Login from './Auth0Login';
-import FirebaseLogin from './FirebaseLogin';
+import FirebaseRgister from './FirebaseRgister';
 
 import logo from './../../../../assets/images/logo.svg';
 import AuthPattern from './../../../../assets/images/auth/auth-pattern.svg';
@@ -152,7 +152,7 @@ const Item = (props) => {
     );
 };
 
-const Login = () => {
+const Register = () => {
     const classes = useStyles();
     const theme = useTheme();
     const matchDownSM = useMediaQuery(theme.breakpoints.down('sm'));
@@ -174,7 +174,7 @@ const Login = () => {
 
     return (
         <Grid container justifyContent="space-between" alignItems="center" className={classes.root}>
-            <Grid item container justifyContent="center" md={7}>
+            <Grid item md={7} container justifyContent="center" alignItems="center">
                 <Card className={classes.card}>
                     <CardContent className={classes.content}>
                         <Grid container direction="column" spacing={2} justifyContent="center">
@@ -182,66 +182,48 @@ const Login = () => {
                                 <Grid
                                     container
                                     direction={matchDownSM ? 'column-reverse' : 'row'}
-                                    alignItems={matchDownSM && 'center'}
-                                    justifyContent={matchDownSM ? 'center' : 'space-between'}
+                                    alignItems="center"
+                                    justifyContent="center"
                                 >
                                     <Grid item>
-                                        <Grid container direction="column" spacing={1}>
-                                            <Grid item container direction="column" alignItems={matchDownSM && 'center'}>
+                                        <Grid container direction="column" alignItems="center" spacing={1}>
+                                            <Grid item container direction="column" alignItems="center">
                                                 <Grid item>
                                                     <Typography
                                                         color={theme.palette.purple.main}
                                                         gutterBottom
                                                         variant={matchDownSM ? 'h3' : 'h2'}
                                                     >
-                                                        Hi, Welcome Back
-                                                    </Typography>
-                                                </Grid>
-                                                <Grid item>
-                                                    <Typography color="textPrimary" gutterBottom variant={matchDownSM ? 'h4' : 'h3'}>
-                                                        Login in to your account
+                                                        Sign up
                                                     </Typography>
                                                 </Grid>
                                             </Grid>
-                                            {/* <Grid item>
-                                                <Typography variant="caption">
-                                                    Enter your credentials to continue.
+                                            <Grid item>
+                                                <Typography variant="caption" fontSize="16px">
+                                                    {' '}
+                                                    Enter your credentials to continue
                                                 </Typography>
-                                            </Grid> */}
+                                            </Grid>
                                         </Grid>
-                                    </Grid>
-                                    <Grid item className={classes.icon}>
-                                        <RouterLink to="#">
-                                            <img alt="Auth method" src={logo} width="100" />
-                                        </RouterLink>
                                     </Grid>
                                 </Grid>
                             </Grid>
                             <Grid item xs={12}>
-                                {/* <JWTLogin /> */}
-                                {/* <Auth0Login /> */}
-                                <FirebaseLogin />
+                                <FirebaseRgister />
                             </Grid>
                             <Grid item xs={12}>
                                 <Divider />
                             </Grid>
                             <Grid item xs={12}>
-                                <Grid item container direction="column" alignItems="flex-end" xs={12}>
-                                    <Typography component={RouterLink} to="/register" variant="subtitle1" className={classes.title}>
-                                        Don't have an account?
-                                    </Typography>
-                                    {/* <Box mt={1} width='100%'>
-                                    <Button
-                                        disableElevation
-                                        fullWidth
-                                        size="large"
-                                        type="submit"
-                                        variant="outlined"
-                                        className={classes.login}
+                                <Grid item container direction="column" alignItems="center" xs={12}>
+                                    <Typography
+                                        component={RouterLink}
+                                        to="/login"
+                                        variant="subtitle1"
+                                        className={classes.title}
                                     >
-                                        Sign up now
-                                    </Button>
-                                </Box> */}
+                                        Having an account?
+                                    </Typography>
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -302,4 +284,4 @@ const Login = () => {
     );
 };
 
-export default Login;
+export default Register;
