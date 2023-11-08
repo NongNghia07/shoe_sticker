@@ -57,7 +57,7 @@ const Product = (props) => {
     const [isCreateModal, setIsCreateModal] = useState(false);
     const [isUpdateModal, setIsUpdateModal] = useState(false);
     const [isDeleteModal, setIsDeleteModal] = useState(false);
-    const { callGet } = useCallGetAPI()
+    const { response, callGet } = useCallGetAPI(undefined, false);
     const { callPost } = useCallPostAPI()
     const { enqueueSnackbar } = useSnackbar();
     const [lstproductData, setLstProductData] = useState([])

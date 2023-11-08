@@ -12,7 +12,7 @@ const useCallPostAPI = () => {
     const { enqueueSnackbar } = useSnackbar();
     // const ourRequest = axios.CancelToken.source()
 
-    const callPost = async (url, datas, action) => {
+    const callPost = async (url, datas, getData, getError) => {
         try {
             let canceled = false;
             let res = await axios.post(url, datas, { headers: { "Authorization": `Bearer ${token}` } })
@@ -21,16 +21,18 @@ const useCallPostAPI = () => {
             setIsLoading(false);
             setIsError(false);
             if (canceled) {
-                if (action) action(data)
+                if (getData) getData(data)
                 setData(data)
             }
         } catch (e) {
             if (e.response) {
                 console.log(e.response.data.message);
                 enqueueSnackbar(e.response.data.message, { variant: 'error' })
+                getError(e.response)
             } else {
                 console.log(e);
                 enqueueSnackbar("Error!", { variant: 'error' })
+                getError(e)
             }
             setIsError(true)
         }
