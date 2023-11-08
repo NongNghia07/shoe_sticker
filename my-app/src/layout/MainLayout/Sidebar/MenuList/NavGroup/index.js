@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Divider, List, makeStyles, Typography} from '@material-ui/core';
+import { Divider, List, makeStyles, Typography } from '@material-ui/core';
 
 import NavItem from './../NavItem';
 import NavCollapse from './../NavCollapse';
@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const NavGroup = (props) => {
-    const {item} = props;
+    const { item } = props;
     const classes = useStyles();
 
     const items = item.children.map((menu) => {

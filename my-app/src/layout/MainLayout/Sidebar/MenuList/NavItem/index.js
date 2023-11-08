@@ -1,8 +1,8 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
-import {useDispatch, useSelector} from 'react-redux';
-import {makeStyles} from '@material-ui/core/styles';
-import {useMediaQuery, Avatar, Chip, ListItem, ListItemIcon, ListItemText, Typography} from '@material-ui/core';
+import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
+import { useMediaQuery, Avatar, Chip, ListItem, ListItemIcon, ListItemText, Typography } from '@material-ui/core';
 
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
@@ -43,7 +43,7 @@ const NavItem = (props) => {
     const matchesSM = useMediaQuery((theme) => theme.breakpoints.down('md'));
     const customization = useSelector((state) => state.customization);
     const dispatch = useDispatch();
-    const {item, level} = props;
+    const { item, level } = props;
 
     const Icon = item.icon;
     const itemIcon = item.icon ? (
@@ -62,26 +62,26 @@ const NavItem = (props) => {
         itemTarget = '_blank';
     }
 
-    let listItemProps = {component: Link, to: item.url};
+    let listItemProps = { component: Link, to: item.url };
     if (item.external) {
-        listItemProps = {component: 'a', href: item.url};
+        listItemProps = { component: 'a', href: item.url };
     }
 
     const itemHandler = (id) => {
-        dispatch({type: actionTypes.MENU_OPEN, isOpen: id});
-        matchesSM && dispatch({type: actionTypes.SET_MENU, opened: false});
+        dispatch({ type: actionTypes.MENU_OPEN, isOpen: id });
+        matchesSM && dispatch({ type: actionTypes.SET_MENU, opened: false });
     };
 
     return (
         <ListItem
             disabled={item.disabled}
             className={level > 1 ? classes.listItemNoBack : classes.listItem}
-            sx={{borderRadius: customization.borderRadius + 'px'}}
+            sx={{ borderRadius: customization.borderRadius + 'px' }}
             selected={customization.isOpen === item.id}
             onClick={() => itemHandler(item.id)}
             button
             target={itemTarget}
-            style={{paddingLeft: level * 23 + 'px'}}
+            style={{ paddingLeft: level * 23 + 'px' }}
             {...listItemProps}
         >
             <ListItemIcon className={itemIconClass}>{itemIcon}</ListItemIcon>

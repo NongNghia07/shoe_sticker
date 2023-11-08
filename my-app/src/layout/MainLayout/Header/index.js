@@ -1,7 +1,7 @@
 import React from 'react';
-import {Avatar, ButtonBase, Hidden, makeStyles} from '@material-ui/core';
+import { Avatar, ButtonBase, Hidden, makeStyles } from '@material-ui/core';
 
-import {IconMenu2} from '@tabler/icons';
+import { IconMenu2 } from '@tabler/icons';
 
 import LogoSection from '../LogoSection';
 import SearchSection from './SearchSection';
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Header = (props) => {
-    const {handleLeftDrawerToggle} = props;
+    const { handleLeftDrawerToggle } = props;
     const classes = useStyles();
 
     return (
@@ -48,7 +48,7 @@ const Header = (props) => {
                     <LogoSection />
                     <div className={classes.grow} />
                 </Hidden>
-                <ButtonBase sx={{borderRadius: '12px'}}>
+                <ButtonBase sx={{ borderRadius: '12px' }}>
                     <Avatar variant="rounded" className={classes.headerAvtar} onClick={handleLeftDrawerToggle}>
                         <IconMenu2 stroke={1.5} size="1.3rem" />
                     </Avatar>

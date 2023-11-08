@@ -1,10 +1,10 @@
 import React from 'react';
-import {useSelector} from 'react-redux';
-import {Collapse, List, ListItem, ListItemIcon, ListItemText, makeStyles, Typography} from '@material-ui/core';
+import { useSelector } from 'react-redux';
+import { Collapse, List, ListItem, ListItemIcon, ListItemText, makeStyles, Typography } from '@material-ui/core';
 
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
-import {IconChevronDown, IconChevronUp} from '@tabler/icons';
+import { IconChevronDown, IconChevronUp } from '@tabler/icons';
 
 import NavItem from './../NavItem';
 
@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
             top: 0,
             height: '100%',
             width: '1px',
-            opacity:  1,
+            opacity: 1,
             background: theme.palette.primary.light
         }
     }
@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
 const NavCollapse = (props) => {
     const classes = useStyles();
     const customization = useSelector((state) => state.customization);
-    const {menu, level} = props;
+    const { menu, level } = props;
     const [open, setOpen] = React.useState(false);
     const [selected, setSelected] = React.useState(null);
 
@@ -108,11 +108,11 @@ const NavCollapse = (props) => {
         <React.Fragment>
             <ListItem
                 className={level > 1 ? classes.listItemNoBack : classes.listItem}
-                sx={{borderRadius: customization.borderRadius + 'px'}}
+                sx={{ borderRadius: customization.borderRadius + 'px' }}
                 selected={selected === menu.id}
                 button
                 onClick={handleClick}
-                style={{paddingLeft: level * 23 + 'px'}}
+                style={{ paddingLeft: level * 23 + 'px' }}
             >
                 <ListItemIcon className={menuIconClass}>{menuIcon}</ListItemIcon>
                 <ListItemText

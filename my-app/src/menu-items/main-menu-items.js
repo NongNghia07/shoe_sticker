@@ -47,7 +47,9 @@ import {
     IconTypography,
     IconUser,
     IconUserCheck,
-    IconShoe
+    IconShoe,
+    IconCategory2,
+    IconRulerMeasure
 } from '@tabler/icons';
 
 const icons = {
@@ -98,7 +100,9 @@ const icons = {
     IconBorderAll: IconBorderAll,
     IconChartCandle: IconChartCandle,
     IconBasket: IconBasket,
-    IconShoe: IconShoe
+    IconShoe: IconShoe,
+    IconCategory2: IconCategory2,
+    IconRulerMeasure: IconRulerMeasure
 };
 
 const menuItems = {
@@ -165,8 +169,30 @@ const menuItems = {
                     icon: icons['IconShoe'],
                     breadcrumbs: false
                 },
-
-
+                {
+                    id: 'manage-category',
+                    title: <FormattedMessage id="Category" />,
+                    type: 'item',
+                    url: '/admin/category',
+                    icon: icons['IconCategory2'],
+                    breadcrumbs: false
+                },
+                {
+                    id: 'manage-size',
+                    title: <FormattedMessage id="Size" />,
+                    type: 'item',
+                    url: '/admin/sizeOrColor/size',
+                    icon: icons['IconRulerMeasure'],
+                    breadcrumbs: false
+                },
+                {
+                    id: 'manage-color',
+                    title: <FormattedMessage id="Color" />,
+                    type: 'item',
+                    url: '/admin/sizeOrColor/color',
+                    icon: icons['IconPalette'],
+                    breadcrumbs: false
+                }
             ]
         },
         {

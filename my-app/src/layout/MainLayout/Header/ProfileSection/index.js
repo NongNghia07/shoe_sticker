@@ -30,6 +30,10 @@ import UpgradePlanCard from '../../../../ui-component/cards/UpgradePlanCard';
 
 import User1 from './../../../../assets/images/users/user-round.svg';
 
+import avatar from '../../../../assets/images/avatar.jpg'
+
+import { useHistory } from "react-router-dom";
+
 const useStyles = makeStyles((theme) => ({
     navContainer: {
         width: '100%',
@@ -56,6 +60,21 @@ const useStyles = makeStyles((theme) => ({
         '&[aria-controls="menu-list-grow"], &:hover': {
             borderColor: theme.palette.primary.main,
             background: theme.palette.primary.main + '!important',
+            color: theme.palette.primary.light,
+            '& svg': {
+                stroke: theme.palette.primary.light
+            }
+        }
+    },
+    profileDetailChip: {
+        height: '48px',
+        width: '100%',
+        borderRadius: '27px',
+        transition: 'all .2s ease-in-out',
+        borderColor: 'white',
+        '&[aria-controls="menu-list-grow"], &:hover': {
+            borderColor: theme.palette.primary.light,
+            background: theme.palette.primary.light + '!important',
             color: theme.palette.primary.light,
             '& svg': {
                 stroke: theme.palette.primary.light
@@ -114,6 +133,7 @@ const ProfileSection = () => {
     const [value, setValue] = React.useState('');
     const [notification, setNotification] = React.useState(false);
     const [selectedIndex] = React.useState(1);
+    const navigate = useHistory()
 
     const [open, setOpen] = React.useState(false);
     const anchorRef = React.useRef(null);
@@ -125,6 +145,12 @@ const ProfileSection = () => {
             console.error(err);
         }
     };
+
+    const handleProfile = () => {
+        navigate.replace("/account-settings")
+        handleToggle()
+    }
+
     const handleToggle = () => {
         setOpen((prevOpen) => !prevOpen);
     };
@@ -150,7 +176,7 @@ const ProfileSection = () => {
                 className={classes.profileChip}
                 icon={
                     <Avatar
-                        src={User1}
+                        src={avatar}
                         className={classes.headerAvtar}
                         ref={anchorRef}
                         aria-controls={open ? 'menu-list-grow' : undefined}
@@ -192,16 +218,24 @@ const ProfileSection = () => {
                                     <CardContent className={classes.cardContent}>
                                         <Grid container direction="column" spacing={0}>
                                             <Grid item className={classes.flex}>
-                                                <Typography variant="h4">Good Morning,</Typography>
-                                                <Typography component="span" variant="h4" className={classes.name}>
-                                                    Kishan
-                                                </Typography>
-                                            </Grid>
-                                            <Grid item>
-                                                <Typography variant="subtitle2">Project Admin</Typography>
+                                                <Chip
+                                                    classes={{ label: classes.profileLabel }}
+                                                    className={classes.profileDetailChip}
+                                                    icon={
+                                                        <Avatar
+                                                            src={User1}
+                                                            className={classes.headerAvtar}
+                                                            color="inherit"
+                                                        />
+                                                    }
+                                                    label={<Typography variant="h4">Good Morning</Typography>}
+                                                    variant="outlined"
+                                                    onClick={handleProfile}
+                                                    color="primary"
+                                                />
                                             </Grid>
                                         </Grid>
-                                        <OutlinedInput
+                                        {/* <OutlinedInput
                                             className={classes.searchControl}
                                             id="input-search-profile"
                                             value={value}
@@ -217,11 +251,9 @@ const ProfileSection = () => {
                                                 'aria-label': 'weight'
                                             }}
                                             labelWidth={0}
-                                        />
-                                        <Divider />
+                                        /> */}
                                         <PerfectScrollbar className={classes.ScrollHeight}>
-                                            <UpgradePlanCard />
-                                            <Divider />
+                                            {/* <UpgradePlanCard /> */}
                                             <Card className={classes.card}>
                                                 <CardContent>
                                                     <Grid container spacing={3} direction="column">

@@ -7,6 +7,9 @@ import MainLayout from './../layout/MainLayout';
 
 const DashboardDefault = lazy(() => import('../views/dashboard/Default'));
 
+const AccountSettings = lazy(() => import('../views/accountSettings'));
+
+
 const Product = lazy(() => import('../views/pages/manage/product'));
 const ProductDetail = lazy(() => import('../views/pages/manage/product/productDetail'));
 const Category = lazy(() => import('../views/pages/manage/category'));
@@ -29,7 +32,7 @@ const MainRoutes = () => {
         <Route
             path={[
                 '/dashboard/default',
-
+                '/account-settings',
                 '/admin/product',
                 '/admin/product-detail/:id',
                 '/admin/category',
@@ -47,6 +50,8 @@ const MainRoutes = () => {
             <MainLayout showBreadcrumb={true}>
                 <Switch >
                     <Route path="/dashboard/default" component={DashboardDefault} />
+
+                    <Route path="/account-settings" component={AccountSettings} />
 
                     <Route path="/admin/product" component={Product} />
                     <Route path="/admin/product-detail/:id" component={ProductDetail} />
