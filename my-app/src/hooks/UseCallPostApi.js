@@ -27,12 +27,12 @@ const useCallPostAPI = () => {
         } catch (e) {
             if (e.response) {
                 console.log(e.response.data.message);
-                enqueueSnackbar(e.response.data.message, { variant: 'error' })
-                getError(e.response)
+                // enqueueSnackbar(e.response.data.message, { variant: 'error' })
+                // getError(e.response)
             } else {
                 console.log(e);
-                enqueueSnackbar("Error!", { variant: 'error' })
-                getError(e)
+                // enqueueSnackbar("Error!", { variant: 'error' })
+                // getError(e)
             }
             setIsError(true)
         }

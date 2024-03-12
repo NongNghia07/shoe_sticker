@@ -42,14 +42,14 @@ public class SpringbootFirstApplication {
 //                    .build();
 //            System.out.println("Admin token: " + service.register(admin).getAccessToken());
 //
-//            var manager = RegisterRequest.builder()
-//                    .firstname("Staff")
-//                    .lastname("Staff")
-//                    .userName("staff")
-//                    .password("123")
-//                    .role(MANAGER)
-//                    .build();
-//            System.out.println("Manager token: " + service.register(max1nager).getAccessToken());
+////            var manager = RegisterRequest.builder()
+////                    .firstname("Staff")
+////                    .lastname("Staff")
+////                    .userName("staff")
+////                    .password("123")
+////                    .role(MANAGER)
+////                    .build();
+////            System.out.println("Manager token: " + service.register(max1nager).getAccessToken());
 //
 //        };
 //    }

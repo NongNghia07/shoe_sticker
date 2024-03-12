@@ -75,7 +75,7 @@ export default function SizeOrColor(props) {
 
     useEffect(() => {
         refreshData()
-    }, [])
+    }, [param])
 
 
     useEffect(() => {

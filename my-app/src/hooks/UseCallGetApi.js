@@ -18,7 +18,7 @@ const useCallGetAPI = (axiosParams, executeOnMount) => {
                 if (e.response.status === 403) {
                     console.log("K có quền truy cập");
                 }
-                // window.location.href = 'http://localhost:3000/404'
+                window.location.href = 'http://localhost:3000/404'
                 console.log(e.response);
                 setError(e.response)
                 getError(e.response)
