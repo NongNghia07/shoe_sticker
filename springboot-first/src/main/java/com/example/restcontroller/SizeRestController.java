@@ -1,6 +1,6 @@
 package com.example.restcontroller;
 
-import com.example.dto.SizeDTO;
+import com.example.dto.response.SizeDTO;
 import com.example.service.SizeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

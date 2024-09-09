@@ -1,7 +1,7 @@
 package com.example.restcontroller;
 
 import com.example.auth.AuthenticationService;
-import com.example.dto.UserDataDTO;
+import com.example.dto.response.UserDataDTO;
 import com.example.service.UserDataService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;

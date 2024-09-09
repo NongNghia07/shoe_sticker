@@ -1,6 +1,6 @@
 package com.example.service.impl;
 
-import com.example.dto.UserLoginDTO;
+import com.example.dto.response.UserLoginDTO;
 import com.example.entity.UserLogin;
 import com.example.exception.ApiRequestException;
 import com.example.repository.UserLoginRepository;

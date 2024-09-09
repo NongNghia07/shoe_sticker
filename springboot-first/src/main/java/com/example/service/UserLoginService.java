@@ -1,6 +1,6 @@
 package com.example.service;
 
-import com.example.dto.UserLoginDTO;
+import com.example.dto.response.UserLoginDTO;
 
 import java.util.List;
 

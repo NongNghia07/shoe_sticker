@@ -1,6 +1,6 @@
 package com.example.service.impl;
 
-import com.example.dto.UserRolesDTO;
+import com.example.dto.response.UserRolesDTO;
 import com.example.entity.UserRoles;
 import com.example.repository.UserRoleRepository;
 import com.example.service.UserRoleService;

@@ -1,6 +1,6 @@
 package com.example.service;
 
-import com.example.dto.SizeDTO;
+import com.example.dto.response.SizeDTO;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

@@ -1,7 +1,5 @@
 package com.example.service;
 
-import com.example.dto.RolesDTO;
-
 import java.util.List;
 
 public interface RoleService {

@@ -1,6 +1,6 @@
 package com.example.service;
 
-import com.example.dto.UserRolesDTO;
+import com.example.dto.response.UserRolesDTO;
 
 import java.util.List;
 

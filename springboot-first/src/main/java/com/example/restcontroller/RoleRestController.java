@@ -1,6 +1,5 @@
 package com.example.restcontroller;
 
-import com.example.dto.RolesDTO;
 import com.example.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

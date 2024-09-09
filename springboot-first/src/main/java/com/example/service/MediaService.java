@@ -1,6 +1,6 @@
 package com.example.service;
 
-import com.example.dto.MediaDTO;
+import com.example.dto.response.MediaDTO;
 
 import java.util.List;
 

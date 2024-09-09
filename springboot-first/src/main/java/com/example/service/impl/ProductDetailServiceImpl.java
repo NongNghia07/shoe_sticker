@@ -1,18 +1,13 @@
 package com.example.service.impl;
 
-import com.example.dto.ProductDataDTO;
-import com.example.dto.ProductDetailDTO;
-import com.example.dto.SizeDTO;
-import com.example.entity.ProductData;
-import com.example.entity.ProductDetail;
+import com.example.dto.response.SizeDTO;
+import com.example.entity.Order;
 import com.example.exception.ApiRequestException;
 import com.example.repository.ProductDetailRepository;
-import com.example.service.ProductDataService;
 import com.example.service.ProductDetailService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.SerializationUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -39,7 +34,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
 
     @Override
     public ProductDetailDTO create(ProductDetailDTO productDetailDTO) {
-        ProductDetail productDetail = modelMapper.map(productDetailDTO, ProductDetail.class);
+        Order productDetail = modelMapper.map(productDetailDTO, Order.class);
         productDetail.setCreatedDate(LocalDateTime.now());
         this.productDetailRepository.save(productDetail);
         productDetailDTO.setCreatedDate(productDetail.getCreatedDate());
@@ -49,7 +44,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
 
     @Override
     public List<ProductDetailDTO> createAll(List<ProductDetailDTO> productDetailDTOS) {
-        List<ProductDetail> productDetails = productDetailDTOS.stream().map(o -> modelMapper.map(o, ProductDetail.class)).collect(Collectors.toList());
+        List<Order> productDetails = productDetailDTOS.stream().map(o -> modelMapper.map(o, Order.class)).collect(Collectors.toList());
         for (int i = 0; i < productDetails.size(); i++) {
             productDetails.get(i).setCreatedDate(LocalDateTime.now());
             productDetails.get(i).setStatus((byte) 1);
@@ -60,7 +55,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
 
     @Override
     public ProductDetailDTO update(ProductDetailDTO productDetailDTO) {
-        ProductDetail productDetail = modelMapper.map(productDetailDTO, ProductDetail.class);
+        Order productDetail = modelMapper.map(productDetailDTO, Order.class);
         // Create productDetail
 
         productDetail.setUpdatedDate(LocalDateTime.now());
@@ -71,15 +66,15 @@ public class ProductDetailServiceImpl implements ProductDetailService {
 
     @Override
     public List<ProductDetailDTO> updateAll(List<ProductDetailDTO> productDetailDTOS, Integer status) {
-        List<ProductDetail> productDetails = productDetailDTOS.stream().map(o -> modelMapper.map(o, ProductDetail.class)).collect(Collectors.toList());
-        List<ProductDetail> productDetailsOld = this.productDetailRepository.findAllByProductDataId(status, productDetails.get(0).getProductData().getId());
-        for (ProductDetail o : productDetailsOld) {
+        List<Order> productDetails = productDetailDTOS.stream().map(o -> modelMapper.map(o, Order.class)).collect(Collectors.toList());
+        List<Order> productDetailsOld = this.productDetailRepository.findAllByProductDataId(status, productDetails.get(0).getProductData().getId());
+        for (Order o : productDetailsOld) {
             o.setStatus((byte) 0);
             this.productDetailRepository.save(o);
         }
-        for (ProductDetail p : productDetails) {
+        for (Order p : productDetails) {
             if (p.getId() != null) {
-                ProductDetail productDetail = this.productDetailRepository.findById(Long.valueOf(p.getId())).orElseThrow();
+                Order productDetail = this.productDetailRepository.findById(Long.valueOf(p.getId())).orElseThrow();
                 if (!p.getQuantity().equals(productDetail.getQuantity()) || !p.getPrice().equals(productDetail.getPrice())) {
                     productDetail.setUpdated(p.getUpdated());
                     productDetail.setUpdatedDate(LocalDateTime.now());
@@ -92,7 +87,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
                     this.productDetailRepository.save(productDetail);
                 }
             } else {
-                ProductDetail productDetail = this.productDetailRepository.findByColorIdAndSizeId(p.getProductData().getId(), p.getColor().getId(), p.getSize().getId());
+                Order productDetail = this.productDetailRepository.findByColorIdAndSizeId(p.getProductData().getId(), p.getColor().getId(), p.getSize().getId());
                 if (productDetail != null && (!p.getQuantity().equals(productDetail.getQuantity()) || !p.getPrice().equals(productDetail.getPrice()))) {
                     productDetail.setUpdated(p.getUpdated());
                     productDetail.setUpdatedDate(LocalDateTime.now());
@@ -123,7 +118,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
 
     @Override
     public List<ProductDetailDTO> findAllByProductDataId(Integer status, Integer product_data_id) {
-        List<ProductDetail> productDetails = this.productDetailRepository.findAllByProductDataId(status, product_data_id);
+        List<Order> productDetails = this.productDetailRepository.findAllByProductDataId(status, product_data_id);
         if (productDetails.isEmpty()) {
             throw new ApiRequestException("Not found with id: " + product_data_id);
         }
@@ -187,18 +182,18 @@ public class ProductDetailServiceImpl implements ProductDetailService {
 
     @Override
     public void setStatusFalse(Long id) {
-        ProductDetail productDetail = this.productDetailRepository.findById(id).orElseThrow();
+        Order productDetail = this.productDetailRepository.findById(id).orElseThrow();
         productDetail.setStatus((byte) 0);
         this.productDetailRepository.save(productDetail);
     }
 
     @Override
     public void setAllStatusFalse(Integer id) {
-        List<ProductDetail> productDetails = this.productDetailRepository.findAllByProductDataId(1, id);
+        List<Order> productDetails = this.productDetailRepository.findAllByProductDataId(1, id);
         if (productDetails.isEmpty()) {
             throw new ApiRequestException("Not found with id: " + id);
         }
-        for (ProductDetail p: productDetails) {
+        for (Order p: productDetails) {
             p.setStatus((byte) 0);
             this.productDetailRepository.save(p);
         }

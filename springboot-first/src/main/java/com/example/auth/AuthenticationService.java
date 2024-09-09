@@ -1,7 +1,7 @@
 package com.example.auth;
 
 import com.example.config.JwtService;
-import com.example.dto.UserDataDTO;
+import com.example.dto.response.UserDataDTO;
 import com.example.entity.UserLogin;
 import com.example.enums.TokenType;
 import com.example.exception.ApiRequestException;
@@ -16,8 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

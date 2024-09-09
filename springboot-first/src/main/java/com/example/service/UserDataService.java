@@ -1,6 +1,6 @@
 package com.example.service;
 
-import com.example.dto.UserDataDTO;
+import com.example.dto.response.UserDataDTO;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
 package com.example.restcontroller;
 
-import com.example.dto.UserLoginDTO;
+import com.example.dto.response.UserLoginDTO;
 import com.example.service.UserLoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

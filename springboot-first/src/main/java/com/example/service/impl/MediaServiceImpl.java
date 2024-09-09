@@ -1,6 +1,6 @@
 package com.example.service.impl;
 
-import com.example.dto.MediaDTO;
+import com.example.dto.response.MediaDTO;
 import com.example.entity.Media;
 import com.example.repository.MediaRepository;
 import com.example.service.MediaService;

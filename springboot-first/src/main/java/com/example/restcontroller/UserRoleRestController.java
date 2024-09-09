@@ -1,6 +1,6 @@
 package com.example.restcontroller;
 
-import com.example.dto.UserRolesDTO;
+import com.example.dto.response.UserRolesDTO;
 import com.example.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

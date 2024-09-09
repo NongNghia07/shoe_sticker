@@ -1,6 +1,6 @@
 package com.example.service.impl;
 
-import com.example.dto.SizeDTO;
+import com.example.dto.response.SizeDTO;
 import com.example.entity.Size;
 import com.example.exception.ApiRequestException;
 import com.example.repository.SizeRepository;

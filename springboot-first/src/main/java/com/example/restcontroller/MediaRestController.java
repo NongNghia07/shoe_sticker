@@ -1,6 +1,6 @@
 package com.example.restcontroller;
 
-import com.example.dto.MediaDTO;
+import com.example.dto.response.MediaDTO;
 import com.example.service.MediaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

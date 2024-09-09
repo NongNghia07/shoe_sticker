@@ -1,6 +1,5 @@
 package com.example.restcontroller;
 
-import com.example.dto.ProductDetailDTO;
 import com.example.service.ProductDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
